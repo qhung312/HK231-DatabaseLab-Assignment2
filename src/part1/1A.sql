@@ -6,360 +6,240 @@
 -- constraints in your database.
 
 /*
-	TABLE: PATIENT
+    TABLE: PATIENT
 */
 
-drop table if exists public."Patient";
+drop table if exists patient;
 
-create table if not exists public."Patient"(
-	"uniqueNumber"	character (12)	not null	primary key,
-	"identityNumber"	int	not null check("identityNumber">0)	unique,
-	"fullName"	character varying (20)	not null,
-	"isFemale"	bool	not null	default false,
-	"addr"	text	not null,
-	"phone"	char(10)	not null
+create table if not exists patient (
+    unique_number VARCHAR(255) PRIMARY KEY,
+    identity_number VARCHAR(255) UNIQUE,
+    full_name VARCHAR(255) NOT NULL,
+    gender VARCHAR(6), -- Only male or female
+    addr VARCHAR(255) NOT NULL,
+    phone CHARACTER(10) NOT NULL UNIQUE,
 );
 
-alter table if exists public."Patient" owner to postgres;
+alter table patient owner to postgres;
+
+-- Restrict gender column to male and female
+ALTER TABLE patient ADD CONSTRAINT gender_constraint CHECK (gender IN ('Male', "Female"))
 
 /*
-	TABLE: EMPLOYEE
+    TABLE: EMPLOYEE
 */
 
-drop table if exists public."Employee";
+drop table if exists employee;
 
-create table if not exists public."Employee"(
-	"eID"	character varying (12)	not null primary key
+create table if not exists employee (
+    e_id VARCHAR(255) PRIMARY KEY,
+    e_type VARCHAR(255) NOT NULL,
 );
 
-alter table if exists public."Employee" owner to postgres;
+ALTER TABLE employee ADD CONSTRAINT e_type_constraint CHECK (eType IN ('Doctor', 'Nurse', 'Staff', 'Volunteer', 'Manager'))
 
 /*
-	TABLE: MANAGER
+    TABLE: PATIENT INSTANCE
 */
 
-drop table if exists public."Manager";
+drop table if exists patient_instance;
 
-create table if not exists public."Manager"(
-	"mID"	character varying (12)	not null primary key
-		references public."Employee"("eID")	match full
-		on update restrict
-		on delete restrict,
-	"managedBy"	character varying (12)
-		references public."Manager"("mID")	match full
-		on update restrict
-		on delete restrict
+create table if not exists patient_instance (
+    unique_number VARCHAR(255) NOT NULL REFERENCES patient(unique_number),
+    location_before_admission VARCHAR(255) NOT NULL,
+    admission_time TIMESTAMP NOT NULL,
+    nurse_assigned VARCHAR(255) NOT NULL REFERENCES employee(e_id),
+    order INT NOT NULL, -- Order of admission
+    PRIMARY KEY (unique_number, order)
 );
 
-alter table if exists public."Manager" owner to postgres;
+alter table if exists patient_instance owner to postgres;
 
 /*
-	TABLE: STAFF
+    TABLES: TESTINFO & 4 TEST TYPES
 */
 
-drop table if exists public."Staff";
+drop table if exists test_info;
 
-create table if not exists public."Staff"(
-	"sID"	character varying (12)	not null primary key
-		references public."Employee"("eID")	match full
-		on update restrict
-		on delete restrict,
-	"managedBy"	character varying (12)
-		references public."Manager"("mID")	match full
-		on update restrict
-		on delete restrict
-);
-
-alter table if exists public."Staff" owner to postgres;
-
-/*
-	TABLE: NURSE
-*/
-
-drop table if exists public."Nurse";
-
-create table if not exists public."Nurse"(
-	"nID"	character varying (12)	not null primary key
-		references public."Employee"("eID")	match full
-		on update restrict
-		on delete restrict,
-	"managedBy"	character varying (12)
-		references public."Manager"("mID")	match full
-		on update restrict
-		on delete restrict
-);
-
-alter table if exists public."Nurse" owner to postgres;
-
-/*
-	TABLE: VOLUNTEER
-*/
-
-drop table if exists public."Volunteer";
-
-create table if not exists public."Volunteer"(
-	"vID"	character varying (12)	not null primary key
-		references public."Employee"("eID")	match full
-		on update restrict
-		on delete restrict,
-	"managedBy"	character varying (12)
-		references public."Manager"("mID")	match full
-		on update restrict
-		on delete restrict
-);
-
-alter table if exists public."Volunteer" owner to postgres;
-
-/*
-	TABLE: DOCTOR
-*/
-
-drop table if exists public."Doctor";
-
-create table if not exists public."Doctor"(
-	"dID"	character varying (12)	not null primary key
-		references public."Employee"("eID")	match full
-		on update restrict
-		on delete restrict,
-	"isHeadDoctor"	bool not null default false,
-	"managedBy"	character varying (12)
-		references public."Manager"("mID")	match full
-		on update restrict
-		on delete restrict
-);
-
-create unique index on public."Doctor" ("isHeadDoctor")
-where "isHeadDoctor" = true;
-
-alter table if exists public."Doctor" owner to postgres;
-
-/*
-	TABLE: PATIENT INSTANCE
-*/
-
-drop table if exists public."PatientInstance";
-
-create table if not exists public."PatientInstance"(
-	"uniqueNumber"	character(12)	not null
-		references public."Patient" match full
-		on delete restrict
-		on update restrict,
-	"locationBeforeAdmission"	text	not null,
-	"admissionTime"	timestamp	not null,
-	"nurseAssigned"	character varying(12)	not null
-		references public."Nurse"("nID")	match full
-		on update restrict
-		on delete restrict,
-	primary key("uniqueNumber", "admissionTime")
-);
-
-alter table if exists public."PatientInstance" owner to postgres;
-
-/*
-	TABLES: TESTINFO & 4 TEST TYPES
-*/
-
-drop table if exists public."TestInfo";
-
-create table if not exists public."TestInfo"(
-	"uniqueNumber"	character(12)	not null,
-	"admissionTime"	timestamp	not null,
-	"testTimestamp"	timestamp	not null,
-	primary key("uniqueNumber", "admissionTime", "testTimestamp"),
-	foreign key("uniqueNumber", "admissionTime")
-		references public."PatientInstance" match full
-		on delete restrict
-		on update restrict
+create table if not exists test_info (
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    test_order INT NOT NULL,
+    test_timestamp TIMESTAMP NOT NULL,
+    PRIMARY KEY (unique_number, order, test_order),
+    foreign key (unique_number, order) references patient_instance(unique_number, order)
 );
 
 alter table if exists public."TestInfo" owner to postgres;
 
 /* TABLE: SPO2 TEST */
 
-drop table if exists public."SPO2Test";
+drop table if exists spo2_test;
 
-create table if not exists public."SPO2Test"(
-	"testTimestamp"	timestamp	not null,
-	"admissionTime"	timestamp	not null,
-	"uniqueNumber"	character(12)	not null,
-	"SPO2rate"	real	not null
-		check("SPO2rate"<=1)
-		check("SPO2rate">=0),
-	primary key("uniqueNumber", "admissionTime", "testTimestamp"),
-	foreign key("uniqueNumber", "admissionTime", "testTimestamp")
-		references public."TestInfo" match full
-		on delete restrict
-		on update restrict
+create table if not exists spo2_test (
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    test_order INT NOT NULL,
+    test_timestamp TIMESTAMP not null,
+    spo2_rate real	not null check(spo2_rate <= 1) check(spo2_rate >= 0),
+    primary key(unique_number, order, test_order),
+    foreign key(unique_number, order, test_order) references test_info(unique_number, order, test_order)
 );
 
-alter table if exists public."SPO2Test" owner to postgres;
+alter table if exists spo2_test owner to postgres;
 
 /* TABLE: QUICK TEST */
 
-drop table if exists public."QuickTest";
+drop table if exists quick_test;
 
-create table if not exists public."QuickTest"(
-	"testTimestamp"	timestamp	not null,
-	"admissionTime"	timestamp	not null,
-	"uniqueNumber"	character(12)	not null,
-	"QuickTest_Result"	bool	not null,
-	"QuickTest_ctThreshold"	int	not null,
-	primary key("uniqueNumber", "admissionTime", "testTimestamp"),
-	foreign key("uniqueNumber", "admissionTime", "testTimestamp")
-		references public."TestInfo" match full
-		on delete restrict
-		on update restrict
+create table if not exists quick_test (
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    test_order INT NOT NULL,
+    test_timestamp TIMESTAMP not null,
+    result BOOLEAN NOT NULL,
+    ct_threshold INT NOT NULL,
+    primary key(unique_number, order, test_order),
+    foreign key(unique_number, order, test_order) references test_info(unique_number, order, test_order)
 );
 
-alter table if exists public."QuickTest" owner to postgres;
+alter table if exists quick_test owner to postgres;
 
 /* TABLE: PCR TEST */
 
-drop table if exists public."PCRTest";
+drop table if exists pcr_test;
 
-create table if not exists public."PCRTest"(
-	"testTimestamp"	timestamp	not null,
-	"admissionTime"	timestamp	not null,
-	"uniqueNumber"	character(12)	not null,
-	"PCRTest_Result"	bool	not null,
-	"PCRTest_ctThreshold"	int	not null,
-	primary key("uniqueNumber", "admissionTime", "testTimestamp"),
-	foreign key("uniqueNumber", "admissionTime", "testTimestamp")
-		references public."TestInfo" match full
-		on delete restrict
-		on update restrict
+create table if not exists pcr_test (
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    test_order INT NOT NULL,
+    test_timestamp TIMESTAMP not null,
+    result BOOLEAN NOT NULL,
+    ct_threshold INT NOT NULL,
+    primary key(unique_number, order, test_order),
+    foreign key(unique_number, order, test_order) references test_info(unique_number, order, test_order)
 );
 
-alter table if exists public."PCRTest" owner to postgres;
+alter table pcr_test owner to postgres;
 
 /* TABLE: RESPIRATORY RATE TEST*/
 
-drop table if exists public."RespiratoryRateTest";
+drop table if exists respiratory_rate_test;
 
-create table if not exists public."RespiratoryRateTest"(
-	"testTimestamp"	timestamp	not null,
-	"admissionTime"	timestamp	not null,
-	"uniqueNumber"	character(12)	not null,
-	"RespiratoryRateBPM"	int	not null,
-	primary key("uniqueNumber", "admissionTime", "testTimestamp"),
-	foreign key("uniqueNumber", "admissionTime", "testTimestamp")
-		references public."TestInfo" match full
-		on delete restrict
-		on update restrict
+create table if not exists respiratory_rate_test (
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    test_order INT NOT NULL,
+    test_timestamp TIMESTAMP not null,
+    respiratory_bpm INT NOT NULL,
+    primary key(unique_number, order, test_order),
+    foreign key(unique_number, order, test_order) references test_info(unique_number, order, test_order)
 );
 
-alter table if exists public."RespiratoryRateTest" owner to postgres;
+alter table if exists respiratory_rate_test owner to postgres;
 
 /*
-	TABLE: COMORBIDITY
+    TABLE: COMORBIDITY
 */
 
-drop table if exists public."Comorbidity";
+drop table if exists cormobidity;
 
-create table if not exists public."Comorbidity"(
-	"cID"	int	not null	primary key,
-	"description"	text	not null,
-	"seriousness"	text	not null
+create table if not exists cormobidity (
+    c_id VARCHAR(255) PRIMARY KEY,
+    c_description VARCHAR(255) NOT NULL,
+    seriousness VARCHAR(255) NOT NULL
 );
 
-alter table if exists public."Comorbidity" owner to postgres;
+alter table if exists cormobidity owner to postgres;
 
 /*
-	TABLE: SYMPTOM
+    TABLE: SYMPTOM
 */
 
-drop table if exists public."Symptom";
+drop table if exists symptom;
 
-create table if not exists public."Symptom"(
-	"sID"	int	not null	primary key,
-	"description"	text	not null,
-	"seriousness"	text	not null
+create table if not exists symptom (
+    s_id VARCHAR(255) PRIMARY KEY,
+    s_description VARCHAR(255) NOT NULL,
+    seriousness VARCHAR(255) NOT NULL
 );
 
-alter table if exists public."Symptom" owner to postgres;
+alter table if exists symptom owner to postgres;
 
 /*
-	TABLE: BUILDING
+    TABLE: BUILDING
 */
 
-drop table if exists public."Building";
+drop table if exists building;
 
-create table if not exists public."Building"(
-	"buildingID"	character varying(4)	not null	primary key,
+create table if not exists building (
+    building_id VARCHAR(255) PRIMARY KEY,
 );
 
-alter table if exists public."Building" owner to postgres;
+alter table if exists building owner to postgres;
 
 /*
-	TABLE: FLOOR
+    TABLE: FLOOR
 */
 
-drop table if exists public."Floor";
+drop table if exists floor;
 
-create table if not exists public."Floor"(
-	"floorID"	character varying(4)	not null,
-	"buildingID"	character varying(4)	not null
-		references public."Building"	match full
-		on delete restrict
-		on update restrict,
-	primary key("buildingID", "floorID")
+create table if not exists floor (
+    floor_id VARCHAR(255) PRIMARY KEY,
+    building_id VARCHAR(255) NOT NULL REFERENCES building(building_id),
+    primary key (building_id, floor_id)
 );
 
-alter table if exists public."Floor" owner to postgres;
+alter table if exists floor owner to postgres;
 
 /*
-	TABLE: ROOM
+    TABLE: ROOM
 */
 
-drop table if exists public."Room";
+drop table if exists room;
 
-create table if not exists public."Room"(
-	"buildingID"	character varying(4)	not null,
-	"floorID"	character varying(4)	not null,
-	"roomID"	character varying(4)	not null,
-	"capacity"	int	not null,
-	"normalRoomFlag"	bool	not null,
-	"emergencyRoomFlag"	bool	not null,
-	"recuperationRoomFlag"	bool	not null,
-	primary key("buildingID", "floorID", "roomID"),
-	foreign key("buildingID", "floorID") references public."Floor" match full
-		on delete restrict
-		on update restrict
+create table if not exists room (
+    building_id VARCHAR(255) NOT NULL,
+    floor_id VARCHAR(255) NOT NULL,
+    room_id VARCHAR(255) NOT NULL,
+    capacity INT NOT NULL,
+    room_type VARCHAR(255) NOT NULL,
+    primary key (building_id, floor_id, room_id),
+    foreign key (building_id, floor_id) references floor(building_id, floor_id)
 );
 
-alter table if exists public."Room" owner to postgres;
+alter table room owner to postgres;
+
+ALTER TABLE room ADD CONSTRAINT room_type_constraint CHECK (room_type IN ('Normal', 'Emergency', 'Recuperation'))
 
 /*
-	TABLE: MEDICATION
+    TABLE: MEDICATION
 */
 
-drop table if exists public."Medication";
+drop table if exists medication;
 
-create table if not exists public."Medication"(
-	"medicationID"	character varying(10)	primary key,
-	"name"	character varying(20)	not null	unique,
-	"price"	money	not null,
-	"expDate"	date	not null
+create table if not exists medication (
+    medication_id VARCHAR(255) PRIMARY KEY,
+    medication_name VARCHAR(255) NOT NULL,
+    price MONEY NOT NULL,
+    exp_date DATE NOT NULL
 );
 
-alter table if exists public."Medication" owner to postgres;
+alter table if exists medication owner to postgres;
 
 /*
-	MULTIVALUED ATTRIBUTE: MEDICATION EFFECT
+    MULTIVALUED ATTRIBUTE: MEDICATION EFFECT
 */
 
-drop table if exists public."MedicationEffect";
+drop table if exists medication_effect;
 
 create table if not exists public."MedicationEffect"(
-	"medicationID"	character varying(10)	not null
-		references public."Medication"	match full
-		on update restrict
-		on delete restrict,
-	"medicationEffect"	text	not null,
-	primary key("medicationID", "medicationEffect")
+    medication_id VARCHAR(255) NOT NULL REFERENCES medication(medication_id),
+    effect VARCHAR(255) NOT NULL,
+    primary key (medication_id, effect)
 );
 
-alter table if exists public."MedicationEffect" owner to postgres;
+alter table if exists medication_effect owner to postgres;
 
 /*
 ///////////////////////////////////////////////////////
@@ -368,229 +248,176 @@ alter table if exists public."MedicationEffect" owner to postgres;
 */
 
 /*
-	RELATIONSHIP: HAS COMORBIDITY
+    RELATIONSHIP: HAS COMORBIDITY
 */
 
-drop table if exists public."HasComorbidity";
+drop table if exists has_cormobidity;
 
-create table if not exists public."HasComorbidity"(
-	"cID"	int	not null
-		references public."Comorbidity" match full
-		on update restrict
-		on delete restrict,
-	"admissionTime"	timestamp	not null,
-	"uniqueNumber"	character(12)	not null,
-	primary key("uniqueNumber", "admissionTime", "cID"),
-	foreign key("uniqueNumber", "admissionTime")
-		references public."PatientInstance" match full
-		on update restrict
-		on delete restrict
+create table if not exists has_cormobidity (
+    c_id VARCHAR(255) NOT NULL REFERENCES cormobidity(c_id),
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    PRIMARY KEY (unique_number, order, c_id),
+    FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order)
 );
 
-alter table if exists public."HasComorbidity" owner to postgres;
+alter table if exists has_cormobidity owner to postgres;
 
 /*
-	RELATIONSHIP: HAS SYMPTOM
+    RELATIONSHIP: HAS SYMPTOM
 */
 
-drop table if exists public."HasSymptom";
+drop table if exists has_symptom;
 
-create table if not exists public."HasSymptom"(
-	"sID"	int	not null
-		references public."Symptom" match full
-		on update restrict
-		on delete restrict,
-	"admissionTime"	timestamp	not null,
-	"uniqueNumber"	character(12)	not null,
-	primary key("uniqueNumber", "admissionTime", "sID"),
-	foreign key("uniqueNumber", "admissionTime")
-		references public."PatientInstance" match full
-		on update restrict
-		on delete restrict
+create table if not exists has_symptom (
+    s_id VARCHAR(255) NOT NULL REFERENCES symptom(s_id),
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    PRIMARY KEY (unique_number, order, s_id),
+    FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order)
 );
 
-alter table if exists public."HasSymptom" owner to postgres;
+alter table if exists has_symptom owner to postgres;
 
 /*
-	MULTIVALUED ATTRIBUTE: SYMPTOM PERIOD
+    MULTIVALUED ATTRIBUTE: SYMPTOM PERIOD
 */
 
-drop table if exists public."SymptomPeriod";
+drop table if exists symptom_period;
 
-create table if not exists public."SymptomPeriod"(
-	"sID"	int	not null,
-	"admissionTime"	timestamp	not null,
-	"uniqueNumber"	character(12)	not null,
-	"startDate"	timestamp not null,
-	"endDate"	timestamp,
-	foreign key("uniqueNumber", "admissionTime", "sID")
-		references public."HasSymptom" match full
-		on update restrict
-		on delete restrict
+create table if not exists symptom_period (
+    s_id VARCHAR(255) NOT NULL,
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    FOREIGN KEY (unique_number, order, s_id) REFERENCES has_symptom(unique_number, order, s_id),
 );
 
-alter table if exists public."SymptomPeriod" owner to postgres;
+alter table if exists symptom_period owner to postgres;
 
 /*
-	RELATIONSHIP: MOVES
+    RELATIONSHIP: MOVES
 */
 
-drop table if exists public."Moves";
+drop table if exists moves;
 
-create table if not exists public."Moves"(
-	"eID"	character varying (12)	not null
-		references public."Employee"("eID")	match full
-		on update restrict
-		on delete restrict,
-	"buildingID"	character varying(4)	not null,
-	"floorID"	character varying(4)	not null,
-	"roomID"	character varying(4)	not null,
-	"uniqueNumber"	character(12)	not null,
-	"admissionTime"	timestamp	not null,
-	"moveTime"	timestamp	not null,
-	"reason"	text,
-	primary key("eID", "buildingID", "floorID", "roomID", "uniqueNumber""admissionTime"),
-	foreign key("buildingID", "floorID", "roomID") references public."Room" match full
-		on delete restrict
-		on update restrict,
-	foreign key("uniqueNumber", "admissionTime") references public."PatientInstance" match full
-		on delete restrict
-		on update restrict
-
+create table if not exists moves (
+    e_id VARCHAR(255) NOT NULL,
+    building_id VARCHAR(255) NOT NULL,
+    floor_id VARCHAR(255) NOT NULL,
+    room_id VARCHAR(255) NOT NULL,
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    move_time TIMESTAMP NOT NULL,
+    reason VARCHAR(255) NOT NULL,
+    PRIMARY KEY (unique_number, order, move_time),
 );
 
-alter table if exists public."Moves" owner to postgres;
+alter table moves owner to postgres;
 
 /*
-	RELATIONSHIP: ADMITS
+    RELATIONSHIP: ADMITS
 */
 
-drop table if exists public."Admits"
+drop table if exists admits;
 
-create table if not exists public."Admits"(
-	"uniqueNumber"	character varying(12)	not null,
-	"admissionTime"	timestamp	not null,
-	"medicationID"	character varying(10)	not null
-		references public."Medication"	match full
-		on update restrict
-		on delete restrict,
-	"sID"	character varying (12)	not null
-		references public."Staff" match full
-		on update restrict
-		on delete restrict,
-	primary key("uniqueNumber", "admissionTime", "medicationID", "sID"),
-	foreign key("uniqueNumber", "admissionTime") references public."PatientInstance" match full
-		on delete restrict
-		on update restrict,
-	unique("uniqueNumber", "admissionTime")
+create table if not exists admits (
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    building_id VARCHAR(255) NOT NULL,
+    floor_id VARCHAR(255) NOT NULL,
+    room_id VARCHAR(255) NOT NULL,
+    e_id VARCHAR(255) NOT NULL REFERENCES employee(e_id),
+
+    PRIMARY KEY (unique_number, order),
+
+    FOREIGN KEY (building_id, floor_id, room_id) REFERENCES room(building_id, floor_id, room_id),
 );
 
-alter table if exists public."Admits" owner to postgres;
+alter table if exists admits owner to postgres;
 
 /*
-	RELATIONSHIP: STAFF TAKES CARE
+    RELATIONSHIP: NURSE TAKES CARE
 */
 
-drop table if exists public."StaffTakesCare";
+drop table if exists nurse_takes_care;
 
-create table if not exists public."StaffTakesCare"(
-	"sID"	character varying (12)	not null primary key
-		references public."Staff"	match full
-		on update restrict
-		on delete restrict,
-	"uniqueNumber"	character(12)	not null,
-	"admissionTime"	timestamp	not null,
-	foreign key("uniqueNumber", "admissionTime") references public."PatientInstance" match full
-		on delete restrict
-		on update restrict
+create table if not exists nurse_takes_care (
+    e_id VARCHAR(255) NOT NULL REFERENCES employee(e_id),
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order),
 );
 
-alter table if exists public."Volunteer" owner to postgres;
+alter table if exists nurse_takes_care owner to postgres;
 
 /*
-	RELATIONSHIP: VOLUNTEER TAKES CARE
+    RELATIONSHIP: VOLUNTEER TAKES CARE
 */
 
-drop table if exists public."VolunteerTakesCare";
+drop table if exists volunteer_takes_care;
 
-create table if not exists public."VolunteerTakesCare"(
-	"vID"	character varying (12)	not null primary key
-		references public."Volunteer"	match full
-		on update restrict
-		on delete restrict,
-	"uniqueNumber"	character(12)	not null,
-	"admissionTime"	timestamp	not null,
-	foreign key("uniqueNumber", "admissionTime") references public."PatientInstance" match full
-		on delete restrict
-		on update restrict
+create table if not exists volunteer_takes_care (
+    e_id VARCHAR(255) NOT NULL REFERENCES employee(e_id),
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order),
 );
 
-alter table if exists public."Volunteer" owner to postgres;
+alter table if exists volunteer_takes_care owner to postgres;
 
 /*
-	RELATIONSHIP: DISCHARGES
+    RELATIONSHIP: DISCHARGES
 */
 
-drop table if exists public."Discharges";
+drop table if exists discharges;
 
-create table if not exists public."Discharges"(
-	"uniqueNumber"	character varying(12)	not null
-		references public."Patient"	match full
-		on update restrict
-		on delete restrict,
-	"admissionTime"	timestamp	not null
-		references public."PatientInstance" match full
-		on delete restrict
-		on update restrict,
-	"testTimestamp"	timestamp	not null
-		references public."TestInfo" match full
-		on delete restrict
-		on update restrict,
-	"dID"	character varying (12)	not null
-		references public."Doctor" match full
-		on update restrict
-		on delete restrict,
-	"dischargeTimestamp"	timestamp	not null,
-	primary key("uniqueNumber", "admissionTime", "testTimestamp", "dID"),
-	foreign key("uniqueNumber", "admissionTime") references public."PatientInstance" match full
-		on delete restrict
-		on update restrict,
-	unique("uniqueNumber", "admissionTime")
+create table if not exists discharges (
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+
+    e_id VARCHAR(255) NOT NULL REFERENCES employee(e_id),
+    discharge_time TIMESTAMP NOT NULL,
+
+    primary key(unique_number, order),
+    FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order)
 );
 
-alter table if exists public."Discharges" owner to postgres;
+alter table if exists discharges owner to postgres;
 
 /*
-	RELATIONSHIP: TREATS
+    RELATIONSHIP: TREATS
 */
 
-drop table if exists public."Treats"
+drop table if exists treats
 
-create table if not exists public."Treats"(
-	"uniqueNumber"	character varying(12)	not null
-		references public."Patient"	match full
-		on update restrict
-		on delete restrict,
-	"admissionTime"	timestamp	not null
-		references public."PatientInstance" match full
-		on delete restrict
-		on update restrict,
-	"medicationID"	character varying(10)	not null
-		references public."Medication"	match full
-		on update restrict
-		on delete restrict,
-	"dID"	character varying (12)	not null
-		references public."Doctor" match full
-		on update restrict
-		on delete restrict,
-	"treatmentResult"	text	not null,
-	"startTime"	timestamp	not null,
-	"endTime"	timestamp	not null,
-	primary key("uniqueNumber", "admissionTime", "medicationID", "dID"),
-	foreign key("uniqueNumber", "admissionTime") references public."PatientInstance" match full
-		on delete restrict
-		on update restrict,,
-	unique("uniqueNumber", "admissionTime")
+create table if not exists treats (
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+
+    e_id VARCHAR(255) NOT NULL REFERENCES employee(e_id),
+    result VARCHAR(255) NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+
+    PRIMARY KEY (unique_number, order, e_id, start_time, end_time)
+
+    FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order),
 );
 
-alter table if exists public."Treats" owner to postgres;
+alter table if exists treats owner to postgres;
+
+DROP TABLE IF EXISTS medications_in_treatment;
+
+CREATE TABLE IF NOT EXISTS medications_in_treatment (
+    unique_number VARCHAR(255) NOT NULL,
+    order INT NOT NULL,
+    e_id VARCHAR(255) NOT NULL,
+    start_time TIMESTAMP NOT NULL,
+    end_time TIMESTAMP NOT NULL,
+
+    medication_id VARCHAR(255) NOT NULL REFERENCES medication(medication_id),
+
+    FOREIGN KEY (unique_number, order, e_id, start_time, end_time) REFERENCES treats(unique_number, order, e_id, start_time, end_time),
+);
