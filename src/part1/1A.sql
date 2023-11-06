@@ -34,9 +34,13 @@ drop table if exists employee;
 create table if not exists employee (
     e_id VARCHAR(255) PRIMARY KEY,
     e_type VARCHAR(255) NOT NULL,
+    is_head BOOLEAN,
 );
 
 ALTER TABLE employee ADD CONSTRAINT e_type_constraint CHECK (eType IN ('Doctor', 'Nurse', 'Staff', 'Volunteer', 'Manager'))
+
+-- Only allow at most one doctor to be head
+CREATE UNIQUE INDEX one_head_doctor ON employee (is_head) WHERE e_type = 'Doctor';
 
 /*
     TABLE: PATIENT INSTANCE
@@ -55,6 +59,16 @@ create table if not exists patient_instance (
 
 alter table if exists patient_instance owner to postgres;
 
+-- ensure that nurse_assigned only points to nurse
+CREATE TRIGGER check_nurse_assigned BEFORE INSERT OR UPDATE ON patient_instance
+    FOR EACH ROW
+    BEGIN
+        if not exists (SELECT 1 FROM employee WHERE e_type = 'Doctor' AND e_id = new.nurse_assigned)  then
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Invalid FK';
+        end if;
+    END;
+
 /*
     TABLES: TESTINFO & 4 TEST TYPES
 */
@@ -67,10 +81,10 @@ create table if not exists test_info (
     test_order INT NOT NULL,
     test_timestamp TIMESTAMP NOT NULL,
     PRIMARY KEY (unique_number, order, test_order),
-    foreign key (unique_number, order) references patient_instance(unique_number, order)
+    FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order)
 );
 
-alter table if exists public."TestInfo" owner to postgres;
+alter table if exists test_info owner to postgres;
 
 /* TABLE: SPO2 TEST */
 
@@ -86,7 +100,7 @@ create table if not exists spo2_test (
     foreign key(unique_number, order, test_order) references test_info(unique_number, order, test_order)
 );
 
-alter table if exists spo2_test owner to postgres;
+alter table spo2_test owner to postgres;
 
 /* TABLE: QUICK TEST */
 
@@ -150,7 +164,7 @@ create table if not exists cormobidity (
     seriousness VARCHAR(255) NOT NULL
 );
 
-alter table if exists cormobidity owner to postgres;
+alter table cormobidity owner to postgres;
 
 /*
     TABLE: SYMPTOM
@@ -164,7 +178,7 @@ create table if not exists symptom (
     seriousness VARCHAR(255) NOT NULL
 );
 
-alter table if exists symptom owner to postgres;
+alter table symptom owner to postgres;
 
 /*
     TABLE: BUILDING
@@ -225,7 +239,7 @@ create table if not exists medication (
     exp_date DATE NOT NULL
 );
 
-alter table if exists medication owner to postgres;
+alter table medication owner to postgres;
 
 /*
     MULTIVALUED ATTRIBUTE: MEDICATION EFFECT
@@ -233,13 +247,13 @@ alter table if exists medication owner to postgres;
 
 drop table if exists medication_effect;
 
-create table if not exists public."MedicationEffect"(
+create table if not exists medication_effect (
     medication_id VARCHAR(255) NOT NULL REFERENCES medication(medication_id),
     effect VARCHAR(255) NOT NULL,
     primary key (medication_id, effect)
 );
 
-alter table if exists medication_effect owner to postgres;
+alter table medication_effect owner to postgres;
 
 /*
 ///////////////////////////////////////////////////////
@@ -261,7 +275,7 @@ create table if not exists has_cormobidity (
     FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order)
 );
 
-alter table if exists has_cormobidity owner to postgres;
+alter table has_cormobidity owner to postgres;
 
 /*
     RELATIONSHIP: HAS SYMPTOM
@@ -277,7 +291,7 @@ create table if not exists has_symptom (
     FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order)
 );
 
-alter table if exists has_symptom owner to postgres;
+alter table has_symptom owner to postgres;
 
 /*
     MULTIVALUED ATTRIBUTE: SYMPTOM PERIOD
@@ -286,15 +300,16 @@ alter table if exists has_symptom owner to postgres;
 drop table if exists symptom_period;
 
 create table if not exists symptom_period (
-    s_id VARCHAR(255) NOT NULL,
+    s_id VARCHAR(255) NOT NULL REFERENCES symptom(s_id),
     unique_number VARCHAR(255) NOT NULL,
     order INT NOT NULL,
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP NOT NULL,
     FOREIGN KEY (unique_number, order, s_id) REFERENCES has_symptom(unique_number, order, s_id),
+    FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order),
 );
 
-alter table if exists symptom_period owner to postgres;
+alter table symptom_period owner to postgres;
 
 /*
     RELATIONSHIP: MOVES
@@ -303,7 +318,7 @@ alter table if exists symptom_period owner to postgres;
 drop table if exists moves;
 
 create table if not exists moves (
-    e_id VARCHAR(255) NOT NULL,
+    e_id VARCHAR(255) NOT NULL REFERENCES employee(e_id),
     building_id VARCHAR(255) NOT NULL,
     floor_id VARCHAR(255) NOT NULL,
     room_id VARCHAR(255) NOT NULL,
@@ -312,6 +327,9 @@ create table if not exists moves (
     move_time TIMESTAMP NOT NULL,
     reason VARCHAR(255) NOT NULL,
     PRIMARY KEY (unique_number, order, move_time),
+
+    FOREIGN KEY (building_id, floor_id, room_id) REFERENCES room(building_id, floor_id, room_id),
+    FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order)
 );
 
 alter table moves owner to postgres;
@@ -333,24 +351,10 @@ create table if not exists admits (
     PRIMARY KEY (unique_number, order),
 
     FOREIGN KEY (building_id, floor_id, room_id) REFERENCES room(building_id, floor_id, room_id),
+    FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order)
 );
 
-alter table if exists admits owner to postgres;
-
-/*
-    RELATIONSHIP: NURSE TAKES CARE
-*/
-
-drop table if exists nurse_takes_care;
-
-create table if not exists nurse_takes_care (
-    e_id VARCHAR(255) NOT NULL REFERENCES employee(e_id),
-    unique_number VARCHAR(255) NOT NULL,
-    order INT NOT NULL,
-    FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order),
-);
-
-alter table if exists nurse_takes_care owner to postgres;
+alter table admits owner to postgres;
 
 /*
     RELATIONSHIP: VOLUNTEER TAKES CARE
@@ -366,6 +370,16 @@ create table if not exists volunteer_takes_care (
 );
 
 alter table if exists volunteer_takes_care owner to postgres;
+
+-- Ensure that e_id of volunteer_takes_care points to a volunteer
+CREATE TRIGGER check_volunteer_takes_care BEFORE INSERT OR UPDATE ON volunteer_takes_care
+    FOR EACH ROW
+    BEGIN
+        if not exists (SELECT 1 FROM employee WHERE e_type = 'Volunteer' AND e_id = new.e_id)  then
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Invalid FK';
+        end if;
+    END;
 
 /*
     RELATIONSHIP: DISCHARGES
@@ -386,6 +400,16 @@ create table if not exists discharges (
 
 alter table if exists discharges owner to postgres;
 
+-- Ensure that a person is only discharged by a doctor
+CREATE TRIGGER check_discharge BEFORE INSERT OR UPDATE ON discharges
+    FOR EACH ROW
+    BEGIN
+        if not exists (SELECT 1 FROM employee WHERE e_type = 'Doctor' AND e_id = new.e_id)  then
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Invalid FK';
+        end if;
+    END;
+
 /*
     RELATIONSHIP: TREATS
 */
@@ -405,6 +429,16 @@ create table if not exists treats (
 
     FOREIGN KEY (unique_number, order) REFERENCES patient_instance(unique_number, order),
 );
+
+-- Ensure that a person is only treated by a doctor
+CREATE TRIGGER check_treats BEFORE INSERT OR UPDATE ON treats
+    FOR EACH ROW
+    BEGIN
+        if not exists (SELECT 1 FROM employee WHERE e_type = 'Doctor' AND e_id = new.e_id)  then
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Invalid FK';
+        end if;
+    END;
 
 alter table if exists treats owner to postgres;
 
