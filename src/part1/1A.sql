@@ -60,21 +60,21 @@ create table if not exists patient_instance (
 alter table if exists patient_instance owner to postgres;
 
 -- ensure that nurse_assigned only points to nurse
-/*
-CREATE OR REPLACE FUNCTION check_nurse_assigned() RETURNS TRIGGER LANGUAGE PLPGSQL AS $$
+CREATE OR REPLACE FUNCTION check_nurse_assigned()
+RETURNS TRIGGER
+AS $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM employee WHERE e_type = 'Nurse' AND e_id = NEW.nurse_assigned) THEN
         RAISE EXCEPTION 'Invalid FK';
     END IF;
 	RETURN NEW;
 END;
-$$
+$$ LANGUAGE PLPGSQL;
 
 CREATE TRIGGER nurse_assigned
 BEFORE INSERT OR UPDATE ON patient_instance
 FOR EACH ROW
 EXECUTE PROCEDURE check_nurse_assigned();
-*/
 
 /*
     TABLES: TESTINFO & 4 TEST TYPES
@@ -380,16 +380,21 @@ create table if not exists volunteer_takes_care (
 alter table if exists volunteer_takes_care owner to postgres;
 
 -- Ensure that e_id of volunteer_takes_care points to a volunteer
-/*
-CREATE TRIGGER check_volunteer_takes_care BEFORE INSERT OR UPDATE ON volunteer_takes_care
-    FOR EACH ROW
-    BEGIN
-        if not exists (SELECT 1 FROM employee WHERE e_type = 'Volunteer' AND e_id = new.e_id)  then
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Invalid FK';
-        end if;
-    END;
-*/
+CREATE OR REPLACE FUNCTION check_volunteer_takes_care()
+RETURNS TRIGGER
+AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM employee WHERE e_type = 'Volunteer' AND e_id = NEW.e_id) THEN
+        RAISE EXCEPTION 'Invalid FK';
+    END IF;
+	RETURN NEW;
+END;
+$$ LANGUAGE PLPGSQL;
+
+CREATE TRIGGER volunteer_takes_care
+BEFORE INSERT OR UPDATE ON volunteer_takes_care
+FOR EACH ROW
+EXECUTE PROCEDURE check_volunteer_takes_care();
 
 /*
     RELATIONSHIP: DISCHARGES
@@ -411,16 +416,21 @@ create table if not exists discharges (
 alter table if exists discharges owner to postgres;
 
 -- Ensure that a person is only discharged by a doctor
-/*
-CREATE TRIGGER check_discharge BEFORE INSERT OR UPDATE ON discharges
-    FOR EACH ROW
-    BEGIN
-        if not exists (SELECT 1 FROM employee WHERE e_type = 'Doctor' AND e_id = new.e_id)  then
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Invalid FK';
-        end if;
-    END;
-*/
+CREATE OR REPLACE FUNCTION check_discharge()
+RETURNS TRIGGER
+AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM employee WHERE e_type = 'Doctor' AND e_id = NEW.e_id) THEN
+        RAISE EXCEPTION 'Invalid FK';
+    END IF;
+	RETURN NEW;
+END;
+$$ LANGUAGE PLPGSQL;
+
+CREATE TRIGGER discharge
+BEFORE INSERT OR UPDATE ON discharges
+FOR EACH ROW
+EXECUTE PROCEDURE check_discharge();
 
 /*
     RELATIONSHIP: TREATS
@@ -443,15 +453,21 @@ create table if not exists treats (
 );
 
 -- Ensure that a person is only treated by a doctor
-/*
-CREATE TRIGGER check_treats BEFORE INSERT OR UPDATE ON treats
-    FOR EACH ROW
-    BEGIN
-        if not exists (SELECT 1 FROM employee WHERE e_type = 'Doctor' AND e_id = new.e_id)  then
-            SET MESSAGE_TEXT = 'Invalid FK';
-        end if;
-    END;
-*/
+CREATE OR REPLACE FUNCTION check_treats()
+RETURNS TRIGGER
+AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM employee WHERE e_type = 'Doctor' AND e_id = NEW.e_id) THEN
+        RAISE EXCEPTION 'Invalid FK';
+    END IF;
+	RETURN NEW;
+END;
+$$ LANGUAGE PLPGSQL;
+
+CREATE TRIGGER treats
+BEFORE INSERT OR UPDATE ON treats
+FOR EACH ROW
+EXECUTE PROCEDURE check_treats();
 
 alter table if exists treats owner to postgres;
 
