@@ -9,7 +9,7 @@
     TABLE: PATIENT
 */
 
-drop table if exists patient;
+drop table if exists patient CASCADE;
 
 create table if not exists patient (
     unique_number VARCHAR(255) PRIMARY KEY,
@@ -29,7 +29,7 @@ ALTER TABLE patient ADD CONSTRAINT gender_constraint CHECK (gender IN ('Male', '
     TABLE: EMPLOYEE
 */
 
-drop table if exists employee;
+drop table if exists employee CASCADE;
 
 create table if not exists employee (
     e_id VARCHAR(255) PRIMARY KEY,
@@ -46,7 +46,7 @@ CREATE UNIQUE INDEX one_head_doctor ON employee (is_head) WHERE e_type = 'Doctor
     TABLE: PATIENT INSTANCE
 */
 
-drop table if exists patient_instance;
+drop table if exists patient_instance CASCADE;
 
 create table if not exists patient_instance (
     unique_number VARCHAR(255) NOT NULL REFERENCES patient(unique_number),
@@ -80,7 +80,7 @@ EXECUTE PROCEDURE check_nurse_assigned();
     TABLES: TESTINFO & 4 TEST TYPES
 */
 
-drop table if exists test_info;
+drop table if exists test_info CASCADE;
 
 create table if not exists test_info (
     unique_number VARCHAR(255) NOT NULL,
@@ -95,7 +95,7 @@ alter table if exists test_info owner to postgres;
 
 /* TABLE: SPO2 TEST */
 
-drop table if exists spo2_test;
+drop table if exists spo2_test CASCADE;
 
 create table if not exists spo2_test (
     unique_number VARCHAR(255) NOT NULL,
@@ -111,7 +111,7 @@ alter table spo2_test owner to postgres;
 
 /* TABLE: QUICK TEST */
 
-drop table if exists quick_test;
+drop table if exists quick_test CASCADE;
 
 create table if not exists quick_test (
     unique_number VARCHAR(255) NOT NULL,
@@ -128,7 +128,7 @@ alter table if exists quick_test owner to postgres;
 
 /* TABLE: PCR TEST */
 
-drop table if exists pcr_test;
+drop table if exists pcr_test CASCADE;
 
 create table if not exists pcr_test (
     unique_number VARCHAR(255) NOT NULL,
@@ -145,7 +145,7 @@ alter table pcr_test owner to postgres;
 
 /* TABLE: RESPIRATORY RATE TEST*/
 
-drop table if exists respiratory_rate_test;
+drop table if exists respiratory_rate_test CASCADE;
 
 create table if not exists respiratory_rate_test (
     unique_number VARCHAR(255) NOT NULL,
@@ -163,7 +163,7 @@ alter table if exists respiratory_rate_test owner to postgres;
     TABLE: COMORBIDITY
 */
 
-drop table if exists cormobidity;
+drop table if exists cormobidity CASCADE;
 
 create table if not exists cormobidity (
     c_id VARCHAR(255) PRIMARY KEY,
@@ -177,7 +177,7 @@ alter table cormobidity owner to postgres;
     TABLE: SYMPTOM
 */
 
-drop table if exists symptom;
+drop table if exists symptom CASCADE;
 
 create table if not exists symptom (
     s_id VARCHAR(255) PRIMARY KEY,
@@ -191,7 +191,7 @@ alter table symptom owner to postgres;
     TABLE: BUILDING
 */
 
-drop table if exists building;
+drop table if exists building CASCADE;
 
 create table if not exists building (
     building_id VARCHAR(255) PRIMARY KEY
@@ -203,7 +203,7 @@ alter table if exists building owner to postgres;
     TABLE: FLOOR
 */
 
-drop table if exists floor;
+drop table if exists floor CASCADE;
 
 create table if not exists floor (
     floor_id VARCHAR(255),
@@ -217,7 +217,7 @@ alter table if exists floor owner to postgres;
     TABLE: ROOM
 */
 
-drop table if exists room;
+drop table if exists room CASCADE;
 
 create table if not exists room (
     building_id VARCHAR(255) NOT NULL,
@@ -237,7 +237,7 @@ ALTER TABLE room ADD CONSTRAINT room_type_constraint CHECK (room_type IN ('Norma
     TABLE: MEDICATION
 */
 
-drop table if exists medication;
+drop table if exists medication CASCADE;
 
 create table if not exists medication (
     medication_id VARCHAR(255) PRIMARY KEY,
@@ -252,7 +252,7 @@ alter table medication owner to postgres;
     MULTIVALUED ATTRIBUTE: MEDICATION EFFECT
 */
 
-drop table if exists medication_effect;
+drop table if exists medication_effect CASCADE;
 
 create table if not exists medication_effect (
     medication_id VARCHAR(255) NOT NULL REFERENCES medication(medication_id),
@@ -272,7 +272,7 @@ alter table medication_effect owner to postgres;
     RELATIONSHIP: HAS COMORBIDITY
 */
 
-drop table if exists has_cormobidity;
+drop table if exists has_cormobidity CASCADE;
 
 create table if not exists has_cormobidity (
     c_id VARCHAR(255) NOT NULL REFERENCES cormobidity(c_id),
@@ -288,7 +288,7 @@ alter table has_cormobidity owner to postgres;
     RELATIONSHIP: HAS SYMPTOM
 */
 
-drop table if exists has_symptom;
+drop table if exists has_symptom CASCADE;
 
 create table if not exists has_symptom (
     s_id VARCHAR(255) NOT NULL REFERENCES symptom(s_id),
@@ -304,7 +304,7 @@ alter table has_symptom owner to postgres;
     MULTIVALUED ATTRIBUTE: SYMPTOM PERIOD
 */
 
-drop table if exists symptom_period;
+drop table if exists symptom_period CASCADE;
 
 create table if not exists symptom_period (
     s_id VARCHAR(255) NOT NULL REFERENCES symptom(s_id),
@@ -322,7 +322,7 @@ alter table symptom_period owner to postgres;
     RELATIONSHIP: MOVES
 */
 
-drop table if exists moves;
+drop table if exists moves CASCADE;
 
 create table if not exists moves (
     e_id VARCHAR(255) NOT NULL REFERENCES employee(e_id),
@@ -345,7 +345,7 @@ alter table moves owner to postgres;
     RELATIONSHIP: ADMITS
 */
 
-drop table if exists admits;
+drop table if exists admits CASCADE;
 
 create table if not exists admits (
     unique_number VARCHAR(255) NOT NULL,
@@ -367,7 +367,7 @@ alter table admits owner to postgres;
     RELATIONSHIP: VOLUNTEER TAKES CARE
 */
 
-drop table if exists volunteer_takes_care;
+drop table if exists volunteer_takes_care CASCADE;
 
 create table if not exists volunteer_takes_care (
     e_id VARCHAR(255) NOT NULL REFERENCES employee(e_id),
@@ -394,7 +394,7 @@ CREATE TRIGGER check_volunteer_takes_care BEFORE INSERT OR UPDATE ON volunteer_t
     RELATIONSHIP: DISCHARGES
 */
 
-drop table if exists discharges;
+drop table if exists discharges CASCADE;
 
 create table if not exists discharges (
     unique_number VARCHAR(255) NOT NULL,
@@ -425,7 +425,7 @@ CREATE TRIGGER check_discharge BEFORE INSERT OR UPDATE ON discharges
     RELATIONSHIP: TREATS
 */
 
-drop table if exists treats;
+drop table if exists treats CASCADE;
 
 create table if not exists treats (
     unique_number VARCHAR(255) NOT NULL,
@@ -447,7 +447,6 @@ CREATE TRIGGER check_treats BEFORE INSERT OR UPDATE ON treats
     FOR EACH ROW
     BEGIN
         if not exists (SELECT 1 FROM employee WHERE e_type = 'Doctor' AND e_id = new.e_id)  then
-            SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Invalid FK';
         end if;
     END;
@@ -455,7 +454,7 @@ CREATE TRIGGER check_treats BEFORE INSERT OR UPDATE ON treats
 
 alter table if exists treats owner to postgres;
 
-DROP TABLE IF EXISTS medications_in_treatment;
+DROP TABLE IF EXISTS medications_in_treatment CASCADE;
 
 CREATE TABLE IF NOT EXISTS medications_in_treatment (
     unique_number VARCHAR(255) NOT NULL,
