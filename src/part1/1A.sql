@@ -87,77 +87,24 @@ create table if not exists test_info (
     patient_order INT NOT NULL,
     test_order INT NOT NULL,
     test_timestamp TIMESTAMP NOT NULL,
+
+    test_type VARCHAR(30) NOT NULL,
+    spo2_rate real DEFAULT NULL,
+    result BOOLEAN DEFAULT NULL,
+    ct_threshold INT DEFAULT NULL,
+    respiratory_bpm INT DEFAULT NULL,
+	
     PRIMARY KEY (unique_number, patient_order, test_order),
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
 
-alter table if exists test_info owner to postgres;
+ALTER TABLE test_info OWNER TO postgres;
 
-/* TABLE: SPO2 TEST */
-
-drop table if exists spo2_test CASCADE;
-
-create table if not exists spo2_test (
-    unique_number VARCHAR(255) NOT NULL,
-    patient_order INT NOT NULL,
-    test_order INT NOT NULL,
-    test_timestamp TIMESTAMP not null,
-    spo2_rate real	not null check(spo2_rate <= 1) check(spo2_rate >= 0),
-    primary key(unique_number, patient_order, test_order),
-    foreign key(unique_number, patient_order, test_order) references test_info(unique_number, patient_order, test_order)
-);
-
-alter table spo2_test owner to postgres;
-
-/* TABLE: QUICK TEST */
-
-drop table if exists quick_test CASCADE;
-
-create table if not exists quick_test (
-    unique_number VARCHAR(255) NOT NULL,
-    patient_order INT NOT NULL,
-    test_order INT NOT NULL,
-    test_timestamp TIMESTAMP not null,
-    result BOOLEAN NOT NULL,
-    ct_threshold INT NOT NULL,
-    primary key(unique_number, patient_order, test_order),
-    foreign key(unique_number, patient_order, test_order) references test_info(unique_number, patient_order, test_order)
-);
-
-alter table if exists quick_test owner to postgres;
-
-/* TABLE: PCR TEST */
-
-drop table if exists pcr_test CASCADE;
-
-create table if not exists pcr_test (
-    unique_number VARCHAR(255) NOT NULL,
-    patient_order INT NOT NULL,
-    test_order INT NOT NULL,
-    test_timestamp TIMESTAMP not null,
-    result BOOLEAN NOT NULL,
-    ct_threshold INT NOT NULL,
-    primary key(unique_number, patient_order, test_order),
-    foreign key(unique_number, patient_order, test_order) references test_info(unique_number, patient_order, test_order)
-);
-
-alter table pcr_test owner to postgres;
-
-/* TABLE: RESPIRATORY RATE TEST*/
-
-drop table if exists respiratory_rate_test CASCADE;
-
-create table if not exists respiratory_rate_test (
-    unique_number VARCHAR(255) NOT NULL,
-    patient_order INT NOT NULL,
-    test_order INT NOT NULL,
-    test_timestamp TIMESTAMP not null,
-    respiratory_bpm INT NOT NULL,
-    primary key(unique_number, patient_order, test_order),
-    foreign key(unique_number, patient_order, test_order) references test_info(unique_number, patient_order, test_order)
-);
-
-alter table if exists respiratory_rate_test owner to postgres;
+ALTER TABLE test_info ADD CONSTRAINT test_type_constraint CHECK (test_type IN ('SPO2 Test', 'Quick Test', 'PCR Test', 'Respiratory Rate Test'));
+ALTER TABLE test_info ADD CONSTRAINT spo2_constraint CHECK (test_type != 'SPO2 Test' OR NOT(spo2_rate > 1 OR spo2_rate < 0));
+ALTER TABLE test_info ADD CONSTRAINT result_constraint CHECK (NOT(test_type = 'Quick Test' OR test_type = 'PCR Test') OR result = FALSE OR result = TRUE);
+ALTER TABLE test_info ADD CONSTRAINT ct_threshold_constraint CHECK (NOT(test_type = 'Quick Test' OR test_type = 'PCR Test') OR result = FALSE OR ct_threshold>=0);
+ALTER TABLE test_info ADD CONSTRAINT respiratory_bpm_constraint CHECK (test_type != 'Respiratory Rate Test' OR respiratory_bpm>=0);
 
 /*
     TABLE: COMORBIDITY
