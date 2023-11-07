@@ -256,8 +256,9 @@ drop table if exists medication_effect CASCADE;
 
 create table if not exists medication_effect (
     medication_id VARCHAR(255) NOT NULL REFERENCES medication(medication_id),
+	medication_effect_id VARCHAR(255),
     effect VARCHAR(255) NOT NULL,
-    primary key (medication_id, effect)
+	PRIMARY KEY (medication_id, medication_effect_id)
 );
 
 alter table medication_effect owner to postgres;
