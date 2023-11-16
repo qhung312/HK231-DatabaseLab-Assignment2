@@ -1,0 +1,1 @@
+export const COOKIES_AUTH = "cookies_auth"
