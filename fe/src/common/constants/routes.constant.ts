@@ -1,10 +1,10 @@
 export const ROUTES = [
     {
         path: '/',
-        name: 'Home',
+        name: 'Search patients',
     },
     {
         path: '/patient',
-        name: 'Patient',
+        name: 'View list patients',
     },
 ];
