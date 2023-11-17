@@ -34,13 +34,13 @@ drop table if exists employee CASCADE;
 create table if not exists employee (
     e_id VARCHAR(255) PRIMARY KEY,
     e_type VARCHAR(255) NOT NULL,
-    is_head BOOLEAN
+    is_head BOOLEAN DEFAULT FALSE NOT NULL
 );
 
 ALTER TABLE employee ADD CONSTRAINT e_type_constraint CHECK (e_type IN ('Doctor', 'Nurse', 'Staff', 'Volunteer', 'Manager'));
 
 -- Only allow at most one doctor to be head
-CREATE UNIQUE INDEX one_head_doctor ON employee (is_head) WHERE e_type = 'Doctor';
+CREATE UNIQUE INDEX one_head_doctor ON employee (is_head) WHERE e_type = 'Doctor' AND is_head=TRUE;
 
 /*
     TABLE: PATIENT INSTANCE
@@ -54,6 +54,7 @@ create table if not exists patient_instance (
     admission_time TIMESTAMP NOT NULL,
     nurse_assigned VARCHAR(255) NOT NULL REFERENCES employee(e_id),
     patient_order INT NOT NULL, -- Order of admission
+	is_warning BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (unique_number, patient_order)
 );
 
@@ -93,7 +94,7 @@ create table if not exists test_info (
     result BOOLEAN DEFAULT NULL,
     ct_threshold INT DEFAULT NULL,
     respiratory_bpm INT DEFAULT NULL,
-	
+
     PRIMARY KEY (unique_number, patient_order, test_order),
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
@@ -110,15 +111,15 @@ ALTER TABLE test_info ADD CONSTRAINT respiratory_bpm_constraint CHECK (test_type
     TABLE: COMORBIDITY
 */
 
-drop table if exists cormobidity CASCADE;
+drop table if exists comorbidity CASCADE;
 
-create table if not exists cormobidity (
+create table if not exists comorbidity (
     c_id VARCHAR(255) PRIMARY KEY,
     c_description VARCHAR(255) NOT NULL,
     seriousness VARCHAR(255) NOT NULL
 );
 
-alter table cormobidity owner to postgres;
+alter table comorbidity owner to postgres;
 
 /*
     TABLE: SYMPTOM
@@ -217,20 +218,51 @@ alter table medication_effect owner to postgres;
 */
 
 /*
+	RELATIONSHIP: MANAGES
+*/
+
+drop table if exists manages CASCADE;
+
+create table if not exists manages (
+	e_id VARCHAR(255) NOT NULL PRIMARY KEY,
+	manager_id VARCHAR(255) NOT NULL
+);
+
+CREATE OR REPLACE FUNCTION check_manager_assigned()
+RETURNS TRIGGER
+AS $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM employee WHERE e_type = 'Manager' AND e_id = NEW.manager_id) THEN
+        RAISE EXCEPTION 'Invalid FK';
+    END IF;
+	RETURN NEW;
+END;
+$$ LANGUAGE PLPGSQL;
+
+CREATE TRIGGER manages_assigned
+BEFORE INSERT OR UPDATE ON manages
+FOR EACH ROW
+EXECUTE PROCEDURE check_manager_assigned();
+
+ALTER TABLE manages ADD CONSTRAINT e_manager_constraint UNIQUE (e_id, manager_id);
+
+alter table manages owner to postgres;
+
+/*
     RELATIONSHIP: HAS COMORBIDITY
 */
 
-drop table if exists has_cormobidity CASCADE;
+drop table if exists has_comorbidity CASCADE;
 
-create table if not exists has_cormobidity (
-    c_id VARCHAR(255) NOT NULL REFERENCES cormobidity(c_id),
+create table if not exists has_comorbidity (
+    c_id VARCHAR(255) NOT NULL REFERENCES comorbidity(c_id),
     unique_number VARCHAR(255) NOT NULL,
     patient_order INT NOT NULL,
     PRIMARY KEY (unique_number, patient_order, c_id),
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
 
-alter table has_cormobidity owner to postgres;
+alter table has_comorbidity owner to postgres;
 
 /*
     RELATIONSHIP: HAS SYMPTOM
@@ -352,12 +384,13 @@ drop table if exists discharges CASCADE;
 create table if not exists discharges (
     unique_number VARCHAR(255) NOT NULL,
     patient_order INT NOT NULL,
-
-    e_id VARCHAR(255) NOT NULL REFERENCES employee(e_id),
+    e_id VARCHAR(255) REFERENCES employee(e_id),
+	test_order INT NOT NULL,
     discharge_time TIMESTAMP NOT NULL,
 
-    primary key(unique_number, patient_order),
-    FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
+    PRIMARY KEY(unique_number, patient_order),
+    FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order),
+    FOREIGN KEY (unique_number, patient_order, test_order) REFERENCES test_info(unique_number, patient_order, test_order)
 );
 
 alter table if exists discharges owner to postgres;
@@ -367,7 +400,7 @@ CREATE OR REPLACE FUNCTION check_discharge()
 RETURNS TRIGGER
 AS $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM employee WHERE e_type = 'Doctor' AND e_id = NEW.e_id) THEN
+    IF NOT EXISTS (SELECT 1 FROM employee WHERE e_type = 'Doctor' AND (NEW.e_id IS NULL OR e_id=NEW.e_id)) THEN
         RAISE EXCEPTION 'Invalid FK';
     END IF;
 	RETURN NEW;
@@ -418,9 +451,13 @@ EXECUTE PROCEDURE check_treats();
 
 alter table if exists treats owner to postgres;
 
-DROP TABLE IF EXISTS medications_in_treatment CASCADE;
+/*
+	TABLE: MEDICATION IN TREATMENT
+*/
 
-CREATE TABLE IF NOT EXISTS medications_in_treatment (
+DROP TABLE IF EXISTS medication_in_treatment CASCADE;
+
+CREATE TABLE IF NOT EXISTS medication_in_treatment (
     unique_number VARCHAR(255) NOT NULL,
     patient_order INT NOT NULL,
     e_id VARCHAR(255) NOT NULL,
@@ -431,3 +468,5 @@ CREATE TABLE IF NOT EXISTS medications_in_treatment (
 
     FOREIGN KEY (unique_number, patient_order, e_id, start_time, end_time) REFERENCES treats(unique_number, patient_order, e_id, start_time, end_time)
 );
+
+alter table if exists medication_in_treatment owner to postgres;
