@@ -10,7 +10,9 @@ const initialState: IAddPatientInfo = {
         gender: "",
         address: "",
         phone: "",
-    }
+    },
+    comorbidityInfo: [],
+    testInfo: [],
 }
 
 const addPatientReducer = createSlice({
@@ -25,11 +27,19 @@ const addPatientReducer = createSlice({
                 ...action.payload
             }
         },
+        setComorbidityInfo: (state, action) => {
+            state.comorbidityInfo = action.payload;
+        },
+        setTestInfo: (state, action) => {
+            state.testInfo = action.payload;
+        }
     }
 })
 
-export const { setDemographicInfo } = addPatientReducer.actions;
+export const { setDemographicInfo, setComorbidityInfo, setTestInfo } = addPatientReducer.actions;
 
 export const selectDemographicInfo = (state: RootState) => state.addPatient.demographicInfo;
+export const selectComorbidityInfo = (state: RootState) => state.addPatient.comorbidityInfo;
+export const selectTestInfo = (state: RootState) => state.addPatient.testInfo;
 
 export default addPatientReducer.reducer;

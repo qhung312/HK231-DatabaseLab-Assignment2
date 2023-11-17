@@ -2,11 +2,12 @@
 import { COOKIES_AUTH } from "@/common/constants/auth";
 import { IUserInterface } from "@/common/interfaces/auth/user.interface";
 import { removeUser, selectUserSession, setUser } from "@/store/reducers/sessionReducer";
+import { useAppDispatch } from "@/store/store";
 import { useCookies } from "next-client-cookies";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const useSessionStore = () => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const user = useSelector(selectUserSession);
     const cookies = useCookies()
 
