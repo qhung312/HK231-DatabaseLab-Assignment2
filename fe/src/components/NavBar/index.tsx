@@ -2,12 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Button, notification } from 'antd';
+import { Button } from 'antd';
 import { ROUTES } from '@/common/constants/routes.constant';
 import { useSessionStore } from '@/hooks';
 import { LogoutOutlined } from "@ant-design/icons";
-import { useCookies } from 'next-client-cookies';
-import { COOKIES_AUTH } from '@/common/constants/auth';
 import { useRouter } from 'next/navigation';
 
 const NavBar = () => {
