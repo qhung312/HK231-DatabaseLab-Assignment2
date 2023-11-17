@@ -7,6 +7,12 @@ export interface IDemographicInfo {
     phone: string;
 }
 
+export interface ISymptomInfo {
+    id: string;
+    description: string;
+    seriousness: string;
+}
+
 export interface IComorbidityInfo {
     id: string;
     description: string;
