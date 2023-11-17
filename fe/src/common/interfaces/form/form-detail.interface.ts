@@ -22,11 +22,35 @@ export interface ITestInfo {
     respiratoryBpm?: number;
 }
 
-export interface IMedicationInfo {
+export interface IMedicationEffect {
+    medEffectId: string;
+    medEffect: string;
+}
 
+export interface IMedicationInfo {
+    medId: string;
+    medName: string;
+    exp: string;
+    effects: IMedicationEffect[];
+    price: string;
 }
 export interface ITreatmenInfo {
-
+    treatmentId: string;
+    startDate: string;
+    endDate: string;
+    medications: IMedicationInfo[];
+    result: string;
 }
 export interface IDemographicFormProps {
+}
+
+export interface IMedicationFormProps {
+    medications: IMedicationInfo[];
+    treatmentIndex: number;
+}
+
+export interface IMedicationEffectsFormProps {
+    medicationIndex: number;
+    treatmentIndex: number;
+    medicationEffects: IMedicationEffect[];
 }

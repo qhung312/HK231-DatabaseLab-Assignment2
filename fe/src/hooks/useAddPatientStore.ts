@@ -1,5 +1,5 @@
-import { IComorbidityInfo, ITestInfo } from "@/common/interfaces/form/form-detail.interface";
-import { selectComorbidityInfo, selectDemographicInfo, selectTestInfo, setComorbidityInfo, setDemographicInfo, setTestInfo } from "@/store/reducers/addPatientReducer";
+import { IComorbidityInfo, IMedicationEffect, IMedicationInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
+import { selectComorbidityInfo, selectDemographicInfo, selectTestInfo, selectTreatmentInfo, setComorbidityInfo, setDemographicInfo, setTestInfo, setTreatmentInfo } from "@/store/reducers/addPatientReducer";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
 const useAddPatientStore = () => {
@@ -8,6 +8,7 @@ const useAddPatientStore = () => {
     const demographic = useAppSelector(selectDemographicInfo);
     const comorbidities = useAppSelector(selectComorbidityInfo);
     const tests = useAppSelector(selectTestInfo);
+    const treatments = useAppSelector(selectTreatmentInfo);
 
     const setDemographicForm = (demographicInfo: any) => {
         dispatch(setDemographicInfo(demographicInfo))
@@ -53,18 +54,163 @@ const useAddPatientStore = () => {
         dispatch(setTestInfo(newTestInfoState));
     }
 
+    const addTreatmentInfo = (treatmentInfo: ITreatmenInfo) => {
+        const newTreatmentInfoState = [...treatments, treatmentInfo];
+
+        dispatch(setTreatmentInfo(newTreatmentInfoState));
+    }
+
+    const setTreatmentInfos = (newTreatmentInfo: ITreatmenInfo, index: number) => {
+        const treatmentInfo = [...treatments];
+        treatmentInfo[index] = newTreatmentInfo;
+
+        dispatch(setTreatmentInfo(treatmentInfo))
+    }
+
+    const removeTreatmentInfo = (index: number) => {
+        const newTreatmentInfoState = [...treatments];
+        newTreatmentInfoState.splice(index, 1);
+
+        dispatch(setTreatmentInfo(newTreatmentInfoState));
+    }
+
+    const addMedicationInfo = (medicationInfo: IMedicationInfo, treatmentIndex: number) => {
+        const newTreatmentInfoState = [...treatments];
+
+        newTreatmentInfoState[treatmentIndex] = {
+            ...newTreatmentInfoState[treatmentIndex],
+            medications: [
+                ...newTreatmentInfoState[treatmentIndex].medications,
+                medicationInfo
+            ]
+        };
+
+        dispatch(setTreatmentInfo(newTreatmentInfoState));
+    }
+
+    const removeMedicationInfo = (medicationIndex: number, treatmentIndex: number) => {
+        const newTreatmentInfoState = [...treatments];
+
+        newTreatmentInfoState[treatmentIndex] = {
+            ...newTreatmentInfoState[treatmentIndex],
+            medications: [
+                ...newTreatmentInfoState[treatmentIndex].medications
+            ],
+        }
+        newTreatmentInfoState[treatmentIndex].medications.splice(medicationIndex, 1);
+
+        dispatch(setTreatmentInfo(newTreatmentInfoState));
+    }
+
+    // Work around
+    const setMedicationInfos = (medicationInfo: IMedicationInfo, medicationIndex: number, treatmentIndex: number) => {
+        const newTreatmentInfoState = [...treatments];
+
+        newTreatmentInfoState[treatmentIndex] = {
+            ...newTreatmentInfoState[treatmentIndex],
+            medications: [
+                ...newTreatmentInfoState[treatmentIndex].medications
+            ],
+        }
+
+        newTreatmentInfoState[treatmentIndex].medications[medicationIndex] = {
+            ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex],
+            ...medicationInfo
+        };
+
+        dispatch(setTreatmentInfo(newTreatmentInfoState));
+    };
+
+
+    const addMedicationEffect = (medicationEffect: IMedicationEffect, medicationIndex: number, treatmentIndex: number) => {
+        const newTreatmentInfoState = [...treatments];
+
+        newTreatmentInfoState[treatmentIndex] = {
+            ...newTreatmentInfoState[treatmentIndex],
+            medications: [
+                ...newTreatmentInfoState[treatmentIndex].medications
+            ],
+        }
+
+        newTreatmentInfoState[treatmentIndex].medications[medicationIndex] = {
+            ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex],
+            effects: [
+                ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects,
+                medicationEffect
+            ]
+        };
+
+        dispatch(setTreatmentInfo(newTreatmentInfoState));
+    }
+
+    const removeMedicationEffect = (medicationEffectIndex: number, medicationIndex: number, treatmentIndex: number) => {
+        const newTreatmentInfoState = [...treatments];
+
+        newTreatmentInfoState[treatmentIndex] = {
+            ...newTreatmentInfoState[treatmentIndex],
+            medications: [
+                ...newTreatmentInfoState[treatmentIndex].medications
+            ],
+        }
+
+        newTreatmentInfoState[treatmentIndex].medications[medicationIndex] = {
+            ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex],
+            effects: [
+                ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects
+            ]
+        }
+
+        newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects.splice(medicationEffectIndex, 1);
+
+        dispatch(setTreatmentInfo(newTreatmentInfoState));
+    }
+
+    const setMedicationEffect = (medicationEffect: IMedicationEffect, medicationEffectIndex: number, medicationIndex: number, treatmentIndex: number) => {
+        const newTreatmentInfoState = [...treatments];
+
+        newTreatmentInfoState[treatmentIndex] = {
+            ...newTreatmentInfoState[treatmentIndex],
+            medications: [
+                ...newTreatmentInfoState[treatmentIndex].medications
+            ],
+        }
+
+        newTreatmentInfoState[treatmentIndex].medications[medicationIndex] = {
+            ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex],
+            effects: [
+                ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects
+            ]
+        }
+
+        newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects[medicationEffectIndex] = {
+            ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects[medicationEffectIndex],
+            ...medicationEffect
+        }
+        dispatch(setTreatmentInfo(newTreatmentInfoState));
+    }
+
 
     return {
         demographic,
         comorbidities,
         tests,
+        treatments,
         setDemographicForm,
         addComorbidity,
         removeComorbidity,
         setComorbidities,
         setTestInfos,
         addTestInfo,
-        removeTestInfo
+        removeTestInfo,
+        addTreatmentInfo,
+        setTreatmentInfos,
+        removeTreatmentInfo,
+        addMedicationInfo,
+        removeMedicationInfo,
+        setMedicationInfos,
+        addMedicationEffect,
+        removeMedicationEffect,
+        setMedicationEffect
     }
 }
 
