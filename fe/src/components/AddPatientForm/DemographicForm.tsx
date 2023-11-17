@@ -1,4 +1,4 @@
-import { IDemographicFormProps } from "@/common/interfaces/form/demographic-form.interface";
+import { IDemographicFormProps } from "@/common/interfaces/form/form-detail.interface";
 import useAddPatientStore from "@/hooks/useAddPatientStore";
 import { FC } from "react";
 import { Input, Select, Row, Col, Form, Button } from "antd";

@@ -21,5 +21,12 @@ export interface ITestInfo {
     ctThreshold?: number;
     respiratoryBpm?: number;
 }
+
+export interface IMedicationInfo {
+
+}
+export interface ITreatmenInfo {
+
+}
 export interface IDemographicFormProps {
 }

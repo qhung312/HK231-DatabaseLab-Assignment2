@@ -1,4 +1,4 @@
-import { IComorbidityInfo, IDemographicInfo, ITestInfo } from "./demographic-form.interface";
+import { IComorbidityInfo, IDemographicInfo, ITestInfo } from "./form-detail.interface";
 
 export interface IAddPatientInfo {
     demographicInfo: IDemographicInfo;

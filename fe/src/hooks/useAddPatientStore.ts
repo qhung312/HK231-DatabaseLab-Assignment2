@@ -1,4 +1,4 @@
-import { IComorbidityInfo, ITestInfo } from "@/common/interfaces/form/demographic-form.interface";
+import { IComorbidityInfo, ITestInfo } from "@/common/interfaces/form/form-detail.interface";
 import { selectComorbidityInfo, selectDemographicInfo, selectTestInfo, setComorbidityInfo, setDemographicInfo, setTestInfo } from "@/store/reducers/addPatientReducer";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
