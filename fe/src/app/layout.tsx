@@ -25,7 +25,9 @@ export default function RootLayout({
             <ConfigProvider
             >
               <NavBar />
-              {children}
+              <div className='p-6 flex items-center justify-center w-full'>
+                {children}
+              </div>
             </ConfigProvider>
           </ReduxProvider>
         </CookiesProvider>
