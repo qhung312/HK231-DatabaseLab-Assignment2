@@ -1,7 +1,8 @@
-import { IComorbidityInfo, IMedicationEffect, IMedicationInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
-import { selectComorbidityInfo, selectDemographicInfo, selectTestInfo, selectTreatmentInfo, setComorbidityInfo, setDemographicInfo, setTestInfo, setTreatmentInfo } from "@/store/reducers/addPatientReducer";
+import { IComorbidityInfo, IMedicationEffect, IMedicationInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
+import { selectComorbidityInfo, selectDemographicInfo, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setComorbidityInfo, setDemographicInfo, setSymptomInfo, setTestInfo, setTreatmentInfo } from "@/store/reducers/addPatientReducer";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
+// TODO: use cloneDeep to save code space
 const useAddPatientStore = () => {
     const dispatch = useAppDispatch();
 
@@ -9,6 +10,7 @@ const useAddPatientStore = () => {
     const comorbidities = useAppSelector(selectComorbidityInfo);
     const tests = useAppSelector(selectTestInfo);
     const treatments = useAppSelector(selectTreatmentInfo);
+    const symptoms = useAppSelector(selectSymptomInfo);
 
     const setDemographicForm = (demographicInfo: any) => {
         dispatch(setDemographicInfo(demographicInfo))
@@ -19,6 +21,26 @@ const useAddPatientStore = () => {
         comorbidityInfo[index] = newComorbidity;
 
         dispatch(setComorbidityInfo(comorbidityInfo))
+    }
+
+    const addSymptomInfo = (newSymptom: ISymptomInfo) => {
+        const newSymptomState = [...symptoms, newSymptom];
+
+        dispatch(setSymptomInfo(newSymptomState));
+    }
+
+    const removeSymptomInfo = (index: number) => {
+        const newSymptomState = [...symptoms];
+        newSymptomState.splice(index, 1);
+
+        dispatch(setSymptomInfo(newSymptomState));
+    }
+
+    const setSymptomInfos = (newSymptom: ISymptomInfo, index: number) => {
+        const symptomInfo = [...symptoms];
+        symptomInfo[index] = newSymptom;
+
+        dispatch(setSymptomInfo(symptomInfo))
     }
 
     const addComorbidity = (newComorbidity: IComorbidityInfo) => {
@@ -189,12 +211,22 @@ const useAddPatientStore = () => {
         dispatch(setTreatmentInfo(newTreatmentInfoState));
     }
 
+    const getAllPatientInfo = () => {
+        return {
+            demographic,
+            comorbidities,
+            tests,
+            treatments,
+            symptoms
+        }
+    }
 
     return {
         demographic,
         comorbidities,
         tests,
         treatments,
+        symptoms,
         setDemographicForm,
         addComorbidity,
         removeComorbidity,
@@ -210,7 +242,11 @@ const useAddPatientStore = () => {
         setMedicationInfos,
         addMedicationEffect,
         removeMedicationEffect,
-        setMedicationEffect
+        setMedicationEffect,
+        addSymptomInfo,
+        removeSymptomInfo,
+        setSymptomInfos,
+        getAllPatientInfo
     }
 }
 
