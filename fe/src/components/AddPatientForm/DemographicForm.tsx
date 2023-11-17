@@ -1,76 +1,98 @@
 import { IDemographicFormProps } from "@/common/interfaces/form/demographic-form.interface";
 import useAddPatientStore from "@/hooks/useAddPatientStore";
 import { FC } from "react";
-import { Input, Select, Row, Col } from "antd";
+import { Input, Select, Row, Col, Form, Button } from "antd";
 import { GENDER_OPTIONS } from "@/common/constants/add-patient-form.constant";
+
 
 export const DemographicForm: FC<IDemographicFormProps> = () => {
     const { demographic, setDemographicForm } = useAddPatientStore();
 
     return (
         <Row gutter={[16, 16]} className="max-w-[800px]">
+            <div className="font-bold">
+                Information:
+            </div>
             <Col span={24}>
                 <Row gutter={[16, 16]}>
                     <Col span={12}>
-                        <div className="flex flex-row gap-2">
-                            <p className="w-[120px] text-sm">Name: </p>
+                        <Form.Item
+                            label="Name"
+                            initialValue={demographic.name}
+                            name="name" // Add the name prop to connect with the form field
+                            rules={[{ required: true, message: 'Please enter a name' }]}
+                        >
                             <Input
                                 type="text"
                                 value={demographic.name}
                                 onChange={(e) => setDemographicForm({ name: e.target.value })}
                             />
-                        </div>
+                        </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <div className="flex items-center gap-2">
-                            <p className="text-sm">Gender: </p>
+                        <Form.Item
+                            name="gender" // Add the name prop to connect with the form field
+                            label="Gender"
+                            initialValue={demographic.gender}
+                            rules={[{ required: true, message: 'Please select a gender' }]}
+                        >
                             <Select
                                 className="min-w-[80px]"
                                 onSelect={(value) => setDemographicForm({ gender: value })}
                                 value={demographic.gender}
                                 options={GENDER_OPTIONS}
                             />
-                        </div>
+                        </Form.Item>
                     </Col>
                 </Row>
             </Col>
-
             <Col span={24}>
                 <Row gutter={[16, 16]}>
                     <Col span={12}>
-                        <div className="flex flex-row gap-2">
-                            <p className=" w-[120px] text-sm">ID number: </p>
+                        <Form.Item
+                            initialValue={demographic.id}
+                            label="ID number"
+                            name="id" // Add the name prop to connect with the form field
+                            rules={[{ required: true, message: 'Please enter an ID number' }]}
+                        >
                             <Input
                                 type="text"
                                 value={demographic.id}
                                 onChange={(e) => setDemographicForm({ id: e.target.value })}
                             />
-                        </div>
+                        </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <div className="flex items-center gap-2">
-                            <p className="w-[150px] text-sm">Phone number: </p>
+                        <Form.Item
+                            label="Phone number"
+                            initialValue={demographic.phone}
+                            name="phone" // Add the name prop to connect with the form field
+                            rules={[{ required: true, message: 'Please enter a phone number' }]}
+                        >
                             <Input
                                 type="text"
                                 value={demographic.phone}
                                 onChange={(e) => setDemographicForm({ phone: e.target.value })}
                             />
-                        </div>
+                        </Form.Item>
                     </Col>
                 </Row>
             </Col>
-
             <Col span={24}>
                 <Row gutter={[16, 16]}>
                     <Col span={24}>
-                        <div className="flex flex-row gap-2">
-                            <p className="w-[100px] text-sm">Address: </p>
+                        <Form.Item
+                            label="Address"
+                            initialValue={demographic.address}
+                            name="address" // Add the name prop to connect with the form field
+                            rules={[{ required: true, message: 'Please enter an address' }]}
+                        >
                             <Input
                                 type="text"
                                 value={demographic.address}
                                 onChange={(e) => setDemographicForm({ address: e.target.value })}
                             />
-                        </div>
+                        </Form.Item>
                     </Col>
                 </Row>
             </Col>
