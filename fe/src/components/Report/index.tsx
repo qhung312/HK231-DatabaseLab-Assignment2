@@ -1,4 +1,3 @@
-import { IReportInfo } from "@/common/interfaces/report/report.interface";
 import { FC, useEffect, useState } from "react"
 import { SymptomReport } from "./SymptomReport";
 import { MOCK_PATIENT_REPORT_INFO } from "@/common/mock-data/patient-report";
@@ -6,6 +5,7 @@ import { Collapse, Spin } from "antd";
 import { ComorbidityReport } from "./ComorbidityReport";
 import { TestingReport } from "./TestingReport";
 import { TreatmentReport } from "./TreatmentReport";
+import { IReportInfoData } from "@/apis/interfaces/patient-detail.interface";
 
 export interface IReportProps {
     patientId: string | number
@@ -15,7 +15,7 @@ export interface IReportProps {
 export const PatientReport: FC<IReportProps> = ({ patientId }) => {
     const [isLoading, setIsLoading] = useState(false);
 
-    const [reportInfo, setReport] = useState<IReportInfo>({
+    const [reportInfo, setReport] = useState<IReportInfoData>({
         symptomsInfo: [],
         comorbodityInfo: [],
         testInfo: [],

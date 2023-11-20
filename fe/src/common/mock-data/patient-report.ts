@@ -1,6 +1,6 @@
-import { IReportInfo } from "../interfaces/report/report.interface";
+import { IReportInfoData } from "@/apis/interfaces/patient-detail.interface";
 
-export const MOCK_PATIENT_REPORT_INFO: IReportInfo = {
+export const MOCK_PATIENT_REPORT_INFO: IReportInfoData = {
     symptomsInfo: [
         {
             id: 1,
