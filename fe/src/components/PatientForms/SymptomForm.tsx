@@ -1,11 +1,12 @@
 import useAddPatientStore from "@/hooks/useAddPatientStore";
-import { Button, Col, Form, Input, Row, Select } from "antd"
+import { Button, Col, Form, Input, Row, Select, notification } from "antd"
 import { DeleteOutlined } from "@ant-design/icons";
 import { uuid } from "uuidv4";
 import { PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { generateSymptomsOptions } from "@/common/helper/generate-options";
 import { MOCK_SYMPTOMS_DATA } from "@/common/mock-data/form-search-result";
+import { fetchSymptomsApi } from "@/apis";
 
 export const SymptomForm = () => {
     const { symptoms, symptomFunctions } = useAddPatientStore();
@@ -23,7 +24,22 @@ export const SymptomForm = () => {
     };
 
     useEffect(() => {
-        setSymptomsOptions(generateSymptomsOptions(MOCK_SYMPTOMS_DATA))
+        const fetchSymptoms = async () => {
+            const response = await fetchSymptomsApi();
+            const { data, error } = response;
+
+            if (error) {
+                notification.error({
+                    message: error
+                })
+                return;
+            }
+
+            const { symptoms } = data;
+            setSymptomsOptions(generateSymptomsOptions(symptoms))
+        }
+
+        fetchSymptoms();
     }, [])
 
     const filterOption = (input: string, option: any) => {

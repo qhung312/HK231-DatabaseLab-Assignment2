@@ -1,11 +1,12 @@
 import { FC, useEffect, useState } from "react"
 import { SymptomReport } from "./SymptomReport";
 import { MOCK_PATIENT_REPORT_INFO } from "@/common/mock-data/patient-report";
-import { Collapse, Spin } from "antd";
+import { Collapse, Spin, notification } from "antd";
 import { ComorbidityReport } from "./ComorbidityReport";
 import { TestingReport } from "./TestingReport";
 import { TreatmentReport } from "./TreatmentReport";
 import { IReportInfoData } from "@/apis/interfaces/patient-detail.interface";
+import { fetchReportInfoApi } from "@/apis/patient-detail.api";
 
 export interface IReportProps {
     patientId: string | number
@@ -25,17 +26,27 @@ export const PatientReport: FC<IReportProps> = ({ patientId }) => {
     useEffect(() => {
         const fetchReportInfo = async () => {
             setIsLoading(true)
-            // Mock api call
-            return await new Promise(() => {
-                setTimeout(() => {
-                    setReport(MOCK_PATIENT_REPORT_INFO);
-                    setIsLoading(false);
-                }, 500);
+
+            const response = await fetchReportInfoApi({
+                patientId: `${patientId}`
             })
+
+            const { data, error } = response;
+
+            if (error) {
+                notification.error({
+                    message: error
+                })
+                return;
+            }
+
+            setReport(data.reportInfo);
         }
 
         fetchReportInfo();
-    }, [])
+
+        setIsLoading(false);
+    }, [patientId])
 
     return <>
         {

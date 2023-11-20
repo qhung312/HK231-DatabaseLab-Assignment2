@@ -41,11 +41,15 @@ const addPatientReducer = createSlice({
         },
         setSymptomInfo: (state, action) => {
             state.symptomInfo = action.payload;
+        },
+        resetStore: (state, action) => {
+            state = initialState;
+            console.log(state);
         }
     }
 })
 
-export const { setDemographicInfo, setComorbidityInfo, setTestInfo, setTreatmentInfo, setSymptomInfo } = addPatientReducer.actions;
+export const { setDemographicInfo, setComorbidityInfo, setTestInfo, setTreatmentInfo, setSymptomInfo, resetStore } = addPatientReducer.actions;
 
 export const selectDemographicInfo = (state: RootState) => state.addPatient.demographicInfo;
 export const selectComorbidityInfo = (state: RootState) => state.addPatient.comorbidityInfo;

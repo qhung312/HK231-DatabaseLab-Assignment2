@@ -1,6 +1,7 @@
+import { fetchPatientTestingInfoApi } from "@/apis/patient-detail.api";
 import { ITestInfo } from "@/common/interfaces/form/form-detail.interface";
 import { MOCK_TEST_INFO_DATA } from "@/common/mock-data/patient-test-information";
-import { Col, Row, Spin } from "antd";
+import { Col, Row, Spin, notification } from "antd";
 import { FC, useEffect, useState } from "react"
 
 export interface ITestInformationProps {
@@ -14,16 +15,25 @@ export const TestInformation: FC<ITestInformationProps> = ({ patientId }) => {
     useEffect(() => {
         const fetchTestInformation = async () => {
             setIsLoading(true)
-            // Mock api call
-            return await new Promise(() => {
-                setTimeout(() => {
-                    setTestInformation(MOCK_TEST_INFO_DATA);
-                    setIsLoading(false);
-                }, 500);
-            })
+
+            const response = await fetchPatientTestingInfoApi({
+                patientId: `${patientId}`
+            });
+
+            const { data, error } = response;
+
+            if (error) {
+                notification.error({
+                    message: error
+                })
+                return;
+            }
+
+            setTestInformation(data.testInfo);
         }
 
         fetchTestInformation();
+        setIsLoading(false);
     }, [patientId])
 
     return <div>

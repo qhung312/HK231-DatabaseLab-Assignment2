@@ -1,15 +1,17 @@
 import useAddPatientStore from "@/hooks/useAddPatientStore";
-import { Button, Col, Form, Input, Row, Select } from "antd"
+import { Button, Col, Form, Input, Row, Select, notification } from "antd"
 import { DeleteOutlined } from "@ant-design/icons";
 import { uuid } from "uuidv4";
 import { PlusOutlined } from "@ant-design/icons";
 import { use, useEffect, useState } from "react";
 import { generateComorbiditiesOptions } from "@/common/helper/generate-options";
 import { MOCK_COMORBIDITY_DATA } from "@/common/mock-data/form-search-result";
+import { fetchComorbiditiesApi } from "@/apis";
 
 export const ComorbidityForm = () => {
     const { comorbidities, comorbidityFunctions } = useAddPatientStore();
     const [comorbiditiesOptions, setComorbiditiesOptions] = useState([] as any);
+    const [isLoading, setIsLoading] = useState(false);
 
     const { addComorbidity, removeComorbidity, setComorbidities } = comorbidityFunctions;
 
@@ -23,7 +25,25 @@ export const ComorbidityForm = () => {
     };
 
     useEffect(() => {
-        setComorbiditiesOptions(generateComorbiditiesOptions(MOCK_COMORBIDITY_DATA))
+        const fetchComorbidities = async () => {
+            setIsLoading(true);
+            const response = await fetchComorbiditiesApi();
+            const { data, error } = response;
+
+            if (error) {
+                notification.error({
+                    message: error
+                })
+                setIsLoading(false)
+                return;
+            }
+
+            const { comorbidities } = data;
+            setComorbiditiesOptions(generateComorbiditiesOptions(comorbidities))
+            setIsLoading(false)
+        }
+
+        fetchComorbidities();
     }, [])
 
     const filterOption = (input: string, option: any) => {
@@ -53,6 +73,7 @@ export const ComorbidityForm = () => {
                                         showSearch
                                         onSelect={(value) => handleComorbidityChange(value, 'comorbidityId', index)}
                                         filterOption={filterOption}
+                                        loading={isLoading}
                                     />
                                 </Form.Item>
                             </Col>

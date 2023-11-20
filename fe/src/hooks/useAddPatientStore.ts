@@ -1,5 +1,7 @@
+import { IAddPatientPayload } from "@/apis/interfaces/add-patient.interface";
+import { generatePatientComorbidityPayload, generatePatientSymptomPayload } from "@/common/helper/generate-payload";
 import { IComorbidityInfo, IMedicationEffect, IMedicationInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
-import { selectComorbidityInfo, selectDemographicInfo, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setComorbidityInfo, setDemographicInfo, setSymptomInfo, setTestInfo, setTreatmentInfo } from "@/store/reducers/addPatientReducer";
+import { resetStore, selectComorbidityInfo, selectDemographicInfo, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setComorbidityInfo, setDemographicInfo, setSymptomInfo, setTestInfo, setTreatmentInfo } from "@/store/reducers/addPatientReducer";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
 const useAddPatientStore = () => {
@@ -145,14 +147,21 @@ const useAddPatientStore = () => {
         dispatch(setTreatmentInfo(newTreatmentInfoState));
     }
 
-    const getAllPatientInfo = () => {
+    const getAddPatientPayload = (): IAddPatientPayload => {
+        const comorbiditiesPayload = generatePatientComorbidityPayload(comorbidities)
+        const symptomsPayload = generatePatientSymptomPayload(symptoms)
+
         return {
             demographic,
-            comorbidities,
             tests,
             treatments,
-            symptoms
+            comorbidities: comorbiditiesPayload,
+            symptoms: symptomsPayload
         }
+    }
+
+    const resetAddPatientForm = () => {
+        dispatch(resetStore({}))
     }
 
     const symptomFunctions = {
@@ -196,7 +205,8 @@ const useAddPatientStore = () => {
         testFunctions,
         treatmentFunctions,
         setDemographicForm,
-        getAllPatientInfo
+        getAddPatientPayload,
+        resetAddPatientForm
     }
 }
 

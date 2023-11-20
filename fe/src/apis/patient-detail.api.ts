@@ -18,7 +18,7 @@ export const fetchPatientTestingInfoApi = async (
                 }
             }
             resolve(data);
-        }, 1000)
+        }, 2000)
     );
 
     return await mockApiCallResponse;
@@ -40,7 +40,7 @@ export const fetchReportInfoApi = async (
                 }
             }
             resolve(data);
-        }, 1000)
+        }, 2000)
     );
 
     return await mockApiCallResponse;

@@ -15,6 +15,23 @@ export interface IAddPatientPayload {
 export interface IAddPatientResponse {
     data: {
         success: boolean;
+        patientId: string;
+    },
+    error?: string;
+}
+
+export type IFetchSymptomData = Pick<ISymptomInfo, "description" | "symptomId">
+export type IFetchComorbidityData = Pick<IComorbidityInfo, "description" | "comorbidityId">
+export interface IFetchSymptomResponse {
+    data: {
+        symptoms: IFetchSymptomData[]
+    },
+    error?: string;
+}
+
+export interface IFetchComorbidityResponse {
+    data: {
+        comorbidities: IFetchComorbidityData[]
     },
     error?: string;
 }
