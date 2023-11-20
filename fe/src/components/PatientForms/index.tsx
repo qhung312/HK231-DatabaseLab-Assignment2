@@ -7,7 +7,7 @@ import { SymptomForm } from "./SymptomForm"
 import { useForm } from "antd/es/form/Form"
 import useAddPatientStore from "@/hooks/useAddPatientStore"
 
-export const AddPatientForm = () => {
+export const PatientForms = () => {
     const [form] = useForm();
     const { getAllPatientInfo } = useAddPatientStore()
     const onAddPatient = () => {
