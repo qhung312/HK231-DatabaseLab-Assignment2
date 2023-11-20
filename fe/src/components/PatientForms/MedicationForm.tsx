@@ -1,103 +1,26 @@
 import { IMedicationFormProps } from "@/common/interfaces/form/form-detail.interface"
 import useAddPatientStore from "@/hooks/useAddPatientStore";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { Row } from "antd";
 import { FC } from "react"
 import { uuid } from "uuidv4";
-import { MedicationEffectForm } from "./MedicationEffectsForm";
+import { MedicationDetail } from "./MedicationDetail";
 
 export const MedicationForm: FC<IMedicationFormProps> = ({
     medications,
     treatmentIndex
 }) => {
     const { treatmentFunctions } = useAddPatientStore();
-    const { addMedicationInfo, removeMedicationInfo, setMedicationInfos } = treatmentFunctions;
+    const { addMedicationInfo } = treatmentFunctions;
 
     return <div className="border-[1px] p-4 rounded-[8px] mb-[24px]">
-        <div className="font-bold">
+        <div className="font-bold mb-[12px]">
             Medications
         </div>
         <>
             {
                 medications.map((medication, medIndex) => {
-                    const { medId, medName, exp, price, effects } = medication;
-
-                    return <div className="border-[1px] p-4 rounded-[8px] mb-[24px]" key={medId}>
-                        <Row gutter={[16, 16]}>
-                            <Col span={12}>
-                                <Form.Item
-                                    label="Medication name:"
-                                    initialValue={medName}
-                                    name={`med_name_id_${medId}`} // Add the name prop to connect with the form field
-                                    rules={[{ required: true, message: 'Please enter medication name' }]}
-                                >
-                                    <Input
-                                        type="text"
-                                        value={medName}
-                                        placeholder="Medication name"
-                                        onChange={(e) => {
-                                            const newMed = {
-                                                ...medication,
-                                                medName: e.target.value
-                                            }
-
-                                            setMedicationInfos(newMed, medIndex, treatmentIndex)
-                                        }}
-                                    />
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item
-                                    label="Expiry date:"
-                                    initialValue={exp}
-                                    name={`exp_date_${medId}`} // Add the name prop to connect with the form field
-                                    rules={[{ required: true, message: 'Please enter medication expiry date' }]}
-                                >
-                                    <Input
-                                        type="text"
-                                        value={exp}
-                                        placeholder="mm/dd/yyyy"
-                                        onChange={(e) => {
-                                            const newMed = {
-                                                ...medication,
-                                                exp: e.target.value
-                                            }
-
-                                            setMedicationInfos(newMed, medIndex, treatmentIndex)
-                                        }}
-                                    />
-                                </Form.Item>
-                            </Col>
-                        </Row>
-                        <Row gutter={[16, 16]}>
-                            <Col span={12}>
-                                <Form.Item
-                                    label="Medication price:"
-                                    initialValue={price}
-                                    name={`med_price_${medId}`} // Add the name prop to connect with the form field
-                                    rules={[{ required: true, message: 'Please enter medication price' }]}
-                                >
-                                    <Input
-                                        type="text"
-                                        value={price}
-                                        placeholder="mm/dd/yyyy"
-                                        onChange={(e) => {
-                                            const newMed = {
-                                                ...medication,
-                                                price: e.target.value
-                                            }
-
-                                            setMedicationInfos(newMed, medIndex, treatmentIndex)
-                                        }}
-                                    />
-                                </Form.Item>
-                            </Col>
-                        </Row>
-                        <MedicationEffectForm medicationIndex={medIndex} treatmentIndex={treatmentIndex} medicationEffects={effects} />
-                        <Button onClick={() => removeMedicationInfo(medIndex, treatmentIndex)} className="flex items-center justify-center" type="primary" danger={true}>
-                            <DeleteOutlined />
-                        </Button>
-                    </div>
+                    return <MedicationDetail key={medication.id} medication={medication} medIndex={medIndex} treatmentIndex={treatmentIndex} />
                 })
             }
         </>
@@ -108,9 +31,10 @@ export const MedicationForm: FC<IMedicationFormProps> = ({
             <div
                 onClick={() => addMedicationInfo(
                     {
-                        medId: uuid(),
+                        id: uuid(),
+                        medId: "",
                         medName: "",
-                        exp: "",
+                        expiredDate: "",
                         price: "0",
                         effects: []
                     },

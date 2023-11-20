@@ -61,5 +61,80 @@ export const MOCK_COMORBIDITY_DATA = [
 ]
 
 export const MOCK_MEDICATION_DATA = [
-
+    {
+        medId: 1,
+        medName: "Paracetamol",
+        expiredDate: '12/3/2023',
+        price: 500,
+        effects: [
+            {
+                medEffectId: 1,
+                medEffect: 'Reduces headache',
+            },
+            {
+                medEffectId: 2,
+                medEffect: 'May result in lost of taste',
+            },
+        ],
+    },
+    {
+        medId: 2,
+        medName: "Ibuprofen",
+        expiredDate: '12/3/2023',
+        price: 600,
+        effects: [
+            {
+                medEffectId: 1,
+                medEffect: 'Reduces headache',
+            },
+            {
+                medEffectId: 2,
+                medEffect: 'May result in lost of taste',
+            },
+        ],
+    },
+    {
+        medId: 3,
+        medName: "Vitamin C",
+        expiredDate: '12/3/2023',
+        price: 700,
+        effects: [
+            {
+                medEffectId: 1,
+                medEffect: 'Reduces headache',
+            },
+            {
+                medEffectId: 2,
+                medEffect: 'May result in lost of taste',
+            },
+        ],
+    },
+    {
+        medId: 4,
+        medName: "Vitamin D",
+        expiredDate: '12/3/2023',
+        price: 800,
+        effects: [
+            {
+                medEffectId: 1,
+                medEffect: 'Reduces headache',
+            },
+            {
+                medEffectId: 2,
+                medEffect: 'May result in lost of taste',
+            },
+        ],
+    },
+    {
+        medId: 5,
+        medName: "Zinc",
+        expiredDate: '12/3/2023',
+        price: 900,
+        effects: [
+            {
+                medEffectId: 1,
+                medEffect: 'Reduces headache',
+            },
+        ],
+    },
 ]

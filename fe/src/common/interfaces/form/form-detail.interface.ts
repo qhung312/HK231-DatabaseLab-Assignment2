@@ -31,16 +31,17 @@ export interface ITestInfo {
 }
 
 export interface IMedicationEffect {
-    medEffectId: string;
+    medEffectId: string | number;
     medEffect: string;
 }
 
 export interface IMedicationInfo {
-    medId: string;
+    id?: string;
+    medId: string | number;
     medName: string;
-    exp: string;
+    expiredDate: string;
     effects: IMedicationEffect[];
-    price: string;
+    price: string | number;
 }
 export interface ITreatmenInfo {
     treatmentId: string;
