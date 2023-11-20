@@ -58,8 +58,6 @@ create table if not exists patient_instance (
     PRIMARY KEY (unique_number, patient_order)
 );
 
-alter table if exists patient_instance owner to postgres;
-
 -- ensure that nurse_assigned only points to nurse
 CREATE OR REPLACE FUNCTION check_nurse_assigned()
 RETURNS TRIGGER
@@ -99,8 +97,6 @@ create table if not exists test_info (
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
 
-ALTER TABLE test_info OWNER TO postgres;
-
 ALTER TABLE test_info ADD CONSTRAINT test_type_constraint CHECK (test_type IN ('SPO2 Test', 'Quick Test', 'PCR Test', 'Respiratory Rate Test'));
 ALTER TABLE test_info ADD CONSTRAINT spo2_constraint CHECK (test_type != 'SPO2 Test' OR NOT(spo2_rate > 1 OR spo2_rate < 0));
 ALTER TABLE test_info ADD CONSTRAINT result_constraint CHECK (NOT(test_type = 'Quick Test' OR test_type = 'PCR Test') OR result = FALSE OR result = TRUE);
@@ -115,11 +111,8 @@ drop table if exists comorbidity CASCADE;
 
 create table if not exists comorbidity (
     c_id VARCHAR(255) PRIMARY KEY,
-    c_description VARCHAR(255) NOT NULL,
-    seriousness VARCHAR(255) NOT NULL
+    c_description VARCHAR(255) NOT NULL
 );
-
-alter table comorbidity owner to postgres;
 
 /*
     TABLE: SYMPTOM
@@ -129,11 +122,8 @@ drop table if exists symptom CASCADE;
 
 create table if not exists symptom (
     s_id VARCHAR(255) PRIMARY KEY,
-    s_description VARCHAR(255) NOT NULL,
-    seriousness VARCHAR(255) NOT NULL
+    s_description VARCHAR(255) NOT NULL
 );
-
-alter table symptom owner to postgres;
 
 /*
     TABLE: BUILDING
@@ -144,8 +134,6 @@ drop table if exists building CASCADE;
 create table if not exists building (
     building_id VARCHAR(255) PRIMARY KEY
 );
-
-alter table if exists building owner to postgres;
 
 /*
     TABLE: FLOOR
@@ -158,8 +146,6 @@ create table if not exists floor (
     building_id VARCHAR(255) NOT NULL REFERENCES building(building_id),
     primary key (building_id, floor_id)
 );
-
-alter table if exists floor owner to postgres;
 
 /*
     TABLE: ROOM
@@ -194,8 +180,6 @@ create table if not exists medication (
     exp_date DATE NOT NULL
 );
 
-alter table medication owner to postgres;
-
 /*
     MULTIVALUED ATTRIBUTE: MEDICATION EFFECT
 */
@@ -208,8 +192,6 @@ create table if not exists medication_effect (
     effect VARCHAR(255) NOT NULL,
 	PRIMARY KEY (medication_id, medication_effect_id)
 );
-
-alter table medication_effect owner to postgres;
 
 /*
 ///////////////////////////////////////////////////////
@@ -246,8 +228,6 @@ EXECUTE PROCEDURE check_manager_assigned();
 
 ALTER TABLE manages ADD CONSTRAINT e_manager_constraint UNIQUE (e_id, manager_id);
 
-alter table manages owner to postgres;
-
 /*
     RELATIONSHIP: HAS COMORBIDITY
 */
@@ -258,11 +238,10 @@ create table if not exists has_comorbidity (
     c_id VARCHAR(255) NOT NULL REFERENCES comorbidity(c_id),
     unique_number VARCHAR(255) NOT NULL,
     patient_order INT NOT NULL,
+	seriousness VARCHAR(255) NOT NULL,
     PRIMARY KEY (unique_number, patient_order, c_id),
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
-
-alter table has_comorbidity owner to postgres;
 
 /*
     RELATIONSHIP: HAS SYMPTOM
@@ -278,8 +257,6 @@ create table if not exists has_symptom (
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
 
-alter table has_symptom owner to postgres;
-
 /*
     MULTIVALUED ATTRIBUTE: SYMPTOM PERIOD
 */
@@ -290,13 +267,15 @@ create table if not exists symptom_period (
     s_id VARCHAR(255) NOT NULL REFERENCES symptom(s_id),
     unique_number VARCHAR(255) NOT NULL,
     patient_order INT NOT NULL,
+
+	seriousness VARCHAR(255) NOT NULL,
+
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP NOT NULL,
     FOREIGN KEY (unique_number, patient_order, s_id) REFERENCES has_symptom(unique_number, patient_order, s_id),
-    FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
+    FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order),
+	PRIMARY KEY (unique_number, patient_order, s_id, start_date, end_date)
 );
-
-alter table symptom_period owner to postgres;
 
 /*
     RELATIONSHIP: MOVES
@@ -319,8 +298,6 @@ create table if not exists moves (
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
 
-alter table moves owner to postgres;
-
 /*
     RELATIONSHIP: ADMITS
 */
@@ -341,8 +318,6 @@ create table if not exists admits (
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
 
-alter table admits owner to postgres;
-
 /*
     RELATIONSHIP: VOLUNTEER TAKES CARE
 */
@@ -355,8 +330,6 @@ create table if not exists volunteer_takes_care (
     patient_order INT NOT NULL,
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
-
-alter table if exists volunteer_takes_care owner to postgres;
 
 -- Ensure that e_id of volunteer_takes_care points to a volunteer
 CREATE OR REPLACE FUNCTION check_volunteer_takes_care()
@@ -392,8 +365,6 @@ create table if not exists discharges (
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order),
     FOREIGN KEY (unique_number, patient_order, test_order) REFERENCES test_info(unique_number, patient_order, test_order)
 );
-
-alter table if exists discharges owner to postgres;
 
 -- Ensure that a person is only discharged by a doctor
 CREATE OR REPLACE FUNCTION check_discharge()
@@ -449,8 +420,6 @@ BEFORE INSERT OR UPDATE ON treats
 FOR EACH ROW
 EXECUTE PROCEDURE check_treats();
 
-alter table if exists treats owner to postgres;
-
 /*
 	TABLE: MEDICATION IN TREATMENT
 */
@@ -468,5 +437,3 @@ CREATE TABLE IF NOT EXISTS medication_in_treatment (
 
     FOREIGN KEY (unique_number, patient_order, e_id, start_time, end_time) REFERENCES treats(unique_number, patient_order, e_id, start_time, end_time)
 );
-
-alter table if exists medication_in_treatment owner to postgres;

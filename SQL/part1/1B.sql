@@ -108,31 +108,31 @@ VALUES ('6', '1', '1'),
 ('6', '5', '1');
 
 -- comorbidity
-INSERT INTO comorbidity (c_id, c_description, seriousness)
-VALUES ('1', 'Cancer', 'Very Serious'),
-('2', 'Chornic Lung Disease', 'Very Serious'),
-('3', 'Diabetes', 'Possibly Very Dangerous'),
-('4', 'Heart Condition', 'Possibly Very Dangerous');
+INSERT INTO comorbidity (c_id, c_description)
+VALUES ('1', 'Cancer'),
+('2', 'Chornic Lung Disease'),
+('3', 'Diabetes'),
+('4', 'Heart Condition');
 
 -- symptom
-INSERT INTO symptom (s_id, s_description, seriousness)
-VALUES ('1', 'Fever', 'Not very serious'),
-('2', 'Dry Cough', 'Not very serious'),
-('3', 'Tiredness', 'Not very serious'),
-('4', 'Aches and pains', 'Not very serious'),
-('5', 'Sore throat', 'Not very serious'),
-('6', 'Diarrhea', 'Possibly serious'),
-('7', 'Headache', 'Not very serious'),
-('8', 'Discoloration of fingers or toes', 'Very serious'),
-('9', 'Loss of taste or smell', 'Very serious'),
-('10', 'Skin rashes', 'Not very serious');
+INSERT INTO symptom (s_id, s_description)
+VALUES ('1', 'Fever'),
+('2', 'Dry Cough'),
+('3', 'Tiredness'),
+('4', 'Aches and pains'),
+('5', 'Sore throat'),
+('6', 'Diarrhea'),
+('7', 'Headache'),
+('8', 'Discoloration of fingers or toes'),
+('9', 'Loss of taste or smell'),
+('10', 'Skin rashes');
 
 -- has_comorbidity
-INSERT INTO has_comorbidity (c_id, unique_number, patient_order)
-VALUES ('1', '1', '1'),
-('1', '2', '1'),
-('2', '3', '1'),
-('3', '3', '1');
+INSERT INTO has_comorbidity (c_id, unique_number, patient_order, seriousness)
+VALUES ('1', '1', '1', 'Not very serious'),
+('1', '2', '1', 'Very serious'),
+('2', '3', '1', 'Not very serious'),
+('3', '3', '1', 'Not very serious');
 
 -- has_symptom
 INSERT INTO has_symptom (s_id, unique_number, patient_order)
@@ -143,12 +143,12 @@ VALUES ('1', '1', '1'),
 ('5', '4', '1');
 
 -- symptom period
-INSERT INTO symptom_period (s_id, unique_number, patient_order, start_date, end_date)
-VALUES ('1', '1', '1', '7/11/2023', '11/20/2023'),
-('2', '1', '1', '11/11/2023', '11/18/2023'),
-('3', '2', '1', '11/10/2023', '11/15/2023'),
-('4', '3', '1', '11/11/2023', '11/20/2023'),
-('5', '4', '1', '11/15/2023', '11/20/2023');
+INSERT INTO symptom_period (s_id, unique_number, patient_order, start_date, end_date, seriousness)
+VALUES ('1', '1', '1', '7/11/2023', '11/20/2023', 'Possible very dangerous'),
+('2', '1', '1', '11/11/2023', '11/18/2023', 'Possible very dangerous'),
+('3', '2', '1', '11/10/2023', '11/15/2023', 'Very dangerous'),
+('4', '3', '1', '11/11/2023', '11/20/2023', 'Dangerous'),
+('5', '4', '1', '11/15/2023', '11/20/2023', 'Harmless');
 
 -- medication
 INSERT INTO medication (medication_id, medication_name, exp_date, price)
