@@ -7,6 +7,7 @@ import { Spin } from 'antd'
 
 interface WithAuthProps {
     // TODO: add custom auth props
+    [key: string]: any;
 }
 
 const withAuth = (WrappedComponent: React.ComponentType<WithAuthProps>) => {

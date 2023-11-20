@@ -1,5 +1,5 @@
 export interface IDemographicInfo {
-    uid: string;
+    uid?: string;
     id: string; // ID number
     name: string;
     gender: string;
@@ -22,12 +22,15 @@ export interface IComorbidityInfo {
 }
 
 export interface ITestInfo {
-    id: string;
+    id: string | number;
     type: "SPO2 Test" | "PCR Test" | "Quick Test" | "Respiratory Rate Test";
+
     spo2Rate?: number;
     result?: boolean;
     ctThreshold?: number;
     respiratoryBpm?: number;
+
+    timestamp?: string;
 }
 
 export interface IMedicationEffect {
