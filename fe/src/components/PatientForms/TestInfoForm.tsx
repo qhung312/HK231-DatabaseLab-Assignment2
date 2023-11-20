@@ -4,7 +4,9 @@ import { Form, Input, Row, Col, Select, Button } from "antd"
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { uuid } from "uuidv4";
 export const TestInfoForm = () => {
-    const { tests, setTestInfos, addTestInfo, removeTestInfo } = useAddPatientStore();
+    const { tests, testFunctions } = useAddPatientStore();
+
+    const { addTestInfo, removeTestInfo, setTestInfos } = testFunctions;
 
     return <Row gutter={[16, 16]} className="max-w-[800px]">
         <div className="font-bold">

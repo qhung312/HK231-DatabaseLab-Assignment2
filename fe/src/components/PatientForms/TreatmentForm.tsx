@@ -6,7 +6,9 @@ import { MedicationForm } from "./MedicationForm";
 
 const { TextArea } = Input;
 export const TreatmentForm = () => {
-    const { treatments, addTreatmentInfo, setTreatmentInfos, removeTreatmentInfo } = useAddPatientStore();
+    const { treatments, treatmentFunctions } = useAddPatientStore();
+
+    const { addTreatmentInfo, removeTreatmentInfo, setTreatmentInfos } = treatmentFunctions;
 
     return <Row gutter={[16, 16]} className="max-w-[800px]">
         <div className="font-bold">

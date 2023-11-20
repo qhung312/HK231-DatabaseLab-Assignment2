@@ -10,7 +10,9 @@ export const MedicationForm: FC<IMedicationFormProps> = ({
     medications,
     treatmentIndex
 }) => {
-    const { addMedicationInfo, setMedicationInfos, removeMedicationInfo } = useAddPatientStore();
+    const { treatmentFunctions } = useAddPatientStore();
+    const { addMedicationInfo, removeMedicationInfo, setMedicationInfos } = treatmentFunctions;
+
     return <div className="border-[1px] p-4 rounded-[8px] mb-[24px]">
         <div className="font-bold">
             Medications

@@ -5,7 +5,9 @@ import { uuid } from "uuidv4";
 import { PlusOutlined } from "@ant-design/icons";
 
 export const SymptomForm = () => {
-    const { symptoms, addSymptomInfo, removeSymptomInfo, setSymptomInfos } = useAddPatientStore();
+    const { symptoms, symptomFunctions } = useAddPatientStore();
+
+    const { addSymptomInfo, removeSymptomInfo, setSymptomInfos } = symptomFunctions;
 
     const handleSymptomChange = (value: string, field: "description" | "seriousness", index: number) => {
         const newSymptom = {

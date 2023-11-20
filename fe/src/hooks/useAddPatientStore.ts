@@ -2,7 +2,6 @@ import { IComorbidityInfo, IMedicationEffect, IMedicationInfo, ISymptomInfo, ITe
 import { selectComorbidityInfo, selectDemographicInfo, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setComorbidityInfo, setDemographicInfo, setSymptomInfo, setTestInfo, setTreatmentInfo } from "@/store/reducers/addPatientReducer";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
-// TODO: use cloneDeep to save code space
 const useAddPatientStore = () => {
     const dispatch = useAppDispatch();
 
@@ -97,28 +96,16 @@ const useAddPatientStore = () => {
     }
 
     const addMedicationInfo = (medicationInfo: IMedicationInfo, treatmentIndex: number) => {
-        const newTreatmentInfoState = [...treatments];
+        const newTreatmentInfoState = structuredClone(treatments);
 
-        newTreatmentInfoState[treatmentIndex] = {
-            ...newTreatmentInfoState[treatmentIndex],
-            medications: [
-                ...newTreatmentInfoState[treatmentIndex].medications,
-                medicationInfo
-            ]
-        };
+        newTreatmentInfoState[treatmentIndex].medications.push(medicationInfo);
 
         dispatch(setTreatmentInfo(newTreatmentInfoState));
     }
 
     const removeMedicationInfo = (medicationIndex: number, treatmentIndex: number) => {
-        const newTreatmentInfoState = [...treatments];
+        const newTreatmentInfoState = structuredClone(treatments);
 
-        newTreatmentInfoState[treatmentIndex] = {
-            ...newTreatmentInfoState[treatmentIndex],
-            medications: [
-                ...newTreatmentInfoState[treatmentIndex].medications
-            ],
-        }
         newTreatmentInfoState[treatmentIndex].medications.splice(medicationIndex, 1);
 
         dispatch(setTreatmentInfo(newTreatmentInfoState));
@@ -126,61 +113,24 @@ const useAddPatientStore = () => {
 
     // Work around
     const setMedicationInfos = (medicationInfo: IMedicationInfo, medicationIndex: number, treatmentIndex: number) => {
-        const newTreatmentInfoState = [...treatments];
+        const newTreatmentInfoState = structuredClone(treatments);
 
-        newTreatmentInfoState[treatmentIndex] = {
-            ...newTreatmentInfoState[treatmentIndex],
-            medications: [
-                ...newTreatmentInfoState[treatmentIndex].medications
-            ],
-        }
-
-        newTreatmentInfoState[treatmentIndex].medications[medicationIndex] = {
-            ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex],
-            ...medicationInfo
-        };
+        newTreatmentInfoState[treatmentIndex].medications[medicationIndex] = medicationInfo;
 
         dispatch(setTreatmentInfo(newTreatmentInfoState));
     };
 
 
     const addMedicationEffect = (medicationEffect: IMedicationEffect, medicationIndex: number, treatmentIndex: number) => {
-        const newTreatmentInfoState = [...treatments];
+        const newTreatmentInfoState = structuredClone(treatments);
 
-        newTreatmentInfoState[treatmentIndex] = {
-            ...newTreatmentInfoState[treatmentIndex],
-            medications: [
-                ...newTreatmentInfoState[treatmentIndex].medications
-            ],
-        }
-
-        newTreatmentInfoState[treatmentIndex].medications[medicationIndex] = {
-            ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex],
-            effects: [
-                ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects,
-                medicationEffect
-            ]
-        };
+        newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects.push(medicationEffect);
 
         dispatch(setTreatmentInfo(newTreatmentInfoState));
     }
 
     const removeMedicationEffect = (medicationEffectIndex: number, medicationIndex: number, treatmentIndex: number) => {
-        const newTreatmentInfoState = [...treatments];
-
-        newTreatmentInfoState[treatmentIndex] = {
-            ...newTreatmentInfoState[treatmentIndex],
-            medications: [
-                ...newTreatmentInfoState[treatmentIndex].medications
-            ],
-        }
-
-        newTreatmentInfoState[treatmentIndex].medications[medicationIndex] = {
-            ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex],
-            effects: [
-                ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects
-            ]
-        }
+        const newTreatmentInfoState = structuredClone(treatments);
 
         newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects.splice(medicationEffectIndex, 1);
 
@@ -188,26 +138,10 @@ const useAddPatientStore = () => {
     }
 
     const setMedicationEffect = (medicationEffect: IMedicationEffect, medicationEffectIndex: number, medicationIndex: number, treatmentIndex: number) => {
-        const newTreatmentInfoState = [...treatments];
+        const newTreatmentInfoState = structuredClone(treatments);
 
-        newTreatmentInfoState[treatmentIndex] = {
-            ...newTreatmentInfoState[treatmentIndex],
-            medications: [
-                ...newTreatmentInfoState[treatmentIndex].medications
-            ],
-        }
+        newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects[medicationEffectIndex] = medicationEffect;
 
-        newTreatmentInfoState[treatmentIndex].medications[medicationIndex] = {
-            ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex],
-            effects: [
-                ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects
-            ]
-        }
-
-        newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects[medicationEffectIndex] = {
-            ...newTreatmentInfoState[treatmentIndex].medications[medicationIndex].effects[medicationEffectIndex],
-            ...medicationEffect
-        }
         dispatch(setTreatmentInfo(newTreatmentInfoState));
     }
 
@@ -221,19 +155,25 @@ const useAddPatientStore = () => {
         }
     }
 
-    return {
-        demographic,
-        comorbidities,
-        tests,
-        treatments,
-        symptoms,
-        setDemographicForm,
+    const symptomFunctions = {
+        addSymptomInfo,
+        removeSymptomInfo,
+        setSymptomInfos
+    }
+
+    const comorbidityFunctions = {
         addComorbidity,
         removeComorbidity,
-        setComorbidities,
+        setComorbidities
+    }
+
+    const testFunctions = {
         setTestInfos,
         addTestInfo,
-        removeTestInfo,
+        removeTestInfo
+    }
+
+    const treatmentFunctions = {
         addTreatmentInfo,
         setTreatmentInfos,
         removeTreatmentInfo,
@@ -242,10 +182,20 @@ const useAddPatientStore = () => {
         setMedicationInfos,
         addMedicationEffect,
         removeMedicationEffect,
-        setMedicationEffect,
-        addSymptomInfo,
-        removeSymptomInfo,
-        setSymptomInfos,
+        setMedicationEffect
+    }
+
+    return {
+        demographic,
+        comorbidities,
+        tests,
+        treatments,
+        symptoms,
+        symptomFunctions,
+        comorbidityFunctions,
+        testFunctions,
+        treatmentFunctions,
+        setDemographicForm,
         getAllPatientInfo
     }
 }

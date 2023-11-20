@@ -5,7 +5,9 @@ import { uuid } from "uuidv4";
 import { PlusOutlined } from "@ant-design/icons";
 
 export const ComorbidityForm = () => {
-    const { comorbidities, addComorbidity, removeComorbidity, setComorbidities } = useAddPatientStore();
+    const { comorbidities, comorbidityFunctions } = useAddPatientStore();
+
+    const { addComorbidity, removeComorbidity, setComorbidities } = comorbidityFunctions;
 
     const handleComorbidityChange = (value: string, field: "description" | "seriousness", index: number) => {
         const newComorbidity = {
