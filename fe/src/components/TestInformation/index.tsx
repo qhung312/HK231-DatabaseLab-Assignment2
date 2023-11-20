@@ -112,15 +112,5 @@ const RBPMOrSPO2Test = (props: ITestInfo) => {
                 {displayedResultType}: {result}
             </div>
         </Col>
-
-        {
-            result &&
-            <Col span={12}>
-                <div>
-                    CT Threshold: {ctThreshold}
-                </div>
-            </Col>
-        }
-
     </Row>
 }
