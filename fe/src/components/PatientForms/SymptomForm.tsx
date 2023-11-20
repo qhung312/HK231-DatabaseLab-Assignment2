@@ -1,21 +1,33 @@
 import useAddPatientStore from "@/hooks/useAddPatientStore";
-import { Button, Col, Form, Input, Row } from "antd"
+import { Button, Col, Form, Input, Row, Select } from "antd"
 import { DeleteOutlined } from "@ant-design/icons";
 import { uuid } from "uuidv4";
 import { PlusOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import { generateSymptomsOptions } from "@/common/helper/generate-options";
+import { MOCK_SYMPTOMS_DATA } from "@/common/mock-data/form-search-result";
 
 export const SymptomForm = () => {
     const { symptoms, symptomFunctions } = useAddPatientStore();
+    const [symptomsOptions, setSymptomsOptions] = useState([] as any);
 
     const { addSymptomInfo, removeSymptomInfo, setSymptomInfos } = symptomFunctions;
 
-    const handleSymptomChange = (value: string, field: "description" | "seriousness", index: number) => {
+    const handleSymptomChange = (value: string | number, field: "description" | "seriousness" | "symptomId", index: number) => {
         const newSymptom = {
             ...symptoms[index],
             [field]: value,
         }
 
         setSymptomInfos(newSymptom, index);
+    };
+
+    useEffect(() => {
+        setSymptomsOptions(generateSymptomsOptions(MOCK_SYMPTOMS_DATA))
+    }, [])
+
+    const filterOption = (input: string, option: any) => {
+        return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
     };
 
     return <Row gutter={[16, 16]} className="max-w-[800px]">
@@ -26,21 +38,23 @@ export const SymptomForm = () => {
         <Col span={24}>
             {
                 symptoms.map((symptom, index) => {
-                    const { id, description, seriousness } = symptom
+                    const { id, seriousness, symptomId } = symptom
 
                     return <div className="border-[1px] p-4 rounded-[8px] mb-[12px]" key={id}>
                         <Row gutter={[16, 16]}>
                             <Col span={24}>
                                 <Form.Item
                                     label="Description"
-                                    initialValue={description}
+                                    initialValue={symptomId}
                                     name={`symptom_description_${id}`} // Add the name prop to connect with the form field
-                                    rules={[{ required: true, message: 'Please enter a description' }]}
+                                    rules={[{ required: true, message: 'Please select a description' }]}
                                 >
-                                    <Input
-                                        type="text"
-                                        value={description}
-                                        onChange={(e) => handleSymptomChange(e.target.value, 'description', index)}
+                                    <Select
+                                        options={symptomsOptions}
+                                        defaultValue={symptomId}
+                                        onSelect={(value) => handleSymptomChange(value, 'symptomId', index)}
+                                        filterOption={filterOption}
+                                        showSearch
                                     />
                                 </Form.Item>
                             </Col>
@@ -74,6 +88,7 @@ export const SymptomForm = () => {
                 <div
                     onClick={() => addSymptomInfo({
                         id: uuid(),
+                        symptomId: "",
                         description: "",
                         seriousness: ""
                     })}

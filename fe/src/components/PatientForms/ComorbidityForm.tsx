@@ -1,15 +1,19 @@
 import useAddPatientStore from "@/hooks/useAddPatientStore";
-import { Button, Col, Form, Input, Row } from "antd"
+import { Button, Col, Form, Input, Row, Select } from "antd"
 import { DeleteOutlined } from "@ant-design/icons";
 import { uuid } from "uuidv4";
 import { PlusOutlined } from "@ant-design/icons";
+import { use, useEffect, useState } from "react";
+import { generateComorbiditiesOptions } from "@/common/helper/generate-options";
+import { MOCK_COMORBIDITY_DATA } from "@/common/mock-data/form-search-result";
 
 export const ComorbidityForm = () => {
     const { comorbidities, comorbidityFunctions } = useAddPatientStore();
+    const [comorbiditiesOptions, setComorbiditiesOptions] = useState([] as any);
 
     const { addComorbidity, removeComorbidity, setComorbidities } = comorbidityFunctions;
 
-    const handleComorbidityChange = (value: string, field: "description" | "seriousness", index: number) => {
+    const handleComorbidityChange = (value: string, field: "description" | "seriousness" | "comorbidityId", index: number) => {
         const newComorbidity = {
             ...comorbidities[index],
             [field]: value,
@@ -17,6 +21,14 @@ export const ComorbidityForm = () => {
 
         setComorbidities(newComorbidity, index);
     };
+
+    useEffect(() => {
+        setComorbiditiesOptions(generateComorbiditiesOptions(MOCK_COMORBIDITY_DATA))
+    }, [])
+
+    const filterOption = (input: string, option: any) => {
+        return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    }
     return <Row gutter={[16, 16]} className="max-w-[800px]">
 
         <div className="font-bold">
@@ -25,21 +37,22 @@ export const ComorbidityForm = () => {
         <Col span={24}>
             {
                 comorbidities.map((comorbidity, index) => {
-                    const { id, description, seriousness } = comorbidity
+                    const { id, description, seriousness, comorbidityId } = comorbidity
 
                     return <div className="border-[1px] p-4 rounded-[8px] mb-[12px]" key={id}>
                         <Row gutter={[16, 16]}>
                             <Col span={24}>
                                 <Form.Item
                                     label="Description"
-                                    initialValue={description}
+                                    initialValue={comorbidityId}
                                     name={`description_${id}`} // Add the name prop to connect with the form field
                                     rules={[{ required: true, message: 'Please enter a description' }]}
                                 >
-                                    <Input
-                                        type="text"
-                                        value={description}
-                                        onChange={(e) => handleComorbidityChange(e.target.value, 'description', index)}
+                                    <Select
+                                        options={comorbiditiesOptions}
+                                        showSearch
+                                        onSelect={(value) => handleComorbidityChange(value, 'comorbidityId', index)}
+                                        filterOption={filterOption}
                                     />
                                 </Form.Item>
                             </Col>
@@ -73,6 +86,7 @@ export const ComorbidityForm = () => {
                 <div
                     onClick={() => addComorbidity({
                         id: uuid(),
+                        comorbidityId: "",
                         description: "",
                         seriousness: ""
                     })}

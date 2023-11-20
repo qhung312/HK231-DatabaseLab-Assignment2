@@ -1,6 +1,6 @@
 export interface IDemographicInfo {
     uid: string;
-    id: string;
+    id: string; // ID number
     name: string;
     gender: string;
     address: string;
@@ -8,15 +8,17 @@ export interface IDemographicInfo {
 }
 
 export interface ISymptomInfo {
-    id: string;
+    id?: string | number; // unique id for frontend or has_symptom (if needed)
+    symptomId: string | number;
     description: string;
-    seriousness: string;
+    seriousness?: string;
 }
 
 export interface IComorbidityInfo {
-    id: string;
+    id?: string | number;
+    comorbidityId: string | number;
     description: string;
-    seriousness: string;
+    seriousness?: string;
 }
 
 export interface ITestInfo {
