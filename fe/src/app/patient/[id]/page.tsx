@@ -1,6 +1,7 @@
 'use client';
 import { IDemographicInfo } from "@/common/interfaces/form/form-detail.interface";
 import { MOCK_TEST_DEMOGRAPHIC_DATA } from "@/common/mock-data/patient-test-information";
+import { PatientReport } from "@/components/Report";
 import { TestInformation } from "@/components/TestInformation";
 import withAuth from "@/hocs/WithAuth"
 import { ContainerOutlined, PieChartOutlined } from "@ant-design/icons";
@@ -38,7 +39,7 @@ const items: MenuItem[] = [
 
 const SELECTED_VIEWS: Record<ViewsEnum, (patientId: string) => ReactNode> = {
     [ViewsEnum.test]: (patientId) => <TestInformation patientId={patientId} />,
-    [ViewsEnum.report]: () => <></>
+    [ViewsEnum.report]: (patientId) => <PatientReport patientId={patientId} />
 };
 
 
