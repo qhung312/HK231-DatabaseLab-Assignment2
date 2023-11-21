@@ -1,4 +1,4 @@
-import { IComorbidityInfo, IDemographicInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
+import { IComorbidityInfo, IDemographicInfo, IMedicationInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
 
 export type IAddPatientComorbidity = Omit<IComorbidityInfo, "description">;
 
@@ -32,6 +32,17 @@ export interface IFetchSymptomResponse {
 export interface IFetchComorbidityResponse {
     data: {
         comorbidities: IFetchComorbidityData[]
+    },
+    error?: string;
+}
+
+export interface IFetchMedicationPayload {
+    medId: string;
+}
+
+export interface IFetchMedicationResponse {
+    data: {
+        medications: IMedicationInfo[]
     },
     error?: string;
 }

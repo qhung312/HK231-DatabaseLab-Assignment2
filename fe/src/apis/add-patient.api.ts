@@ -1,5 +1,5 @@
-import { MOCK_COMORBIDITY_DATA, MOCK_SYMPTOMS_DATA } from "@/common/mock-data/form-search-result";
-import { IAddPatientPayload, IAddPatientResponse, IFetchComorbidityResponse, IFetchSymptomResponse } from "./interfaces/add-patient.interface";
+import { MOCK_COMORBIDITY_DATA, MOCK_MEDICATION_DATA, MOCK_SYMPTOMS_DATA } from "@/common/mock-data/form-search-result";
+import { IAddPatientPayload, IAddPatientResponse, IFetchComorbidityResponse, IFetchMedicationPayload, IFetchMedicationResponse, IFetchSymptomResponse } from "./interfaces/add-patient.interface";
 
 /**
  * POST: /api/add-patient
@@ -23,6 +23,10 @@ export const addPatientApi = async (payload: IAddPatientPayload): Promise<IAddPa
     return await mockApiCallResponse;
 }
 
+/**
+ * GET: /api/fetch-symptoms
+ * @returns 
+ */
 export const fetchSymptomsApi = async (): Promise<IFetchSymptomResponse> => {
     const mockApiCallResponse: Promise<IFetchSymptomResponse> = new Promise((resolve) =>
         setTimeout(() => {
@@ -38,6 +42,10 @@ export const fetchSymptomsApi = async (): Promise<IFetchSymptomResponse> => {
     return await mockApiCallResponse;
 }
 
+/**
+ * GET: /api/fetch-comorbidities
+ * @returns 
+ */
 export const fetchComorbiditiesApi = async (): Promise<IFetchComorbidityResponse> => {
     const mockApiCallResponse: Promise<IFetchComorbidityResponse> = new Promise((resolve) =>
         setTimeout(() => {
@@ -48,6 +56,26 @@ export const fetchComorbiditiesApi = async (): Promise<IFetchComorbidityResponse
             }
             resolve(data);
         }, 2000)
+    );
+
+    return await mockApiCallResponse;
+}
+
+/**
+ * GET /api/fetch-medication
+ * @param payload 
+ * @returns 
+ */
+export const fetchMedicationApi = async (payload: IFetchMedicationPayload): Promise<IFetchMedicationResponse> => {
+    const mockApiCallResponse: Promise<IFetchMedicationResponse> = new Promise((resolve) =>
+        setTimeout(() => {
+            const data = {
+                data: {
+                    medications: MOCK_MEDICATION_DATA
+                }
+            }
+            resolve(data);
+        }, 1000)
     );
 
     return await mockApiCallResponse;

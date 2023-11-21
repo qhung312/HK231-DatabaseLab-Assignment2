@@ -1,11 +1,12 @@
 import { IMedicationInfo } from "@/common/interfaces/form/form-detail.interface"
 import useAddPatientStore from "@/hooks/useAddPatientStore";
-import { Button, Col, Divider, Form, Row, Select } from "antd";
+import { Button, Col, Divider, Form, Row, Select, notification } from "antd";
 import { FC, useEffect, useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useDebounce } from "@/hooks";
 import { generateMedicationOptions } from "@/common/helper/generate-options";
 import { MOCK_MEDICATION_DATA } from "@/common/mock-data/form-search-result";
+import { fetchMedicationApi } from "@/apis";
 
 export interface IMedicationDetailProps {
     medication: IMedicationInfo;
@@ -36,12 +37,24 @@ export const MedicationDetail: FC<IMedicationDetailProps> = ({
         const fetchData = async () => {
             setIsLoading(true)
             // Mock api call
-            return await new Promise(() => {
-                setTimeout(() => {
-                    setMedicationOptions(generateMedicationOptions(MOCK_MEDICATION_DATA));
-                    setIsLoading(false);
-                }, 500);
-            })
+            const response = await fetchMedicationApi({
+                medId: debouncedValue
+            });
+
+            const { data, error } = response;
+
+            if (error) {
+                notification.error({
+                    message: error
+                })
+                setIsLoading(false)
+                return;
+            }
+
+            const { medications } = data;
+
+            setMedicationOptions(generateMedicationOptions(medications))
+            setIsLoading(false)
         }
 
         fetchData();
