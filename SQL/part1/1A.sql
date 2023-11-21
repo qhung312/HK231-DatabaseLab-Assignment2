@@ -54,7 +54,7 @@ create table if not exists patient_instance (
     admission_time TIMESTAMP NOT NULL,
     nurse_assigned VARCHAR(255) NOT NULL REFERENCES employee(e_id),
     patient_order INT NOT NULL, -- Order of admission
-	is_warning BOOLEAN NOT NULL DEFAULT FALSE,
+    is_warning BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (unique_number, patient_order)
 );
 
