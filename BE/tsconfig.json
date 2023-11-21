@@ -8,7 +8,7 @@
     "sourceMap": false,
     "outDir": "dist",
     "paths": {
-      "*": ["./node_modules/*", "./src/types/*"]
+      "*": ["./node_modules/*"]
     },
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,

@@ -1,27 +1,31 @@
 import { Router } from 'express';
-import { toNumber } from 'lodash';
+import _, { toNumber } from 'lodash';
 
 import pool from '../database/database_connection';
+import { CustomResponse } from '../types/response';
 
 const comorbidityController = Router();
 
-comorbidityController.get('/', async (req, res) => {
+comorbidityController.get('/', async (req, res: CustomResponse) => {
   try {
     const result = await pool.query('SELECT * FROM comorbidity');
-    res.status(200).json(result.rows);
+    res.composer.ok(result.rows);
   } catch (error) {
-    res.status(400).json(`Error: ${error}`);
+    res.composer.badRequest(error.message);
   }
 });
 
-comorbidityController.get('/:id', async (req, res) => {
+comorbidityController.get('/:id', async (req, res: CustomResponse) => {
   try {
     const result = await pool.query('SELECT * FROM comorbidity WHERE id = $1', [
       toNumber(req.params.id)
     ]);
-    res.status(200).json(result.rows[0]);
+    if (_.isEmpty(result)) {
+      throw new Error(`No comorbidity with id ${req.params.id} found`);
+    }
+    res.composer.ok(result.rows[0]);
   } catch (error) {
-    res.status(400).json(`Error: ${error}`);
+    res.composer.badRequest(error.message);
   }
 });
 

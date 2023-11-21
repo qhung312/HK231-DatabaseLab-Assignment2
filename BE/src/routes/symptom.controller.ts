@@ -1,31 +1,31 @@
 import { Router } from 'express';
-import { toNumber } from 'lodash';
+import _, { toNumber } from 'lodash';
 
 import pool from '../database/database_connection';
+import { CustomResponse } from '../types/response';
 
 const symptomController = Router();
 
-symptomController.get('/', async (req, res) => {
+symptomController.get('/', async (req, res: CustomResponse) => {
   try {
     const result = await pool.query('SELECT * FROM symptom');
-    res.status(200).json(result.rows);
+    res.composer.ok(result.rows);
   } catch (error) {
-    res.status(400).json(`Error: ${error}`);
+    res.composer.badRequest(error.message);
   }
 });
 
-symptomController.get('/:id', async (req, res) => {
+symptomController.get('/:id', async (req, res: CustomResponse) => {
   try {
     const result = await pool.query('SELECT * FROM symptom WHERE id = $1', [
       toNumber(req.params.id)
     ]);
-    if (result.rowCount === 0) {
-      res.status(200).json(null);
-    } else {
-      res.status(200).json(result.rows[0]);
+    if (_.isEmpty(result)) {
+      throw new Error(`No symptom with id ${req.params.id} found`);
     }
+    res.composer.ok(result.rows[0]);
   } catch (error) {
-    res.status(400).json(`Error: ${error}`);
+    res.composer.badRequest(error.message);
   }
 });
 
