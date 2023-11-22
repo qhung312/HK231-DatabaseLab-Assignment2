@@ -435,3 +435,19 @@ CREATE TABLE IF NOT EXISTS medication_in_treatment (
 
     FOREIGN KEY (unique_number, patient_order, e_id, start_time, end_time) REFERENCES treats(unique_number, patient_order, e_id, start_time, end_time)
 );
+
+DROP TABLE IF EXISTS account CASCADE;
+
+CREATE TABLE IF NOT EXISTS account (
+	username VARCHAR(255) PRIMARY KEY,
+	passwd VARCHAR(255) NOT NULL,
+	e_id VARCHAR(255) UNIQUE NOT NULL REFERENCES employee(e_id)
+);
+
+DROP TABLE IF EXISTS session;
+
+CREATE TABLE IF NOT EXISTS session (
+	sid VARCHAR(255) PRIMARY KEY,
+	sess JSON NOT NULL,
+	expire TIMESTAMP NOT NULL
+);
