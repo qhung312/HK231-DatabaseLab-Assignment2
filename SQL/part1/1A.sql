@@ -236,11 +236,9 @@ drop table if exists has_comorbidity CASCADE;
 
 create table if not exists has_comorbidity (
     c_id VARCHAR(255) NOT NULL REFERENCES comorbidity(c_id),
-    unique_number VARCHAR(255) NOT NULL,
-    patient_order INT NOT NULL,
-	seriousness VARCHAR(255) NOT NULL,
-    PRIMARY KEY (unique_number, patient_order, c_id),
-    FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
+    unique_number VARCHAR(255) NOT NULL REFERENCES patient(unique_number),
+    seriousness VARCHAR(255) NOT NULL,
+    PRIMARY KEY (unique_number, c_id)
 );
 
 /*

@@ -128,11 +128,11 @@ VALUES ('1', 'Fever'),
 ('10', 'Skin rashes');
 
 -- has_comorbidity
-INSERT INTO has_comorbidity (c_id, unique_number, patient_order, seriousness)
-VALUES ('1', '1', '1', 'Not very serious'),
-('1', '2', '1', 'Very serious'),
-('2', '3', '1', 'Not very serious'),
-('3', '3', '1', 'Not very serious');
+INSERT INTO has_comorbidity (c_id, unique_number, seriousness)
+VALUES ('1', '1', 'Not very serious'),
+('1', '2', 'Very serious'),
+('2', '3', 'Not very serious'),
+('3', '3', 'Not very serious');
 
 -- has_symptom
 INSERT INTO has_symptom (s_id, unique_number, patient_order)
