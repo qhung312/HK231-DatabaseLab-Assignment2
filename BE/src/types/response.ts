@@ -18,6 +18,10 @@ class HttpComposer {
   public badRequest(payload: any) {
     this.send(400, { error: payload });
   }
+
+  public unauthorized(payload: any) {
+    this.send(401, { error: payload });
+  }
 }
 
 export interface CustomResponse extends Response {
