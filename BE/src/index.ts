@@ -1,8 +1,6 @@
 import express from 'express';
 
-import comorbidityController from './routes/comorbidity.controller';
-import medicationController from './routes/medication.controller';
-import symptomController from './routes/symptom.controller';
+import { comorbidityController, symptomController, medicationController } from './routes/index';
 import { applyHttpComposer } from './types/response';
 
 const app = express();

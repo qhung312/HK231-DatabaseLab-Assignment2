@@ -12,11 +12,11 @@ class HttpComposer {
   }
 
   public ok(payload: any) {
-    this.send(200, payload);
+    this.send(200, { data: payload });
   }
 
   public badRequest(payload: any) {
-    this.send(400, payload);
+    this.send(400, { error: payload });
   }
 }
 
