@@ -1,3 +1,4 @@
 import { MedicationEffect, MedicationInfo } from './medication';
+import { HasSymptomInfo, SymptomInfo } from './symptom';
 
-export { MedicationEffect, MedicationInfo };
+export { MedicationEffect, MedicationInfo, HasSymptomInfo, SymptomInfo };

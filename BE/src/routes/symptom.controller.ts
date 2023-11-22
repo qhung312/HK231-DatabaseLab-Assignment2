@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import _, { toNumber } from 'lodash';
 
 import pool from '../database/database_connection';
 import { CustomResponse } from '../types/response';
@@ -8,22 +7,14 @@ const symptomController = Router();
 
 symptomController.get('/', async (req, res: CustomResponse) => {
   try {
-    const result = await pool.query('SELECT * FROM symptom');
-    res.composer.ok(result.rows);
-  } catch (error) {
-    res.composer.badRequest(error.message);
-  }
-});
+    const { rows } = await pool.query(`
+    SELECT
+      s_id AS "symptomId",
+      s_description AS "description"
+    FROM symptom
+    `);
 
-symptomController.get('/:id', async (req, res: CustomResponse) => {
-  try {
-    const result = await pool.query('SELECT * FROM symptom WHERE id = $1', [
-      toNumber(req.params.id)
-    ]);
-    if (_.isEmpty(result)) {
-      throw new Error(`No symptom with id ${req.params.id} found`);
-    }
-    res.composer.ok(result.rows[0]);
+    res.composer.ok(rows);
   } catch (error) {
     res.composer.badRequest(error.message);
   }
