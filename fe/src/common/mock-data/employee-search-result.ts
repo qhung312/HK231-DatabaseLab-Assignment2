@@ -1,5 +1,4 @@
 import { IEmployeeBriefInfo } from "@/apis/interfaces/employee-detail.interface";
-import { ICareTakerBriefInfo } from "../interfaces/form/form.interface";
 
 export const NURSES_SEARCH_RESULT: IEmployeeBriefInfo[] = [
     {
