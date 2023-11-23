@@ -41,11 +41,10 @@ export const PatientReport: FC<IReportProps> = ({ patientId }) => {
             }
 
             setReport(data.reportInfo);
+            setIsLoading(false);
         }
 
         fetchReportInfo();
-
-        setIsLoading(false);
     }, [patientId])
 
     return <>

@@ -30,10 +30,10 @@ export const TestInformation: FC<ITestInformationProps> = ({ patientId }) => {
             }
 
             setTestInformation(data.testInfo);
+            setIsLoading(false);
         }
 
         fetchTestInformation();
-        setIsLoading(false);
     }, [patientId])
 
     return <div>

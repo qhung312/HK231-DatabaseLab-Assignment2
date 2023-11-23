@@ -2,7 +2,7 @@ import { ISearchBarProps } from "@/common/interfaces/search/patient-search.inter
 import { Input, Select } from "antd"
 import { FC } from "react"
 
-export const SearchBar: FC<ISearchBarProps> = ({ value, type, options, setSearchBarInfo }) => {
+export const SearchBar: FC<ISearchBarProps> = ({ value, type, options, placeholder, setSearchBarInfo }) => {
     const onSelect = (value: string) => {
         setSearchBarInfo(prevSearchInfo => {
             return {
@@ -14,16 +14,13 @@ export const SearchBar: FC<ISearchBarProps> = ({ value, type, options, setSearch
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
-
         setSearchBarInfo(prevSearchInfo => {
             return {
                 ...prevSearchInfo,
-                value
+                value: value
             }
         })
     }
-
-    const placeholder = `Enter patient's ${type == "phone" ? "phone number" : type}`
 
     return <div className="flex gap-2 items-center justify-center w-full">
         <Select onSelect={onSelect} className="min-w-[110px]" defaultValue={type} options={options} />
