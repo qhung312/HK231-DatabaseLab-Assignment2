@@ -1,20 +1,15 @@
 import { Router } from 'express';
 
-import pool from '../database/database_connection';
+import SymptomService from '../services/symptom.service';
 import { CustomResponse } from '../types/response';
 
 const symptomController = Router();
 
 symptomController.get('/', async (req, res: CustomResponse) => {
   try {
-    const { rows } = await pool.query(`
-    SELECT
-      s_id AS "symptomId",
-      s_description AS "description"
-    FROM symptom
-    `);
+    const result = await SymptomService.getAllSymptoms();
 
-    res.composer.ok(rows);
+    res.composer.ok(result);
   } catch (error) {
     res.composer.badRequest(error.message);
   }

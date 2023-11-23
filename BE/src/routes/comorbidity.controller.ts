@@ -1,20 +1,15 @@
 import { Router } from 'express';
 
-import pool from '../database/database_connection';
+import ComorbidityService from '../services/comorbidity.service';
 import { CustomResponse } from '../types/response';
 
 const comorbidityController = Router();
 
 comorbidityController.get('/', async (req, res: CustomResponse) => {
   try {
-    const { rows } = await pool.query(`
-    SELECT
-      c_id AS "comorbidityId",
-      c_description AS "description"
-    FROM comorbidity
-    `);
+    const result = await ComorbidityService.getAllComorbidities();
 
-    res.composer.ok(rows);
+    res.composer.ok(result);
   } catch (error) {
     res.composer.badRequest(error.message);
   }

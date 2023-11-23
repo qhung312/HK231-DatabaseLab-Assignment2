@@ -9,7 +9,8 @@ import {
   symptomController,
   medicationController,
   patientController,
-  authController
+  authController,
+  employeeController
 } from './routes/index';
 import { applyHttpComposer } from './types/response';
 
@@ -37,11 +38,12 @@ app.use(
 app.use('/auth', authController);
 
 // ROUTES - Must be authenticated
-app.all('*', authMiddleware);
+// app.all('*', authMiddleware);
 app.use('/symptom', symptomController);
 app.use('/comorbidity', comorbidityController);
 app.use('/medication', medicationController);
 app.use('/patient', patientController);
+app.use('/employee', employeeController);
 
 const PORT = 3500;
 
