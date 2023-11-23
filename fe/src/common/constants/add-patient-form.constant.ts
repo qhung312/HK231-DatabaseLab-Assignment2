@@ -38,3 +38,10 @@ export const TEST_RESULT = [
         value: false
     }
 ]
+
+export const EMPLOYEE_SEARCH_TYPE = [
+    {
+        label: 'Name',
+        value: 'name'
+    },
+]

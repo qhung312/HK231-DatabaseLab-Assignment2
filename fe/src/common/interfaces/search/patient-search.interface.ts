@@ -7,10 +7,11 @@ export interface ISearchBarProps {
         label: string,
         value: string,
     }[],
+    placeholder?: string;
     setSearchBarInfo: Dispatch<SetStateAction<SearchBarState>>
 }
 
-export type SearchBarState = Omit<ISearchBarProps, 'setSearchBarInfo' | 'options'>
+export type SearchBarState = Omit<ISearchBarProps, 'setSearchBarInfo' | 'options' | 'placeholder'>
 
 
 export interface IPatientComorbidity {
