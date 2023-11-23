@@ -32,7 +32,7 @@ authController.post('/login', async (req, res: CustomResponse) => {
       throw new Error('Password is incorrect');
     }
 
-    _.set(req.session, 'userId', account.e_id);
+    _.set(req.session, 'username', account.username);
 
     res.composer.ok({ employeeId: account.e_id });
   } catch (error) {
@@ -64,6 +64,19 @@ authController.post('/signup', async (req, res: CustomResponse) => {
     ]);
 
     res.composer.ok(`Account '${username}' created`);
+  } catch (error) {
+    res.composer.badRequest(error.message);
+  }
+});
+
+authController.get('/session', async (req, res: CustomResponse) => {
+  try {
+    const username = _.get(req.session, 'username');
+    if (username) {
+      res.composer.ok({ userInfo: { username } });
+    } else {
+      res.composer.ok({ error: `You're not logged in` });
+    }
   } catch (error) {
     res.composer.badRequest(error.message);
   }
