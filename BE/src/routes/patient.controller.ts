@@ -3,6 +3,7 @@ import _, { toNumber } from 'lodash';
 
 import pool from '../database/database_connection';
 import ComorbidityService from '../services/comorbidity.service';
+import PatientService from '../services/patient.service';
 import SymptomService from '../services/symptom.service';
 import TestInfoService from '../services/test-info.service';
 import TreatmentInfoService from '../services/treatment-info.service';
@@ -131,10 +132,43 @@ patientController.get(
 
       res.composer.ok({ reportInfo: result });
     } catch (error) {
-      console.error(error);
       res.composer.badRequest(error.message);
     }
   }
 );
+
+patientController.get('/:patientId/instance', async (req, res: CustomResponse) => {
+  try {
+    const { patientId } = req.params;
+    if (_.isNil(patientId)) {
+      throw new Error('Patient id is required');
+    }
+
+    const instances = await PatientService.getAllInstancesOfPatient(patientId);
+
+    res.composer.ok({ instanceInfo: instances });
+  } catch (error) {
+    res.composer.badRequest(error.message);
+  }
+});
+
+patientController.get('/:patientId', async (req, res: CustomResponse) => {
+  try {
+    const { patientId } = req.params;
+    if (_.isNil(patientId)) {
+      throw new Error('Patient id is required');
+    }
+
+    const patientInfo = await PatientService.getPatientDemographic(patientId);
+
+    if (_.isNil(patientInfo)) {
+      throw new Error('Patient not found');
+    }
+
+    res.composer.ok({ demographicInfo: patientInfo });
+  } catch (error) {
+    res.composer.badRequest(error.message);
+  }
+});
 
 export default patientController;
