@@ -15,6 +15,10 @@ export interface IPatientReportInfoPayload {
     patientId: string;
 }
 
+export interface IPatientInstanceInfoPayload {
+    patientId: string;
+}
+
 export interface IReportInfoData {
     symptomsInfo: ISymptomInfo[];
     comorbodityInfo: IComorbidityInfo[];
@@ -25,6 +29,21 @@ export interface IReportInfoData {
 export interface IPatientReportInfoResponse {
     data: {
         reportInfo: IReportInfoData;
+    };
+    error?: string;
+}
+
+export interface IPatientInstance {
+    patientOrder: number | string;
+    admissionTime: string;
+    assignedNurseId: string;
+    locationBeforeAdmission: string;
+    isWarning: boolean;
+}
+
+export interface IPatientInstanceInfoResponse {
+    data: {
+        instanceInfo: IPatientInstance[];
     };
     error?: string;
 }
