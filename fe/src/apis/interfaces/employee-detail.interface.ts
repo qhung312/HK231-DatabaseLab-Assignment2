@@ -7,7 +7,7 @@ export interface IEmployeeBriefInfo {
 
 export interface ISearchEmployeePayload {
     type: "id" | "name" | "phone";
-    role: 'Doctor' | 'Nurse' | 'Staff' | 'Volunteer' | 'Manager';
+    role?: 'Doctor' | 'Nurse' | 'Staff' | 'Volunteer' | 'Manager';
     value: string;
 }
 
