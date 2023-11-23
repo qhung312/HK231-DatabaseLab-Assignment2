@@ -1,5 +1,6 @@
 import authController from './auth.controller';
 import comorbidityController from './comorbidity.controller';
+import employeeController from './employee.controller';
 import medicationController from './medication.controller';
 import patientController from './patient.controller';
 import symptomController from './symptom.controller';
@@ -9,5 +10,6 @@ export {
   medicationController,
   symptomController,
   patientController,
-  authController
+  authController,
+  employeeController
 };
