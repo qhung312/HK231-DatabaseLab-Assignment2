@@ -10,14 +10,14 @@ VALUES ('1', '2153414', 'Truong Quoc Hung', 'Male', 'Ho Chi Minh City', '0111222
 ('6', '12', 'Nguyen Van A', 'Male', 'Da Nang', '0172849543');
 
 -- insert employee
-INSERT INTO employee (e_id, e_type, is_head)
-VALUES ('1', 'Doctor', TRUE),
-('2', 'Doctor', FALSE),
-('3', 'Nurse', FALSE),
-('4', 'Nurse', FALSE),
-('5', 'Staff', FALSE),
-('6', 'Volunteer', FALSE),
-('7', 'Manager', FALSE);
+INSERT INTO employee (e_id, e_name, e_type, is_head)
+VALUES ('1', 'Doctor 1', 'Doctor', TRUE),
+('2', 'Doctor 2', 'Doctor', FALSE),
+('3', 'Nurse 1', 'Nurse', FALSE),
+('4', 'Nurse 2', 'Nurse', FALSE),
+('5', 'Staff 1', 'Staff', FALSE),
+('6', 'Volunteer 1', 'Volunteer', FALSE),
+('7', 'Manager 1', 'Manager', FALSE);
 
 -- manages
 INSERT INTO manages (e_id, manager_id)

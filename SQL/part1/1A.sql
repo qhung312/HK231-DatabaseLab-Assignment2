@@ -33,6 +33,7 @@ drop table if exists employee CASCADE;
 
 create table if not exists employee (
     e_id VARCHAR(255) PRIMARY KEY,
+	e_name VARCHAR(255) NOT NULL,
     e_type VARCHAR(255) NOT NULL,
     is_head BOOLEAN DEFAULT FALSE NOT NULL
 );
