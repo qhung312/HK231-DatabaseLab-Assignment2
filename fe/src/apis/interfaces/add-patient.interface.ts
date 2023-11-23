@@ -1,4 +1,5 @@
 import { IComorbidityInfo, IDemographicInfo, IMedicationInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
+import { ICareTakerBriefInfo } from "@/common/interfaces/form/form.interface";
 
 export type IAddPatientComorbidity = Omit<IComorbidityInfo, "description">;
 
@@ -9,7 +10,8 @@ export interface IAddPatientPayload {
     comorbidities: IAddPatientComorbidity[],
     symptoms: IAddPatientSymptom[],
     treatments: ITreatmenInfo[],
-    tests: ITestInfo[]
+    tests: ITestInfo[],
+    careTakers: ICareTakerBriefInfo[],
 }
 
 export interface IAddPatientResponse {
