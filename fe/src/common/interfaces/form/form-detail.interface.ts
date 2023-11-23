@@ -47,6 +47,7 @@ export interface IMedicationInfo {
     price: string | number;
 }
 export interface ITreatmenInfo {
+    doctorId: string;
     treatmentId: string;
     startDate: string;
     endDate: string;

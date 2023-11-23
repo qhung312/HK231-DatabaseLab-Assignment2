@@ -9,6 +9,7 @@ import useAddPatientStore from "@/hooks/useAddPatientStore"
 import { addPatientApi } from "@/apis"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
+import { CareTakerForm } from "./CareTakerForm"
 
 export const PatientForms = () => {
     const [form] = useForm();
@@ -47,6 +48,13 @@ export const PatientForms = () => {
             return;
         }
 
+        if (!data) {
+            notification.error({
+                message: "Add patient failed"
+            })
+            return;
+        }
+
         if (!data.success) {
             notification.error({
                 message: "Add patient failed"
@@ -65,8 +73,10 @@ export const PatientForms = () => {
     useEffect(() => {
         resetAddPatientForm();
     }, [])
+
     return <Form form={form} layout="vertical" >
         <DemographicForm />
+        <CareTakerForm />
         <SymptomForm />
         <ComorbidityForm />
         <TestInfoForm />

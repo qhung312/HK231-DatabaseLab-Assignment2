@@ -43,6 +43,7 @@ export const MOCK_PATIENT_REPORT_INFO: IReportInfoData = {
     ],
     treatmentInfo: [
         {
+            doctorId: "1",
             treatmentId: "1",
             startDate: "2021-09-01T00:00:00.000Z",
             endDate: "2021-09-10T00:00:00.000Z",
@@ -85,6 +86,7 @@ export const MOCK_PATIENT_REPORT_INFO: IReportInfoData = {
             result: "Recovered"
         },
         {
+            doctorId: "2",
             treatmentId: "2",
             startDate: "2021-09-01T00:00:00.000Z",
             endDate: "2021-09-10T00:00:00.000Z",

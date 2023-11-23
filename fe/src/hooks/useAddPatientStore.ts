@@ -1,7 +1,8 @@
 import { IAddPatientPayload } from "@/apis/interfaces/add-patient.interface";
 import { generatePatientComorbidityPayload, generatePatientSymptomPayload } from "@/common/helper/generate-payload";
 import { IComorbidityInfo, IMedicationEffect, IMedicationInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
-import { resetStore, selectComorbidityInfo, selectDemographicInfo, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setComorbidityInfo, setDemographicInfo, setSymptomInfo, setTestInfo, setTreatmentInfo } from "@/store/reducers/addPatientReducer";
+import { ICareTakerBriefInfo } from "@/common/interfaces/form/form.interface";
+import { resetStore, selectCareTakerInfo, selectComorbidityInfo, selectDemographicInfo, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setCareTakerInfo, setComorbidityInfo, setDemographicInfo, setSymptomInfo, setTestInfo, setTreatmentInfo } from "@/store/reducers/addPatientReducer";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
 const useAddPatientStore = () => {
@@ -12,6 +13,7 @@ const useAddPatientStore = () => {
     const tests = useAppSelector(selectTestInfo);
     const treatments = useAppSelector(selectTreatmentInfo);
     const symptoms = useAppSelector(selectSymptomInfo);
+    const careTakers = useAppSelector(selectCareTakerInfo);
 
     const setDemographicForm = (demographicInfo: any) => {
         dispatch(setDemographicInfo(demographicInfo))
@@ -147,6 +149,24 @@ const useAddPatientStore = () => {
         dispatch(setTreatmentInfo(newTreatmentInfoState));
     }
 
+    const setNurseInfo = (nurseInfo: ICareTakerBriefInfo) => {
+        const clonedCareTakerInfoState = structuredClone(careTakers);
+
+        const newCareTakerInfoState = clonedCareTakerInfoState.map((careTaker) => {
+            if (careTaker.role === "Nurse") {
+                return nurseInfo;
+            }
+
+            return careTaker;
+        })
+
+        if (newCareTakerInfoState.every((careTaker) => careTaker.role !== "Nurse")) {
+            newCareTakerInfoState.push(nurseInfo);
+        }
+
+        dispatch(setCareTakerInfo(newCareTakerInfoState));
+    }
+
     const getAddPatientPayload = (): IAddPatientPayload => {
         const comorbiditiesPayload = generatePatientComorbidityPayload(comorbidities)
         const symptomsPayload = generatePatientSymptomPayload(symptoms)
@@ -156,7 +176,8 @@ const useAddPatientStore = () => {
             tests,
             treatments,
             comorbidities: comorbiditiesPayload,
-            symptoms: symptomsPayload
+            symptoms: symptomsPayload,
+            careTakers,
         }
     }
 
@@ -194,16 +215,22 @@ const useAddPatientStore = () => {
         setMedicationEffect
     }
 
+    const careTakerFunctions = {
+        setNurseInfo
+    }
+
     return {
         demographic,
         comorbidities,
         tests,
         treatments,
         symptoms,
+        careTakers,
         symptomFunctions,
         comorbidityFunctions,
         testFunctions,
         treatmentFunctions,
+        careTakerFunctions,
         setDemographicForm,
         getAddPatientPayload,
         resetAddPatientForm

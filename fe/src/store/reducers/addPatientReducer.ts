@@ -15,7 +15,8 @@ const initialState: IAddPatientInfo = {
     comorbidityInfo: [],
     testInfo: [],
     treatmentInfo: [],
-    symptomInfo: []
+    symptomInfo: [],
+    careTakerInfo: []
 }
 
 const addPatientReducer = createSlice({
@@ -42,6 +43,9 @@ const addPatientReducer = createSlice({
         setSymptomInfo: (state, action) => {
             state.symptomInfo = action.payload;
         },
+        setCareTakerInfo: (state, action) => {
+            state.careTakerInfo = action.payload;
+        },
         resetStore: (state, action) => {
             state = initialState;
             console.log(state);
@@ -49,12 +53,13 @@ const addPatientReducer = createSlice({
     }
 })
 
-export const { setDemographicInfo, setComorbidityInfo, setTestInfo, setTreatmentInfo, setSymptomInfo, resetStore } = addPatientReducer.actions;
+export const { setDemographicInfo, setComorbidityInfo, setTestInfo, setTreatmentInfo, setSymptomInfo, resetStore, setCareTakerInfo } = addPatientReducer.actions;
 
 export const selectDemographicInfo = (state: RootState) => state.addPatient.demographicInfo;
 export const selectComorbidityInfo = (state: RootState) => state.addPatient.comorbidityInfo;
 export const selectTestInfo = (state: RootState) => state.addPatient.testInfo;
 export const selectTreatmentInfo = (state: RootState) => state.addPatient.treatmentInfo;
 export const selectSymptomInfo = (state: RootState) => state.addPatient.symptomInfo;
+export const selectCareTakerInfo = (state: RootState) => state.addPatient.careTakerInfo;
 
 export default addPatientReducer.reducer;

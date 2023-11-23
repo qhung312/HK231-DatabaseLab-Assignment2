@@ -1,4 +1,5 @@
 import { IComorbidityInfo, IDemographicInfo, IMedicationInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
+import { ICareTakerBriefInfo } from "@/common/interfaces/form/form.interface";
 
 export type IAddPatientComorbidity = Omit<IComorbidityInfo, "description">;
 
@@ -9,11 +10,12 @@ export interface IAddPatientPayload {
     comorbidities: IAddPatientComorbidity[],
     symptoms: IAddPatientSymptom[],
     treatments: ITreatmenInfo[],
-    tests: ITestInfo[]
+    tests: ITestInfo[],
+    careTakers: ICareTakerBriefInfo[],
 }
 
 export interface IAddPatientResponse {
-    data: {
+    data?: {
         success: boolean;
         patientId: string;
     },
@@ -23,14 +25,14 @@ export interface IAddPatientResponse {
 export type IFetchSymptomData = Pick<ISymptomInfo, "description" | "symptomId">
 export type IFetchComorbidityData = Pick<IComorbidityInfo, "description" | "comorbidityId">
 export interface IFetchSymptomResponse {
-    data: {
+    data?: {
         symptoms: IFetchSymptomData[]
     },
     error?: string;
 }
 
 export interface IFetchComorbidityResponse {
-    data: {
+    data?: {
         comorbidities: IFetchComorbidityData[]
     },
     error?: string;
@@ -41,7 +43,7 @@ export interface IFetchMedicationPayload {
 }
 
 export interface IFetchMedicationResponse {
-    data: {
+    data?: {
         medications: IMedicationInfo[]
     },
     error?: string;

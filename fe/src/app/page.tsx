@@ -1,8 +1,8 @@
 'use client'
 import { PATIENT_SEARCH_TYPE } from "@/common/constants/patient-search.constant"
-import { IPatientSearchResult, IPatientSearchState } from "@/common/interfaces/search/patient-search.interface"
+import { IPatientSearchResult, SearchBarState } from "@/common/interfaces/search/patient-search.interface"
 import { PATIENT_SEARCH_RESULT } from "@/common/mock-data/patient-search-result"
-import { PatientSearchBar } from "@/components/PatientSearchBar"
+import { SearchBar } from "@/components/SearchBar"
 import { PatientSearchResult } from "@/components/PatientSearchResult"
 import withAuth from "@/hocs/WithAuth"
 import { useDebounce } from "@/hooks"
@@ -10,7 +10,7 @@ import { Spin } from "antd"
 import { useEffect, useState } from "react"
 
 const SearchPatientPage = () => {
-  const [patientSearchInfo, setPatientSearchInfo] = useState<IPatientSearchState>({
+  const [patientSearchInfo, setPatientSearchInfo] = useState<SearchBarState>({
     type: PATIENT_SEARCH_TYPE[0].value,
     value: ''
   })
@@ -44,10 +44,12 @@ const SearchPatientPage = () => {
 
   return (
     <div className="border-[1px] gap-6 flex-col rounded-[8px] p-2 flex w-full items-center justify-center">
-      <PatientSearchBar
+      <SearchBar
         value={patientSearchInfo.value}
         type={patientSearchInfo.type}
-        setPatientSearchInfo={setPatientSearchInfo}
+        options={PATIENT_SEARCH_TYPE}
+        placeholder={`Enter patient's ${patientSearchInfo.type == "phone" ? "phone number" : patientSearchInfo.type}`}
+        setSearchBarInfo={setPatientSearchInfo}
       />
       {
         isLoading &&

@@ -28,7 +28,7 @@ export const MOCK_TEST_INFO_DATA: ITestInfo[] = [
     },
 ];
 
-export const MOCK_TEST_DEMOGRAPHIC_DATA: IDemographicInfo = {
+export const MOCK_DEMOGRAPHIC_DATA: IDemographicInfo = {
     id: "2153342",
     name: "Nguyen Van A",
     gender: "Male",

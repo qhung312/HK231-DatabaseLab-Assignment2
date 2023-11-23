@@ -2,8 +2,7 @@ import { ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface"
 import { Col, Collapse, Divider, Input, Row } from "antd";
 import { FC } from "react";
 import { MedicationsReport } from "./MedicationReport";
-
-const { TextArea } = Input;
+import { EmployeeCard } from "../Card/EmployeeCard";
 
 export interface ITreatmentReportProps {
     treatments: ITreatmenInfo[];
@@ -39,6 +38,11 @@ export const TreatmentReport: FC<ITreatmentReportProps> = ({ treatments }) => {
                     {
                         <Collapse
                             items={[
+                                {
+                                    key: 'Nurse information',
+                                    label: <p className="font-bold">Doctor information</p>,
+                                    children: <EmployeeCard employeeId={treatment.doctorId} role="Doctor" />
+                                },
                                 {
                                     key: 'medications',
                                     label: <p className="font-bold">Medication{pluralMedString} used</p>,
