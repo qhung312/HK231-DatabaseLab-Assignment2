@@ -2,7 +2,7 @@
 import { PATIENT_SEARCH_TYPE } from "@/common/constants/patient-search.constant"
 import { IPatientSearchResult, SearchBarState } from "@/common/interfaces/search/patient-search.interface"
 import { PATIENT_SEARCH_RESULT } from "@/common/mock-data/patient-search-result"
-import { SearchBar } from "@/components/PatientSearchBar"
+import { SearchBar } from "@/components/SearchBar"
 import { PatientSearchResult } from "@/components/PatientSearchResult"
 import withAuth from "@/hocs/WithAuth"
 import { useDebounce } from "@/hooks"
@@ -47,6 +47,8 @@ const SearchPatientPage = () => {
       <SearchBar
         value={patientSearchInfo.value}
         type={patientSearchInfo.type}
+        options={PATIENT_SEARCH_TYPE}
+        placeholder={`Enter patient's ${patientSearchInfo.type == "phone" ? "phone number" : patientSearchInfo.type}`}
         setSearchBarInfo={setPatientSearchInfo}
       />
       {
