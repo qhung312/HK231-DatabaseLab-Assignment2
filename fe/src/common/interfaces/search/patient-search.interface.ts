@@ -1,12 +1,16 @@
 import { Dispatch, SetStateAction } from "react"
 
-export interface IPatientSearchProps {
+export interface ISearchBarProps {
     value: string,
     type: string,
-    setPatientSearchInfo: Dispatch<SetStateAction<IPatientSearchState>>
+    options: {
+        label: string,
+        value: string,
+    }[],
+    setSearchBarInfo: Dispatch<SetStateAction<SearchBarState>>
 }
 
-export type IPatientSearchState = Omit<IPatientSearchProps, 'setPatientSearchInfo'>
+export type SearchBarState = Omit<ISearchBarProps, 'setSearchBarInfo' | 'options'>
 
 
 export interface IPatientComorbidity {
