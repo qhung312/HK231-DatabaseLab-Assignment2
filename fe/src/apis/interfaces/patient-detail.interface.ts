@@ -2,6 +2,7 @@ import { IComorbidityInfo, IDemographicInfo, ISymptomInfo, ITestInfo, ITreatmenI
 
 export interface IPatientTestingInfoPayload {
     patientId: string;
+    patientInstanceOrder: string;
 }
 
 export interface IPatientTestingInfoResponse {
@@ -13,6 +14,7 @@ export interface IPatientTestingInfoResponse {
 
 export interface IPatientReportInfoPayload {
     patientId: string;
+    patientInstanceOrder: string;
 }
 
 export interface IPatientInstanceInfoPayload {

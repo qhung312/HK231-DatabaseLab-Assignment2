@@ -6,9 +6,10 @@ import { FC, useEffect, useState } from "react"
 
 export interface ITestInformationProps {
     patientId: string | number
+    patientInstanceOrder: string;
 }
 
-export const TestInformation: FC<ITestInformationProps> = ({ patientId }) => {
+export const TestInformation: FC<ITestInformationProps> = ({ patientId, patientInstanceOrder }) => {
     const [testInformation, setTestInformation] = useState([] as ITestInfo[]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -17,7 +18,8 @@ export const TestInformation: FC<ITestInformationProps> = ({ patientId }) => {
             setIsLoading(true)
 
             const response = await fetchPatientTestingInfoApi({
-                patientId: `${patientId}`
+                patientId: `${patientId}`,
+                patientInstanceOrder
             });
 
             const { data, error } = response;
@@ -34,7 +36,7 @@ export const TestInformation: FC<ITestInformationProps> = ({ patientId }) => {
         }
 
         fetchTestInformation();
-    }, [patientId])
+    }, [patientId, patientInstanceOrder])
 
     return <div>
         <p className="font-bold mb-[20px]">Testing information</p>

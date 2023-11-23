@@ -10,10 +10,11 @@ import { fetchReportInfoApi } from "@/apis/patient-detail.api";
 
 export interface IReportProps {
     patientId: string | number
+    patientInstanceOrder: string;
 }
 
 
-export const PatientReport: FC<IReportProps> = ({ patientId }) => {
+export const PatientReport: FC<IReportProps> = ({ patientId, patientInstanceOrder }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [reportInfo, setReport] = useState<IReportInfoData>({
@@ -28,7 +29,8 @@ export const PatientReport: FC<IReportProps> = ({ patientId }) => {
             setIsLoading(true)
 
             const response = await fetchReportInfoApi({
-                patientId: `${patientId}`
+                patientId: `${patientId}`,
+                patientInstanceOrder
             })
 
             const { data, error } = response;
@@ -45,7 +47,7 @@ export const PatientReport: FC<IReportProps> = ({ patientId }) => {
         }
 
         fetchReportInfo();
-    }, [patientId])
+    }, [patientId, patientInstanceOrder])
 
     return <>
         {
