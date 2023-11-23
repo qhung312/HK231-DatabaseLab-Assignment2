@@ -48,6 +48,13 @@ export const PatientForms = () => {
             return;
         }
 
+        if (!data) {
+            notification.error({
+                message: "Add patient failed"
+            })
+            return;
+        }
+
         if (!data.success) {
             notification.error({
                 message: "Add patient failed"

@@ -6,7 +6,7 @@ export interface IPatientTestingInfoPayload {
 }
 
 export interface IPatientTestingInfoResponse {
-    data: {
+    data?: {
         testInfo: ITestInfo[];
     },
     error?: string;
@@ -20,6 +20,9 @@ export interface IPatientReportInfoPayload {
 export interface IPatientInstanceInfoPayload {
     patientId: string;
 }
+export interface IPatientDemographicInfoPayload {
+    patientId: string;
+}
 
 export interface IReportInfoData {
     symptomsInfo: ISymptomInfo[];
@@ -29,7 +32,7 @@ export interface IReportInfoData {
 }
 
 export interface IPatientReportInfoResponse {
-    data: {
+    data?: {
         reportInfo: IReportInfoData;
     };
     error?: string;
@@ -44,8 +47,15 @@ export interface IPatientInstance {
 }
 
 export interface IPatientInstanceInfoResponse {
-    data: {
+    data?: {
         instanceInfo: IPatientInstance[];
+    };
+    error?: string;
+}
+
+export interface IPatientDemographicInfoResponse {
+    data?: {
+        demographicInfo: IDemographicInfo;
     };
     error?: string;
 }

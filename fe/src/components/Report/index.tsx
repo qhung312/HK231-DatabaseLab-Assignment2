@@ -42,6 +42,8 @@ export const PatientReport: FC<IReportProps> = ({ patientId, patientInstanceOrde
                 return;
             }
 
+            if (!data?.reportInfo) return;
+
             setReport(data.reportInfo);
             setIsLoading(false);
         }
@@ -53,6 +55,7 @@ export const PatientReport: FC<IReportProps> = ({ patientId, patientInstanceOrde
         {
             isLoading && <Spin />
         }
+        <p className="font-bold mb-[20px]">Report</p>
         {
             !isLoading &&
             <Collapse

@@ -31,6 +31,8 @@ export const TestInformation: FC<ITestInformationProps> = ({ patientId, patientI
                 return;
             }
 
+            if (!data?.testInfo) return;
+
             setTestInformation(data.testInfo);
             setIsLoading(false);
         }
