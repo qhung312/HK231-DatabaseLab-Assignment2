@@ -252,28 +252,9 @@ create table if not exists has_symptom (
     s_id VARCHAR(255) NOT NULL REFERENCES symptom(s_id),
     unique_number VARCHAR(255) NOT NULL,
     patient_order INT NOT NULL,
+	seriousness VARCHAR(255) NOT NULL,
     PRIMARY KEY (unique_number, patient_order, s_id),
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
-);
-
-/*
-    MULTIVALUED ATTRIBUTE: SYMPTOM PERIOD
-*/
-
-drop table if exists symptom_period CASCADE;
-
-create table if not exists symptom_period (
-    s_id VARCHAR(255) NOT NULL REFERENCES symptom(s_id),
-    unique_number VARCHAR(255) NOT NULL,
-    patient_order INT NOT NULL,
-
-	seriousness VARCHAR(255) NOT NULL,
-
-    start_date TIMESTAMP NOT NULL,
-    end_date TIMESTAMP NOT NULL,
-    FOREIGN KEY (unique_number, patient_order, s_id) REFERENCES has_symptom(unique_number, patient_order, s_id),
-    FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order),
-	PRIMARY KEY (unique_number, patient_order, s_id, start_date, end_date)
 );
 
 /*
