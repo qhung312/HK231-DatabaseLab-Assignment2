@@ -1,8 +1,7 @@
 'use client';
 import { IPatientInstance } from "@/apis/interfaces/patient-detail.interface";
-import { fetchPatientInstanceApi } from "@/apis/patient-detail.api";
+import { fetchPatientDemographicInfoApi, fetchPatientInstanceApi } from "@/apis/patient-detail.api";
 import { IDemographicInfo } from "@/common/interfaces/form/form-detail.interface";
-import { MOCK_TEST_DEMOGRAPHIC_DATA } from "@/common/mock-data/patient-test-information";
 import { EmployeeCard } from "@/components/Card/EmployeeCard";
 import { PatientReport } from "@/components/Report";
 import { TestInformation } from "@/components/TestInformation";
@@ -81,11 +80,28 @@ const PatientDetail = ({ params }: {
             setIsLoading(true);
 
             // Mock api call
-            setDemographicInformation(MOCK_TEST_DEMOGRAPHIC_DATA);
+            const { error, data } = await fetchPatientDemographicInfoApi({
+                patientId: params?.id || ""
+            });
 
+            if (error) {
+                notification.error({
+                    message: error
+                })
+                return;
+            }
 
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // mock api delay
+            if (!data?.demographicInfo)
+                return;
 
+            const demographicInfo = data.demographicInfo;
+
+            setDemographicInformation(demographicInfo);
+
+            await fetchPatientInstace();
+        }
+
+        const fetchPatientInstace = async () => {
             const { error, data } = await fetchPatientInstanceApi({
                 patientId: params?.id || ""
             });
@@ -96,6 +112,9 @@ const PatientDetail = ({ params }: {
                 })
                 return;
             }
+
+            if (!data?.instanceInfo)
+                return;
 
             const instanceInfo = data.instanceInfo;
             const patientInstanceOptions = generatePatientInstanceOptions(instanceInfo);
@@ -181,9 +200,6 @@ const PatientDetail = ({ params }: {
                             />
                         </Col>
                     </Row>
-                }
-                {
-                    selectedPatientInstance?.patientOrder && <p className="font-bold">Details</p>
                 }
                 {
                     selectedPatientInstance?.patientOrder && SELECTED_VIEWS[selectedViews](params?.id || "", `${selectedPatientInstance?.patientOrder}`)
