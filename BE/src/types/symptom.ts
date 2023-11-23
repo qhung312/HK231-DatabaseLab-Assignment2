@@ -1,7 +1,13 @@
+export type SymptomPeriod = {
+  startDate: string;
+  endDate: string;
+  seriousness: string;
+};
+
 export type HasSymptomInfo = {
   symptomId: string;
   description: string;
-  seriousness: string;
+  periods: SymptomPeriod[];
 };
 
 export type SymptomInfo = {

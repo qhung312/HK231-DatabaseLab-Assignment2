@@ -1,8 +1,13 @@
 import { Router } from 'express';
-import _ from 'lodash';
+import _, { toNumber } from 'lodash';
 
 import pool from '../database/database_connection';
+import ComorbidityService from '../services/comorbidity.service';
+import SymptomService from '../services/symptom.service';
+import TestInfoService from '../services/test-info.service';
+import TreatmentInfoService from '../services/treatment-info.service';
 import { CustomResponse, PatientSearchResult } from '../types/index';
+import { PatientReportInfo } from '../types/patient';
 
 const patientController = Router();
 
@@ -70,5 +75,66 @@ patientController.get('/', async (req, res: CustomResponse) => {
     res.composer.badRequest(error.message);
   }
 });
+
+patientController.get(
+  '/:patientId/instance/:instanceId/tests',
+  async (req, res: CustomResponse) => {
+    try {
+      const { patientId } = req.params;
+      const instanceId = toNumber(req.params.instanceId);
+
+      if (_.isNil(patientId)) {
+        throw new Error('Patient id is required');
+      }
+
+      if (_.isNil(instanceId)) {
+        throw new Error('Patient instance id is required');
+      }
+
+      const result = await TestInfoService.getAllTestsOfPatientInstance(patientId, instanceId);
+
+      res.composer.ok(result);
+    } catch (error) {
+      res.composer.badRequest(error.message);
+    }
+  }
+);
+
+patientController.get(
+  '/:patientId/instance/:instanceId/report',
+  async (req, res: CustomResponse) => {
+    try {
+      const { patientId } = req.params;
+      const instanceId = toNumber(req.params.instanceId);
+
+      if (_.isNil(patientId)) {
+        throw new Error('Patient id is required');
+      }
+
+      if (_.isNil(instanceId)) {
+        throw new Error('Patient instance id is required');
+      }
+
+      const [symptoms, comorbidities, testInfos, treatments] = await Promise.all([
+        SymptomService.getPatientInstanceSymptoms(patientId, instanceId),
+        ComorbidityService.getComorbidityOfPatient(patientId),
+        TestInfoService.getAllTestsOfPatientInstance(patientId, instanceId),
+        TreatmentInfoService.getAllTreatmentOfPatientInstance(patientId, instanceId)
+      ]);
+
+      const result: PatientReportInfo = {
+        symptomsInfo: symptoms,
+        comorbidityInfo: comorbidities,
+        testInfo: testInfos,
+        treatmentInfo: treatments
+      };
+
+      res.composer.ok({ reportInfo: result });
+    } catch (error) {
+      console.error(error);
+      res.composer.badRequest(error.message);
+    }
+  }
+);
 
 export default patientController;
