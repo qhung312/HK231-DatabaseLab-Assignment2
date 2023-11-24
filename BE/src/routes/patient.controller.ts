@@ -2,6 +2,9 @@ import { Router } from 'express';
 import _, { toNumber } from 'lodash';
 
 import pool from '../database/database_connection';
+import AddPatientInstanceDto from '../dto/add-patient-instance.dto';
+import { AddPatientDto } from '../dto/add-patient.dto';
+import customValidateOrReject from '../lib/custom-validate-reject';
 import ComorbidityService from '../services/comorbidity.service';
 import PatientService from '../services/patient.service';
 import SymptomService from '../services/symptom.service';
@@ -34,7 +37,7 @@ patientController.get('/', async (req, res: CustomResponse) => {
     }
     if (req.query.id) {
       queryOptions.push({
-        queryString: `patient.unique_number=$${queryOptions.length + 1}`,
+        queryString: `patient.identity_number=$${queryOptions.length + 1}`,
         value: req.query.id as string
       });
     }
@@ -166,6 +169,60 @@ patientController.get('/:patientId', async (req, res: CustomResponse) => {
     }
 
     res.composer.ok({ demographicInfo: patientInfo });
+  } catch (error) {
+    res.composer.badRequest(error.message);
+  }
+});
+
+patientController.post('/', async (req, res: CustomResponse) => {
+  try {
+    const info = new AddPatientDto();
+    info.demographic = req.body.demographic;
+    info.locationBeforeAdmission = req.body.locationBeforeAdmission;
+    info.comorbidities = req.body.comorbidities;
+    info.symptoms = req.body.symptoms;
+    info.treatments = req.body.treatments;
+    info.tests = req.body.tests;
+    info.careTakers = req.body.careTakers;
+
+    await customValidateOrReject(info);
+
+    const sameUser = await PatientService.getPatientByIdentityNumber(info.demographic.id);
+
+    if (!_.isNil(sameUser)) {
+      throw new Error('Patient already exists');
+    }
+
+    const result = await PatientService.addPatient(info);
+    res.composer.ok({ success: true, patientId: result });
+  } catch (error) {
+    res.composer.badRequest(error.message);
+  }
+});
+
+patientController.post('/:patientId/instance', async (req, res: CustomResponse) => {
+  try {
+    const { patientId } = req.params;
+    if (_.isNil(patientId)) {
+      throw new Error('Patient id is required');
+    }
+
+    const info = new AddPatientInstanceDto();
+    info.locationBeforeAdmission = req.body.locationBeforeAdmission;
+    info.symptoms = req.body.symptoms;
+    info.treatments = req.body.treatments;
+    info.tests = req.body.tests;
+    info.careTakers = req.body.careTakers;
+
+    await customValidateOrReject(info);
+
+    const sameUser = await PatientService.getPatientByUniqueIdentifier(patientId);
+    if (_.isNil(sameUser)) {
+      throw new Error('Patient not found');
+    }
+
+    const result = await PatientService.addPatientInstance(patientId, info);
+    res.composer.ok({ success: true, patientId, patientInstanceOrder: result });
   } catch (error) {
     res.composer.badRequest(error.message);
   }

@@ -1,4 +1,7 @@
+import _ from 'lodash';
+
 import pool from '../database/database_connection';
+import { AddPatientInstanceSymptom } from '../dto/add-patient.dto';
 import { HasSymptomInfo, SymptomInfo } from '../types';
 
 async function getPatientInstanceSymptoms(
@@ -31,9 +34,33 @@ async function getAllSymptoms(): Promise<SymptomInfo[]> {
   return rows;
 }
 
+async function addPatientInstanceSymptoms(
+  patientId: string,
+  instanceId: number,
+  symptoms: AddPatientInstanceSymptom[]
+) {
+  if (symptoms.length > 0) {
+    await pool.query(
+      `
+    INSERT INTO has_symptom(unique_number, patient_order, s_id, seriousness)
+    VALUES ${_.join(
+      _.map(
+        symptoms,
+        (symp, index) =>
+          `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3}, $${index * 3 + 4})`
+      ),
+      ', '
+    )}
+    `,
+      _.flatMap(symptoms, (symp) => [patientId, instanceId, symp.symptomId, symp.seriousness])
+    );
+  }
+}
+
 const SymptomService = {
   getPatientInstanceSymptoms,
-  getAllSymptoms
+  getAllSymptoms,
+  addPatientInstanceSymptoms
 };
 
 export default SymptomService;
