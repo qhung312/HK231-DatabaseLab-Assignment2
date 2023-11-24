@@ -1,6 +1,7 @@
 import _ from 'lodash';
 
 import pool from '../database/database_connection';
+import { AddPatientInstanceTreatment } from '../dto/add-patient.dto';
 import { MedicationInfo } from '../types';
 import { TreatmentInfo } from '../types/treatment';
 
@@ -85,8 +86,55 @@ async function getAllTreatmentOfPatientInstance(
   );
 }
 
+async function addPatientInstanceTreatment(
+  patientId: string,
+  patientOrder: number,
+  treatments: AddPatientInstanceTreatment[]
+) {
+  if (treatments.length > 0) {
+    await pool.query(
+      `
+    INSERT INTO treats(unique_number, patient_order, e_id, result, start_time, end_time)
+    VALUES ${_.join(
+      _.map(
+        treatments,
+        (treatment, index) =>
+          `($${index * 6 + 1}, $${index * 6 + 2}, $${index * 6 + 3}, $${index * 6 + 4}, $${
+            index * 6 + 5
+          }, $${index * 6 + 6})`
+      ),
+      ', '
+    )}
+    `,
+      _.flatMap(treatments, (treatment) => [
+        patientId,
+        patientOrder,
+        treatment.doctorId,
+        treatment.result,
+        treatment.startDate,
+        treatment.endDate
+      ])
+    );
+
+    // add the medications used for this treatment
+    await Promise.all(
+      _.map(treatments, (treatment) =>
+        MedicationService.addMedicationInTreatment(
+          patientId,
+          patientOrder,
+          treatment.doctorId,
+          treatment.startDate,
+          treatment.endDate,
+          treatment.medications
+        )
+      )
+    );
+  }
+}
+
 const TreatmentInfoService = {
-  getAllTreatmentOfPatientInstance
+  getAllTreatmentOfPatientInstance,
+  addPatientInstanceTreatment
 };
 
 export default TreatmentInfoService;

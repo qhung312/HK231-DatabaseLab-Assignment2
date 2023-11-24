@@ -47,9 +47,46 @@ async function getEffectsOfMedication(medicationId: string): Promise<MedicationE
   return rows;
 }
 
+async function addMedicationInTreatment(
+  patientId: string,
+  patientOrder: number,
+  employeeId: string,
+  startDate: string,
+  endDate: string,
+  medicationIds: string[]
+) {
+  if (medicationIds.length > 0) {
+    await pool.query(
+      `
+    INSERT INTO
+    medication_in_treatment(unique_number, patient_order, e_id, start_time, end_time, medication_id)
+    VALUES ${_.join(
+      _.map(
+        medicationIds,
+        (medId, index) =>
+          `($${index * 6 + 1}, $${index * 6 + 2}, $${index * 6 + 3}, $${index * 6 + 4}, $${
+            index * 6 + 5
+          }, $${index * 6 + 6})`
+      ),
+      ', '
+    )}
+    `,
+      _.flatMap(medicationIds, (medId) => [
+        patientId,
+        patientOrder,
+        employeeId,
+        startDate,
+        endDate,
+        medId
+      ])
+    );
+  }
+}
+
 const MedicationService = {
   getAllMedications,
-  getEffectsOfMedication
+  getEffectsOfMedication,
+  addMedicationInTreatment
 };
 
 export default MedicationService;
