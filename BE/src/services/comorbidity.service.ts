@@ -1,4 +1,7 @@
+import _ from 'lodash';
+
 import pool from '../database/database_connection';
+import { AddPatientComorbidityInfo } from '../dto/add-patient.dto';
 import { HasComorbidityInfo } from '../types/comorbidity';
 
 async function getComorbidityOfPatient(patientId: string): Promise<HasComorbidityInfo[]> {
@@ -27,9 +30,31 @@ async function getAllComorbidities(): Promise<HasComorbidityInfo[]> {
   return rows;
 }
 
+async function addPatientComorbidities(
+  patientId: string,
+  comorbidities: AddPatientComorbidityInfo[]
+) {
+  if (comorbidities.length > 0) {
+    await pool.query(
+      `
+    INSERT INTO has_comorbidity(unique_number, c_id, seriousness)
+    VALUES ${_.join(
+      _.map(
+        comorbidities,
+        (comor, index) => `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3})`
+      ),
+      ', '
+    )}
+    `,
+      _.flatMap(comorbidities, (comor) => [patientId, comor.comorbidityId, comor.seriousness])
+    );
+  }
+}
+
 const ComorbidityService = {
   getComorbidityOfPatient,
-  getAllComorbidities
+  getAllComorbidities,
+  addPatientComorbidities
 };
 
 export default ComorbidityService;
