@@ -7,6 +7,7 @@ export type IAddPatientSymptom = Omit<ISymptomInfo, "description">;
 
 export interface IAddPatientPayload {
     demographic: IDemographicInfo,
+    locationBeforeAdmission: string,
     comorbidities: IAddPatientComorbidity[],
     symptoms: IAddPatientSymptom[],
     treatments: ITreatmenInfo[],

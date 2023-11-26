@@ -178,6 +178,7 @@ const useAddPatientStore = () => {
 
         return {
             demographic,
+            locationBeforeAdmission,
             tests,
             treatments,
             comorbidities: comorbiditiesPayload,
