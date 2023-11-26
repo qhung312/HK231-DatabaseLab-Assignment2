@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/store/store";
 
 export type IAddInstancePayload = Omit<IAddPatientPayload, 'demographic' | "comorbidities">;
 
-const useAddPatientStore = () => {
+const useAddInstaceStore = () => {
     const dispatch = useAppDispatch();
 
     const tests = useAppSelector(selectTestInfo);
@@ -200,4 +200,4 @@ const useAddPatientStore = () => {
     }
 }
 
-export default useAddPatientStore;
+export default useAddInstaceStore;

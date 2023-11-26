@@ -10,6 +10,7 @@ import { addPatientApi } from "@/apis"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { CareTakerForm } from "./CareTakerForm"
+import { LocationBeforeAdmissionForm } from "./LocationForm"
 
 export const PatientForms = () => {
     const [form] = useForm();
@@ -76,6 +77,7 @@ export const PatientForms = () => {
 
     return <Form form={form} layout="vertical" >
         <DemographicForm />
+        <LocationBeforeAdmissionForm />
         <CareTakerForm />
         <SymptomForm />
         <ComorbidityForm />

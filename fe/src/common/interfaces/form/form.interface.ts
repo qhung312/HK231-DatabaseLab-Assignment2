@@ -6,6 +6,7 @@ export interface ICareTakerBriefInfo {
 }
 export interface IAddPatientInfo {
     demographicInfo: IDemographicInfo;
+    locationBeforeAdmission: string;
     comorbidityInfo: IComorbidityInfo[];
     testInfo: ITestInfo[];
     treatmentInfo: ITreatmenInfo[];

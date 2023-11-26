@@ -2,7 +2,7 @@ import { IAddPatientPayload } from "@/apis/interfaces/add-patient.interface";
 import { generatePatientComorbidityPayload, generatePatientSymptomPayload } from "@/common/helper/generate-payload";
 import { IComorbidityInfo, IMedicationEffect, IMedicationInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
 import { ICareTakerBriefInfo } from "@/common/interfaces/form/form.interface";
-import { resetStore, selectCareTakerInfo, selectComorbidityInfo, selectDemographicInfo, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setCareTakerInfo, setComorbidityInfo, setDemographicInfo, setSymptomInfo, setTestInfo, setTreatmentInfo } from "@/store/reducers/addPatientReducer";
+import { resetStore, selectCareTakerInfo, selectComorbidityInfo, selectDemographicInfo, selectLocationBeforeAdmission, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setCareTakerInfo, setComorbidityInfo, setDemographicInfo, setLocationBeforeAdmission, setSymptomInfo, setTestInfo, setTreatmentInfo } from "@/store/reducers/addPatientReducer";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
 const useAddPatientStore = () => {
@@ -14,9 +14,14 @@ const useAddPatientStore = () => {
     const treatments = useAppSelector(selectTreatmentInfo);
     const symptoms = useAppSelector(selectSymptomInfo);
     const careTakers = useAppSelector(selectCareTakerInfo);
+    const locationBeforeAdmission = useAppSelector(selectLocationBeforeAdmission);
 
     const setDemographicForm = (demographicInfo: any) => {
         dispatch(setDemographicInfo(demographicInfo))
+    }
+
+    const setLocation = (location: string) => {
+        dispatch(setLocationBeforeAdmission(location))
     }
 
     const setComorbidities = (newComorbidity: IComorbidityInfo, index: number) => {
@@ -231,6 +236,8 @@ const useAddPatientStore = () => {
         testFunctions,
         treatmentFunctions,
         careTakerFunctions,
+        locationBeforeAdmission,
+        setLocation,
         setDemographicForm,
         getAddPatientPayload,
         resetAddPatientForm

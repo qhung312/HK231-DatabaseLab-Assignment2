@@ -6,6 +6,7 @@ import { uuid } from 'uuidv4';
 export type IAddInstanceInfo = Omit<IAddPatientInfo, 'demographicInfo' | 'comorbidityInfo'>;
 
 const initialState: IAddInstanceInfo = {
+    locationBeforeAdmission: "",
     testInfo: [],
     treatmentInfo: [],
     symptomInfo: [],
