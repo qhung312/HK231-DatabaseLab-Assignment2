@@ -1,4 +1,5 @@
 import connectPgSimple from 'connect-pg-simple';
+import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 
@@ -19,6 +20,7 @@ const pgSession = connectPgSimple(session);
 
 app.use(applyHttpComposer);
 app.use(express.json());
+app.use(cors());
 app.use(
   session({
     // eslint-disable-next-line new-cap
