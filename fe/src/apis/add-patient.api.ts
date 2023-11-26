@@ -1,5 +1,6 @@
 import { MOCK_COMORBIDITY_DATA, MOCK_MEDICATION_DATA, MOCK_SYMPTOMS_DATA } from "@/common/mock-data/form-search-result";
 import { IAddPatientPayload, IAddPatientResponse, IFetchComorbidityResponse, IFetchMedicationPayload, IFetchMedicationResponse, IFetchSymptomResponse } from "./interfaces/add-patient.interface";
+import axiosClient from "@/common/helper/axios-client";
 
 /**
  * POST: /api/add-patient
@@ -7,20 +8,24 @@ import { IAddPatientPayload, IAddPatientResponse, IFetchComorbidityResponse, IFe
  * @returns 
  */
 export const addPatientApi = async (payload: IAddPatientPayload): Promise<IAddPatientResponse> => {
-    const mockApiCallResponse: Promise<IAddPatientResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: {
-                    success: true,
-                    patientId: "123456789"
-                }
-            }
-            resolve(data);
-        }, 3000)
-    );
+    // const mockApiCallResponse: Promise<IAddPatientResponse> = new Promise((resolve) =>
+    //     setTimeout(() => {
+    //         const data = {
+    //             data: {
+    //                 success: true,
+    //                 patientId: "123456789"
+    //             }
+    //         }
+    //         resolve(data);
+    //     }, 3000)
+    // );
 
+    const res = await axiosClient.post('/patient', payload);
+
+    const data = res.data as IAddPatientResponse;
+    console.log(data);
     // const response = axios.post<IAddPatientResponse>("/api/add-patient", payload);
-    return await mockApiCallResponse;
+    return data;
 }
 
 /**
