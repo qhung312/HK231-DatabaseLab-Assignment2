@@ -47,7 +47,7 @@ async function addPatientInstanceSymptoms(
       _.map(
         symptoms,
         (symp, index) =>
-          `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3}, $${index * 3 + 4})`
+          `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, $${index * 4 + 4})`
       ),
       ', '
     )}
