@@ -2,22 +2,31 @@ import axiosClient from "@/common/helper/axios-client";
 import { IUserLoginPayload, IUserLoginResponse, IUserSessionPayload, IUserSessionResponse, IUserSignUpPayload, IUserSignUpResponse } from "./interfaces";
 
 export const fetchUserSession = async (): Promise<IUserSessionResponse> => {
+    try {
+        const res = await axiosClient.get('/me');
 
-    const res = await axiosClient.get('/auth/session', { withCredentials: true });
+        const resData = res.data;
 
-    const resData = res.data;
+        const { data, error } = resData;
 
-    const { data, error } = resData;
+        if (data.error || error) {
+            return {
+                error: data.error || error,
+            }
+        }
 
-    if (data.error || error) {
         return {
-            error: data.error || error,
+            userInfo: {
+                username: data.username,
+            }
         }
     }
-
-    return {
-        userInfo: data.userInfo,
-    };
+    catch (err) {
+        console.log(err)
+        return {
+            error: `${JSON.stringify(err)}` || 'Something went wrong',
+        }
+    }
 }
 
 export const signUpApi = async (payload: IUserSignUpPayload): Promise<IUserSignUpResponse> => {
@@ -27,7 +36,6 @@ export const signUpApi = async (payload: IUserSignUpPayload): Promise<IUserSignU
         const resData = res.data;
 
         const { data, error } = resData;
-        console.log(data)
 
         if (data.error || error) {
             return {
@@ -61,7 +69,6 @@ export const signInApi = async (payload: IUserLoginPayload): Promise<IUserLoginR
         const resData = res.data;
 
         const { data, error } = resData;
-        console.log(data)
 
         if (data.error || error) {
             return {

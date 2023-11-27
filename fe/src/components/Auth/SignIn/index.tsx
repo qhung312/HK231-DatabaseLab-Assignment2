@@ -2,7 +2,7 @@ import { FC, useState } from "react";
 import { Button, Form, Input, Card, notification, Spin, Row, Col } from 'antd';
 import { useRouter } from "next/navigation";
 import { useSessionStore } from "@/hooks";
-import { signInApi } from "@/apis";
+import { fetchUserSession, signInApi } from "@/apis";
 
 const LogInComponent: FC = () => {
     const router = useRouter();
@@ -28,8 +28,20 @@ const LogInComponent: FC = () => {
                 return;
             }
 
-            const userInfo = {
-                username: signInRes?.data?.username
+            const { userInfo, error } = await fetchUserSession();
+
+            if (error) {
+                notification.error({
+                    message: error
+                })
+                return;
+            }
+
+            if (!userInfo?.username) {
+                notification.error({
+                    message: 'Cannot fetch user session'
+                })
+                return;
             }
 
             notification.success({
