@@ -6,8 +6,9 @@ import { SearchBar } from "@/components/SearchBar"
 import { PatientSearchResult } from "@/components/PatientSearchResult"
 import withAuth from "@/hocs/WithAuth"
 import { useDebounce } from "@/hooks"
-import { Spin } from "antd"
+import { Spin, notification } from "antd"
 import { useEffect, useState } from "react"
+import { searchPatientApi } from "@/apis"
 
 const SearchPatientPage = () => {
   const [patientSearchInfo, setPatientSearchInfo] = useState<SearchBarState>({
@@ -25,8 +26,21 @@ const SearchPatientPage = () => {
     // TODO: Call API
     const fetchPatientSearchResults = async () => {
       setIsLoading(true)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setPatientSearchResults(PATIENT_SEARCH_RESULT); // temporary
+      const { data, error } = await searchPatientApi({
+        type: debouncedType as "name" | "phone" | "id",
+        value: debouncedValue
+      })
+
+      if (error) {
+        notification.error({
+          message: error
+        })
+        setIsLoading(false)
+        return
+      }
+      if (!data) return
+
+      setPatientSearchResults(data as IPatientSearchResult[]); // temporary
       setIsLoading(false)
     }
 
