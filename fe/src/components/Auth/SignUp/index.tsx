@@ -1,11 +1,14 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Button, Checkbox, Form, Input, Card, notification, Spin } from 'antd';
 import { useRouter } from "next/navigation";
 import { signUpApi } from "@/apis";
+import { useSessionStore } from "@/hooks";
 
 const SignUpComponent: FC = () => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+
+
 
     const onFinish = async (values: any) => {
         const payload = {
@@ -51,7 +54,6 @@ const SignUpComponent: FC = () => {
         remember?: string;
         employeeID?: string;
     };
-
 
     return (
         <Card title="Sign up">

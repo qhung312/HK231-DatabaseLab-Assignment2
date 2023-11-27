@@ -34,7 +34,7 @@ authController.post('/login', async (req, res: CustomResponse) => {
 
     _.set(req.session, 'username', account.username);
 
-    res.composer.ok({ employeeId: account.e_id });
+    res.composer.ok({ employeeId: account.e_id, username: account.username });
   } catch (error) {
     res.composer.badRequest(error.message);
   }

@@ -5,7 +5,7 @@ export interface IUserSessionPayload {
     password: string,
 }
 export interface IUserSessionResponse {
-    userInfo: IUserInterface,
+    userInfo?: IUserInterface,
     error?: string,
 }
 
@@ -20,4 +20,13 @@ export interface IUserSignUpResponse {
         message: string
     }
     error?: string
+}
+
+export type IUserLoginPayload = IUserSessionPayload;
+export interface IUserLoginResponse {
+    data?: {
+        employeeId: string | number,
+        username: string,
+    }
+    error?: string,
 }

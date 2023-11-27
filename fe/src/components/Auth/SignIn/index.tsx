@@ -1,8 +1,8 @@
 import { FC, useState } from "react";
-import { Button, Checkbox, Form, Input, Card, notification, Spin, Row, Col } from 'antd';
+import { Button, Form, Input, Card, notification, Spin, Row, Col } from 'antd';
 import { useRouter } from "next/navigation";
 import { useSessionStore } from "@/hooks";
-import { fetchUserSession } from "@/apis";
+import { signInApi } from "@/apis";
 
 const LogInComponent: FC = () => {
     const router = useRouter();
@@ -19,13 +19,17 @@ const LogInComponent: FC = () => {
         setIsLoading(true)
 
         try {
-            const { userInfo, error } = await fetchUserSession(payload)
+            const signInRes = await signInApi(payload);
 
-            if (error || !userInfo) {
+            if (signInRes.error || !signInRes?.data?.username) {
                 notification.error({
-                    message: error || "Missing user information"
+                    message: signInRes.error
                 })
                 return;
+            }
+
+            const userInfo = {
+                username: signInRes?.data?.username
             }
 
             notification.success({
@@ -93,6 +97,11 @@ const LogInComponent: FC = () => {
                     {
                         isLoading && <Spin />
                     }
+                </Form.Item>
+                <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
+                    <p>
+                        Don&lsquo;t have an account? <a className="text-[#2563EB]" href="/signup">Sign up</a>
+                    </p>
                 </Form.Item>
             </Form>
         </Card>

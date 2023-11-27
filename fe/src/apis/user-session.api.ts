@@ -1,40 +1,91 @@
 import axiosClient from "@/common/helper/axios-client";
-import { IUserSessionPayload, IUserSessionResponse, IUserSignUpPayload, IUserSignUpResponse } from "./interfaces";
+import { IUserLoginPayload, IUserLoginResponse, IUserSessionPayload, IUserSessionResponse, IUserSignUpPayload, IUserSignUpResponse } from "./interfaces";
 
-export const fetchUserSession = async (payload: IUserSessionPayload): Promise<IUserSessionResponse> => {
-    const mockApiCallResponse: Promise<IUserSessionResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                userInfo: {
-                    username: payload.username,
-                },
-            }
-            resolve(data);
-        }, 1000)
-    );
+export const fetchUserSession = async (): Promise<IUserSessionResponse> => {
 
-    // TODO: replace this mock api call with real api call
-    // const response = await axios.get<IUserSessionResponse>("/api/user-session", payload);
-
-    return await mockApiCallResponse;
-};
-
-export const signUpApi = async (payload: IUserSignUpPayload): Promise<IUserSignUpResponse> => {
-    const res = await axiosClient.post('/auth/signup', payload);
+    const res = await axiosClient.get('/auth/session', { withCredentials: true });
 
     const resData = res.data;
 
     const { data, error } = resData;
 
-    if (res.status === 200) {
+    if (data.error || error) {
         return {
-            data: {
-                message: data,
-            }
-        };
-    };
+            error: data.error || error,
+        }
+    }
 
     return {
-        error: error,
+        userInfo: data.userInfo,
+    };
+}
+
+export const signUpApi = async (payload: IUserSignUpPayload): Promise<IUserSignUpResponse> => {
+    try {
+        const res = await axiosClient.post('/auth/signup', payload);
+
+        const resData = res.data;
+
+        const { data, error } = resData;
+        console.log(data)
+
+        if (data.error || error) {
+            return {
+                error: data.error || error,
+            }
+        }
+
+        if (res.status === 200) {
+            return {
+                data: {
+                    message: data,
+                }
+            };
+        };
+
+        return {
+            error: error,
+        }
     }
+    catch (err) {
+        return {
+            error: `${JSON.stringify(err)}` || 'Something went wrong',
+        }
+    }
+}
+
+export const signInApi = async (payload: IUserLoginPayload): Promise<IUserLoginResponse> => {
+    try {
+        const res = await axiosClient.post('/auth/login', payload);
+
+        const resData = res.data;
+
+        const { data, error } = resData;
+        console.log(data)
+
+        if (data.error || error) {
+            return {
+                error: data.error || error,
+            }
+        }
+
+        if (res.status === 200) {
+            return {
+                data: {
+                    employeeId: data.employeeId,
+                    username: data.username,
+                }
+            };
+        };
+
+        return {
+            error: error,
+        }
+    }
+    catch (err: any) {
+        return {
+            error: err?.response?.data?.error as string || 'Something went wrong',
+        }
+    }
+
 }
