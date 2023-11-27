@@ -11,7 +11,8 @@ import {
   medicationController,
   patientController,
   authController,
-  employeeController
+  employeeController,
+  meController
 } from './routes/index';
 import { applyHttpComposer } from './types/response';
 
@@ -38,9 +39,10 @@ app.use(
 );
 
 app.use('/auth', authController);
+app.use('/me', meController);
 
 // ROUTES - Must be authenticated
-// app.all('*', authMiddleware);
+app.all('*', authMiddleware);
 app.use('/symptom', symptomController);
 app.use('/comorbidity', comorbidityController);
 app.use('/medication', medicationController);
