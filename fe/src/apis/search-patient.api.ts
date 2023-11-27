@@ -1,5 +1,6 @@
 import { PATIENT_SEARCH_RESULT } from "@/common/mock-data/patient-search-result";
 import { ISearchPatientPayload, ISearchPatientResponse } from "./interfaces/search-patient.interface";
+import axiosClient from "@/common/helper/axios-client";
 
 /**
  * GET: /api/search-patient
@@ -7,15 +8,23 @@ import { ISearchPatientPayload, ISearchPatientResponse } from "./interfaces/sear
  * @returns 
  */
 export const searchPatientApi = async (payload: ISearchPatientPayload): Promise<ISearchPatientResponse> => {
-    const mockApiCallResponse: Promise<ISearchPatientResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: PATIENT_SEARCH_RESULT,
-            }
-            resolve(data);
-        }, 1000)
-    );
+    const { type, value } = payload;
 
-    // const response = axios.get<ISearchPatientResponse>("/api/search-patient", payload);
-    return await mockApiCallResponse;
+    const queryString = `?${type}=${value}`;
+    const endpoint = `/patient${queryString}`;
+
+    const res = await axiosClient.get<ISearchPatientResponse>(endpoint);
+    const resData = res.data;
+
+    const { error, data } = resData;
+
+    if (error) {
+        return {
+            error
+        }
+    }
+
+    return {
+        data
+    }
 }

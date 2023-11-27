@@ -3,8 +3,9 @@ import useAddPatientStore from "@/hooks/useAddPatientStore";
 import { Form, Input, Row, Col, Select, Button } from "antd"
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { uuid } from "uuidv4";
+import useAddInstaceStore from "@/hooks/useAddInstanceStore";
 export const TestInfoForm = () => {
-    const { tests, testFunctions } = useAddPatientStore();
+    const { tests, testFunctions } = useAddInstaceStore();
 
     const { addTestInfo, removeTestInfo, setTestInfos } = testFunctions;
 

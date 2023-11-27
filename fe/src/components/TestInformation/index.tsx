@@ -1,4 +1,4 @@
-import { fetchPatientTestingInfoApi } from "@/apis/patient-detail.api";
+import { fetchPatientTestingInfoApi, fetchReportInfoApi } from "@/apis/patient-detail.api";
 import { ITestInfo } from "@/common/interfaces/form/form-detail.interface";
 import { MOCK_TEST_INFO_DATA } from "@/common/mock-data/patient-test-information";
 import { Col, Row, Spin, notification } from "antd";
@@ -17,7 +17,7 @@ export const TestInformation: FC<ITestInformationProps> = ({ patientId, patientI
         const fetchTestInformation = async () => {
             setIsLoading(true)
 
-            const response = await fetchPatientTestingInfoApi({
+            const response = await fetchReportInfoApi({
                 patientId: `${patientId}`,
                 patientInstanceOrder
             });
@@ -31,14 +31,16 @@ export const TestInformation: FC<ITestInformationProps> = ({ patientId, patientI
                 return;
             }
 
-            if (!data?.testInfo) return;
+            if (!data?.reportInfo?.testInfo) return;
 
-            setTestInformation(data.testInfo);
+            setTestInformation(data.reportInfo.testInfo);
             setIsLoading(false);
         }
 
         fetchTestInformation();
     }, [patientId, patientInstanceOrder])
+
+    if (!testInformation?.length) return <div>No test information</div>
 
     return <div>
         <p className="font-bold mb-[20px]">Testing information</p>

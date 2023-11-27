@@ -3,6 +3,7 @@ import { IPatientDemographicInfoPayload, IPatientDemographicInfoResponse, IPatie
 import { MOCK_PATIENT_REPORT_INFO } from "@/common/mock-data/patient-report";
 import { MOCK_PATIENT_INSTANCE_INFO } from "@/common/mock-data/patient-instance";
 import axios from "axios";
+import axiosClient from "@/common/helper/axios-client";
 
 /**
  * GET: /api/patient-testing-info
@@ -34,35 +35,65 @@ export const fetchPatientTestingInfoApi = async (
 export const fetchReportInfoApi = async (
     payload: IPatientReportInfoPayload
 ): Promise<IPatientReportInfoResponse> => {
-    const mockApiCallResponse: Promise<IPatientReportInfoResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: {
-                    reportInfo: MOCK_PATIENT_REPORT_INFO
-                }
-            }
-            resolve(data);
-        }, 2000)
-    );
+    const { patientId, patientInstanceOrder } = payload;
 
-    return await mockApiCallResponse;
+    const res = await axiosClient.get('patient/' + patientId + '/instance/' + patientInstanceOrder + '/report')
+    const resData = res.data;
+
+    const { error, data } = resData;
+
+    if (error) {
+        return {
+            error
+        }
+    }
+
+    const reportInfo = {
+        ...data?.reportInfo,
+        treatmentInfo: data?.reportInfo?.treatmentInfo?.map((treatment: any) => {
+            return {
+                ...treatment,
+                doctorId: treatment.doctor?.employeeId
+            }
+        })
+    }
+
+    return {
+        data: {
+            reportInfo
+        }
+    };
 }
 
 export const fetchPatientInstanceApi = async (
     payload: IPatientInstanceInfoPayload
 ): Promise<IPatientInstanceInfoResponse> => {
-    const mockApiCallResponse: Promise<IPatientInstanceInfoResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: {
-                    instanceInfo: MOCK_PATIENT_INSTANCE_INFO
-                }
-            }
-            resolve(data);
-        }, 2000)
-    );
+    const { patientId } = payload;
 
-    return await mockApiCallResponse;
+    const res = await axiosClient.get('patient/' + patientId + '/instance')
+    const resData = res.data;
+
+    const { error, data } = resData;
+
+    if (error) {
+        return {
+            error
+        }
+    }
+
+    const instanceInfo = (data?.instanceInfo || []).map((instance: any) => {
+        return {
+            ...instance,
+            patientOrder: instance.patientInstanceOrder,
+            assignedNurseId: instance.assignedNurse?.employeeId
+        }
+    })
+
+    return {
+        data: {
+            instanceInfo
+        }
+    };
 }
 
 /**
@@ -72,27 +103,22 @@ export const fetchPatientInstanceApi = async (
 export const fetchPatientDemographicInfoApi = async (payload: IPatientDemographicInfoPayload): Promise<IPatientDemographicInfoResponse> => {
     const { patientId } = payload;
 
-    // const res = await axios.get<IPatientDemographicInfoResponse>(`/api/patient-demographic-info?patientId=${patientId}`);
+    const res = await axiosClient.get('patient/' + patientId)
 
-    // const resData = res.data;
+    const resData = res.data;
 
-    // const { error, data } = resData;
+    const { error, data } = resData;
 
-    // if (error) {
-    //     return {
-    //         error
-    //     }
-    // }
-
-    // return {
-    //     data
-    // }
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const demographicInfo = {
+        ...data.demographicInfo,
+        id: data.demographicInfo.identityNumber,
+        address: data.demographicInfo.addr,
+    };
 
     return {
         data: {
-            demographicInfo: MOCK_DEMOGRAPHIC_DATA
-        }
+            demographicInfo: demographicInfo
+        },
+        error
     }
 }

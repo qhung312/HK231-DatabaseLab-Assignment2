@@ -7,7 +7,7 @@ import { PatientReport } from "@/components/Report";
 import { TestInformation } from "@/components/TestInformation";
 import withAuth from "@/hocs/WithAuth"
 import { ContainerOutlined, PieChartOutlined } from "@ant-design/icons";
-import { Col, Collapse, Menu, MenuProps, Row, Select, notification } from "antd";
+import { Col, Collapse, Menu, MenuProps, Row, Select, Spin, notification } from "antd";
 import { ReactNode, useEffect, useState } from "react";
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -140,40 +140,46 @@ const PatientDetail = ({ params }: {
             />
             <div className="flex flex-col w-[85%] p-8 border-[1px] rounded-[12px]">
                 <p className="font-bold mb-[20px]">Patient information</p>
-                <Row className="mb-[20px]" gutter={[16, 16]}>
-                    <Col span={12}>
-                        <p>Full name: <span>{demographicInformation.name}</span></p>
-                    </Col>
+                {
+                    isLoading ?
+                        <Spin /> :
+                        <Row className="mb-[20px]" gutter={[16, 16]}>
+                            <Col span={12}>
+                                <p>Full name: <span>{demographicInformation.name}</span></p>
+                            </Col>
 
-                    <Col span={12}>
-                        <p>Gender: <span>{demographicInformation.gender}</span></p>
-                    </Col>
+                            <Col span={12}>
+                                <p>Gender: <span>{demographicInformation.gender}</span></p>
+                            </Col>
 
-                    <Col span={12}>
-                        <p>ID: <span>{demographicInformation.id}</span></p>
-                    </Col>
+                            <Col span={12}>
+                                <p>ID: <span>{demographicInformation.id}</span></p>
+                            </Col>
 
-                    <Col span={12} >
-                        <p>Phone: <span>{demographicInformation.phone}</span></p>
-                    </Col>
+                            <Col span={12} >
+                                <p>Phone: <span>{demographicInformation.phone}</span></p>
+                            </Col>
 
-                    <Col span={24}>
-                        <p>Address: <span>{demographicInformation.address}</span></p>
-                    </Col>
-                </Row>
-                <div className="flex flex-col gap-4 mb-[20px]">
-                    <p className="font-bold">Patient admissions</p>
-                    <Col span={12} >
-                        <Select
-                            className="min-w-[150px]"
-                            defaultValue={patientInstanceOptions[0]?.value}
-                            options={patientInstanceOptions}
-                            loading={isLoading}
-                            disabled={isLoading}
-                            onSelect={(value) => setSelectedInstanceOrder(`${value}`)}
-                        />
-                    </Col>
-                </div>
+                            <Col span={24}>
+                                <p>Address: <span>{demographicInformation.address}</span></p>
+                            </Col>
+                        </Row>
+                }
+                {
+                    !isLoading &&
+                    <div className="flex flex-col gap-4 mb-[20px]">
+                        <p className="font-bold">Patient admissions</p>
+                        <Col span={12} >
+                            <Select
+                                className="min-w-[150px]"
+                                options={patientInstanceOptions}
+                                loading={isLoading}
+                                disabled={isLoading}
+                                onSelect={(value) => setSelectedInstanceOrder(`${value}`)}
+                            />
+                        </Col>
+                    </div>
+                }
 
                 {selectedPatientInstance?.patientOrder &&
                     <Row className="mb-[20px]" gutter={[16, 16]}>

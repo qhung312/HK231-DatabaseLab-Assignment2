@@ -1,20 +1,23 @@
 import { Button, Form, notification } from "antd"
-import { DemographicForm } from "./DemographicForm"
-import { ComorbidityForm } from "./ComorbidityForm"
 import { TestInfoForm } from "./TestInfoForm"
 import { TreatmentForm } from "./TreatmentForm"
 import { SymptomForm } from "./SymptomForm"
 import { useForm } from "antd/es/form/Form"
 import useAddPatientStore from "@/hooks/useAddPatientStore"
-import { addPatientApi } from "@/apis"
+import { addInstanceApi, addPatientApi } from "@/apis"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { FC, useEffect } from "react"
 import { CareTakerForm } from "./CareTakerForm"
 import { LocationBeforeAdmissionForm } from "./LocationForm"
+import useAddInstaceStore from "@/hooks/useAddInstanceStore"
 
-export const PatientForms = () => {
+export interface InstaceFormProps {
+    patientId?: string;
+}
+
+export const InstanceForm: FC<InstaceFormProps> = ({ patientId }) => {
     const [form] = useForm();
-    const { getAddPatientPayload, resetAddPatientForm } = useAddPatientStore()
+    const { getAddInstancePayload, resetAddPatientForm } = useAddInstaceStore()
 
     const router = useRouter();
 
@@ -32,13 +35,19 @@ export const PatientForms = () => {
             return;
         }
 
-        const payload = getAddPatientPayload();
+
 
         notification.open({
-            message: `Adding new admission`,
+            message: `Adding information for new patient`,
         })
+        if (!patientId) return;
 
-        const response = await addPatientApi(payload);
+        const payload = {
+            ...getAddInstancePayload(),
+            patientId
+        }
+
+        const response = await addInstanceApi(payload)
 
         const { data, error } = response;
 
@@ -51,20 +60,20 @@ export const PatientForms = () => {
 
         if (!data) {
             notification.error({
-                message: "Add patient failed"
+                message: "Add instance failed"
             })
             return;
         }
 
         if (!data.success) {
             notification.error({
-                message: "Add patient failed"
+                message: "Add instance failed"
             })
             return;
         }
 
         notification.success({
-            message: "Add patient successfully"
+            message: "Add instance successfully"
         })
 
         resetAddPatientForm();
@@ -75,16 +84,18 @@ export const PatientForms = () => {
         resetAddPatientForm();
     }, [])
 
-    return <Form form={form} layout="vertical" >
-        <DemographicForm />
-        <LocationBeforeAdmissionForm />
-        <CareTakerForm />
-        <SymptomForm />
-        <ComorbidityForm />
-        <TestInfoForm />
-        <TreatmentForm />
-        <Button type="primary" htmlType="submit" onClick={onAddPatient}>
-            Add patient
-        </Button>
-    </Form>
+    if (!patientId) return <></>;
+
+    return <div className="w-full p-6 border-[1px] gap-6 flex-col rounded-[8px] flex items-center justify-center">
+        <Form form={form} layout="vertical" >
+            <LocationBeforeAdmissionForm />
+            <CareTakerForm />
+            <SymptomForm />
+            <TestInfoForm />
+            <TreatmentForm />
+            <Button type="primary" htmlType="submit" onClick={onAddPatient}>
+                Add admission
+            </Button>
+        </Form>
+    </div>
 }

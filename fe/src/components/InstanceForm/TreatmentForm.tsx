@@ -9,10 +9,11 @@ import { EMPLOYEE_SEARCH_TYPE } from "@/common/constants/add-patient-form.consta
 import { useDebounce } from "@/hooks";
 import { IEmployeeBriefInfo } from "@/apis/interfaces/employee-detail.interface";
 import { searchEmployeeApi } from "@/apis";
+import useAddInstaceStore from "@/hooks/useAddInstanceStore";
 
 const { TextArea } = Input;
 export const TreatmentForm = () => {
-    const { treatments, treatmentFunctions } = useAddPatientStore();
+    const { treatments, treatmentFunctions } = useAddInstaceStore();
 
     const [isLoading, setIsLoading] = useState(false);
     const [searchDoctorOptions, setSearchDoctorOptions] = useState<{

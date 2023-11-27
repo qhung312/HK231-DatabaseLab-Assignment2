@@ -2,7 +2,6 @@ export interface IEmployeeBriefInfo {
     employeeId: string | number;
     name: string;
     role?: string;
-    phone?: string;
 }
 
 export interface ISearchEmployeePayload {

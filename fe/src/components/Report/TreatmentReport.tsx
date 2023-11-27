@@ -9,11 +9,12 @@ export interface ITreatmentReportProps {
 }
 
 export const TreatmentReport: FC<ITreatmentReportProps> = ({ treatments }) => {
-    const isLastChild = (index: number) => index === treatments.length - 1
+    if (!treatments?.length) return <div>No treatment</div>
 
+    const isLastChild = (index: number) => index === treatments.length - 1
     return <div className="w-full flex flex-col gap-4 border-[1px] rounded-[12px] p-6">
         {
-            treatments.map((treatment, index) => {
+            (treatments || []).map((treatment, index) => {
                 const { startDate, endDate, result, medications, treatmentId } = treatment
 
                 const pluralMedString = medications?.length > 1 ? "s" : ""

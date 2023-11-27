@@ -6,5 +6,9 @@ export const ROUTES = [
     {
         path: '/add',
         name: 'Add new patients'
+    },
+    {
+        path: '/add/instance',
+        name: 'Add new admission'
     }
 ];

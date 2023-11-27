@@ -53,16 +53,18 @@ async function addMedicationInTreatment(
   employeeId: string,
   startDate: string,
   endDate: string,
-  medicationIds: string[]
+  medications: MedicationInfo[]
 ) {
-  if (medicationIds.length > 0) {
+  const medicationIDs = medications.map((med) => med.medId);
+
+  if (medications.length > 0) {
     await pool.query(
       `
     INSERT INTO
     medication_in_treatment(unique_number, patient_order, e_id, start_time, end_time, medication_id)
     VALUES ${_.join(
       _.map(
-        medicationIds,
+        medications,
         (medId, index) =>
           `($${index * 6 + 1}, $${index * 6 + 2}, $${index * 6 + 3}, $${index * 6 + 4}, $${
             index * 6 + 5
@@ -71,7 +73,7 @@ async function addMedicationInTreatment(
       ', '
     )}
     `,
-      _.flatMap(medicationIds, (medId) => [
+      _.flatMap(medicationIDs, (medId) => [
         patientId,
         patientOrder,
         employeeId,

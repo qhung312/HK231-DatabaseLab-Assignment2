@@ -12,6 +12,7 @@ const initialState: IAddPatientInfo = {
         address: "",
         phone: "",
     },
+    locationBeforeAdmission: "",
     comorbidityInfo: [],
     testInfo: [],
     treatmentInfo: [],
@@ -31,6 +32,9 @@ const addPatientReducer = createSlice({
                 ...action.payload
             }
         },
+        setLocationBeforeAdmission: (state, action) => {
+            state.locationBeforeAdmission = action.payload;
+        },
         setComorbidityInfo: (state, action) => {
             state.comorbidityInfo = action.payload;
         },
@@ -48,12 +52,11 @@ const addPatientReducer = createSlice({
         },
         resetStore: (state, action) => {
             state = initialState;
-            console.log(state);
         }
     }
 })
 
-export const { setDemographicInfo, setComorbidityInfo, setTestInfo, setTreatmentInfo, setSymptomInfo, resetStore, setCareTakerInfo } = addPatientReducer.actions;
+export const { setDemographicInfo, setComorbidityInfo, setTestInfo, setTreatmentInfo, setSymptomInfo, resetStore, setCareTakerInfo, setLocationBeforeAdmission } = addPatientReducer.actions;
 
 export const selectDemographicInfo = (state: RootState) => state.addPatient.demographicInfo;
 export const selectComorbidityInfo = (state: RootState) => state.addPatient.comorbidityInfo;
@@ -61,5 +64,6 @@ export const selectTestInfo = (state: RootState) => state.addPatient.testInfo;
 export const selectTreatmentInfo = (state: RootState) => state.addPatient.treatmentInfo;
 export const selectSymptomInfo = (state: RootState) => state.addPatient.symptomInfo;
 export const selectCareTakerInfo = (state: RootState) => state.addPatient.careTakerInfo;
+export const selectLocationBeforeAdmission = (state: RootState) => state.addPatient.locationBeforeAdmission;
 
 export default addPatientReducer.reducer;

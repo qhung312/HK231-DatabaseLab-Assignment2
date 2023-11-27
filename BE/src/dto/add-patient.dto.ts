@@ -1,5 +1,7 @@
 import { IsArray, IsNotEmpty } from 'class-validator';
 
+import { MedicationInfo } from '../types';
+
 export type AddPatientDemographicInfo = {
   // identity_number
   id: string;
@@ -26,7 +28,7 @@ export type AddPatientInstanceTreatment = {
   endDate: string;
   result: string;
   // id of medications
-  medications: string[];
+  medications: MedicationInfo[];
 };
 
 export type AddPatientInstanceTest = {

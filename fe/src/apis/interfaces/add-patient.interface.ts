@@ -1,5 +1,6 @@
 import { IComorbidityInfo, IDemographicInfo, IMedicationInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
 import { ICareTakerBriefInfo } from "@/common/interfaces/form/form.interface";
+import { IAddInstancePayload } from "@/hooks";
 
 export type IAddPatientComorbidity = Omit<IComorbidityInfo, "description">;
 
@@ -7,12 +8,17 @@ export type IAddPatientSymptom = Omit<ISymptomInfo, "description">;
 
 export interface IAddPatientPayload {
     demographic: IDemographicInfo,
+    locationBeforeAdmission: string,
     comorbidities: IAddPatientComorbidity[],
     symptoms: IAddPatientSymptom[],
     treatments: ITreatmenInfo[],
     tests: ITestInfo[],
     careTakers: ICareTakerBriefInfo[],
 }
+
+export type IAddNewInstancePayload = {
+    patientId: string;
+} & IAddInstancePayload
 
 export interface IAddPatientResponse {
     data?: {

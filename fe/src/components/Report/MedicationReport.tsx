@@ -8,6 +8,8 @@ export interface IMedicationReportProps {
 export const MedicationsReport: FC<IMedicationReportProps> = ({
     medications
 }) => {
+    if (!medications?.length) return <div>No medication</div>
+
     return <div>
         <div className="w-full flex flex-col gap-4">
             {

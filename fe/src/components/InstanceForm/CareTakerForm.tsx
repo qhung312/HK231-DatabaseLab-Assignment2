@@ -6,9 +6,10 @@ import { EMPLOYEE_SEARCH_TYPE } from "@/common/constants/add-patient-form.consta
 import { useDebounce } from "@/hooks";
 import { searchEmployeeApi } from "@/apis";
 import { IEmployeeBriefInfo } from "@/apis/interfaces/employee-detail.interface";
+import useAddInstaceStore from "@/hooks/useAddInstanceStore";
 
 export const CareTakerForm = () => {
-    const { careTakers, careTakerFunctions } = useAddPatientStore();
+    const { careTakers, careTakerFunctions } = useAddInstaceStore();
     const { setNurseInfo } = careTakerFunctions;
 
 

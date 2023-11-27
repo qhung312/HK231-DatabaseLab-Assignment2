@@ -7,6 +7,7 @@ import { useDebounce } from "@/hooks";
 import { generateMedicationOptions } from "@/common/helper/generate-options";
 import { MOCK_MEDICATION_DATA } from "@/common/mock-data/form-search-result";
 import { fetchMedicationApi } from "@/apis";
+import useAddInstaceStore from "@/hooks/useAddInstanceStore";
 
 export interface IMedicationDetailProps {
     medication: IMedicationInfo;
@@ -19,7 +20,7 @@ export const MedicationDetail: FC<IMedicationDetailProps> = ({
     medIndex,
     treatmentIndex
 }) => {
-    const { treatmentFunctions } = useAddPatientStore();
+    const { treatmentFunctions } = useAddInstaceStore();
     const { removeMedicationInfo, setMedicationInfos } = treatmentFunctions;
 
     const { medId, medName, expiredDate, price, effects, id } = medication;

@@ -60,12 +60,6 @@ export const EmployeeCard: FC<IEmployeeCardProps> = ({ employeeId, role }) => {
 
                 <Col span={12}>
                     <div>
-                        Phone: {employeeInfo.phone}
-                    </div>
-                </Col>
-
-                <Col span={12}>
-                    <div>
                         Employee ID: {employeeInfo.employeeId}
                     </div>
                 </Col>

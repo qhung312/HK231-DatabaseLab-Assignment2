@@ -18,5 +18,9 @@ export const Comorbidity: FC<{
                 </div>
             ))
         }
+        {
+            comorbidities.length === 0 &&
+            <div className="text-center">No comorbidity</div>
+        }
     </div>
 }

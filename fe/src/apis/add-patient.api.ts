@@ -1,82 +1,100 @@
 import { MOCK_COMORBIDITY_DATA, MOCK_MEDICATION_DATA, MOCK_SYMPTOMS_DATA } from "@/common/mock-data/form-search-result";
-import { IAddPatientPayload, IAddPatientResponse, IFetchComorbidityResponse, IFetchMedicationPayload, IFetchMedicationResponse, IFetchSymptomResponse } from "./interfaces/add-patient.interface";
+import { IAddNewInstancePayload, IAddPatientPayload, IAddPatientResponse, IFetchComorbidityResponse, IFetchMedicationPayload, IFetchMedicationResponse, IFetchSymptomResponse } from "./interfaces/add-patient.interface";
+import axiosClient from "@/common/helper/axios-client";
+import { IAddInstancePayload } from "@/hooks";
 
 /**
- * POST: /api/add-patient
+ * POST: /add-patient
  * @param payload 
  * @returns 
  */
 export const addPatientApi = async (payload: IAddPatientPayload): Promise<IAddPatientResponse> => {
-    const mockApiCallResponse: Promise<IAddPatientResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: {
-                    success: true,
-                    patientId: "123456789"
-                }
-            }
-            resolve(data);
-        }, 3000)
-    );
+    const res = await axiosClient.post('/patient', payload);
 
-    // const response = axios.post<IAddPatientResponse>("/api/add-patient", payload);
-    return await mockApiCallResponse;
+    const data = res.data as IAddPatientResponse;
+    return data;
 }
 
 /**
- * GET: /api/fetch-symptoms
+ * GET: /fetch-symptoms
  * @returns 
  */
 export const fetchSymptomsApi = async (): Promise<IFetchSymptomResponse> => {
-    const mockApiCallResponse: Promise<IFetchSymptomResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: {
-                    symptoms: MOCK_SYMPTOMS_DATA
-                }
-            }
-            resolve(data);
-        }, 2000)
-    );
+    const res = await axiosClient.get('/symptom');
 
-    return await mockApiCallResponse;
+    const { data, error } = res.data;
+
+    const ret = {
+        data: {
+            symptoms: data ?? []
+        },
+        error: error
+    }
+
+    return ret;
 }
 
 /**
- * GET: /api/fetch-comorbidities
+ * GET: /fetch-comorbidities
  * @returns 
  */
 export const fetchComorbiditiesApi = async (): Promise<IFetchComorbidityResponse> => {
-    const mockApiCallResponse: Promise<IFetchComorbidityResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: {
-                    comorbidities: MOCK_COMORBIDITY_DATA
-                }
-            }
-            resolve(data);
-        }, 2000)
-    );
+    const res = await axiosClient.get('/comorbidity');
 
-    return await mockApiCallResponse;
+    const { data, error } = res.data;
+
+    const ret = {
+        data: {
+            comorbidities: data ?? []
+        },
+        error: error
+    }
+
+    return ret;
 }
 
 /**
- * GET /api/fetch-medication
+ * GET
  * @param payload 
  * @returns 
  */
 export const fetchMedicationApi = async (payload: IFetchMedicationPayload): Promise<IFetchMedicationResponse> => {
-    const mockApiCallResponse: Promise<IFetchMedicationResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: {
-                    medications: MOCK_MEDICATION_DATA
-                }
-            }
-            resolve(data);
-        }, 1000)
-    );
+    const { medId } = payload
+    const endpoint = "/medication/" + medId;
 
-    return await mockApiCallResponse;
+    const res = await axiosClient.get(endpoint);
+    const resData = res.data;
+
+    let medications = [];
+
+    switch (typeof resData.data) {
+        case "object":
+            medications = [resData.data];
+            break;
+        default:
+            medications = resData.data ?? [];
+            break;
+    }
+
+    return {
+        data: {
+            medications
+        },
+        error: resData.error
+    }
+}
+
+export const addInstanceApi = async (payload: IAddNewInstancePayload): Promise<IAddPatientResponse> => {
+    const {
+        patientId,
+        ...rest
+    } = payload;
+
+    const body = rest
+
+    const res = await axiosClient.post(`patient/${patientId}/instance`, body);
+
+    const data = res.data as IAddPatientResponse;
+    return data;
+
 }

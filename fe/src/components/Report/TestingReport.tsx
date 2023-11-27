@@ -8,10 +8,12 @@ export interface ITestingReportProps {
 }
 
 export const TestingReport: FC<ITestingReportProps> = ({ testInformation }) => {
+    if (!testInformation?.length) return <div>No test information</div>
+
     return <div>
         <div className="w-full flex flex-col gap-4 p-2">
             {
-                testInformation.map((testInfo, index: number) => {
+                (testInformation || []).map((testInfo, index: number) => {
                     const { type } = testInfo;
                     const key = `${testInfo.id}_${index}`;
                     switch (type) {

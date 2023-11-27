@@ -1,11 +1,11 @@
 export const GENDER_OPTIONS = [
     {
         label: "Male",
-        value: "male"
+        value: "Male"
     },
     {
         label: "Female",
-        value: "female"
+        value: "Female"
     }
 ]
 

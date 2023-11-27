@@ -21,30 +21,30 @@ export const PatientSearchResult: FC<IPatientSearchResultProps> = ({ patientSear
                     patientSearchResults.map((patient) => {
                         const { name, phone, comorbidities, id } = patient
                         return (
-                            <Row className="w-full text-[14px] border-[1px] border-[#f0f0f0] p-6 rounded-[8px] flex flex-col sm:flex-row gap-4" key={id}>
-                                <Col className="flex flex-col gap-1">
+                            <Row gutter={[16, 16]} className="w-full text-[14px] border-[1px] border-[#f0f0f0] p-6 rounded-[8px] flex flex-col sm:flex-row gap-4" key={id}>
+                                <Col span={5} className="flex flex-col gap-1">
                                     <p>Name: <span className="font-bold">{name}</span></p>
                                     <p>Phone number: {phone}</p>
                                     <Button onClick={() => onViewReport(id)} type="primary" className="mt-4 flex items-center justify-center">View report <LinkOutlined /></Button>
                                 </Col>
-                                {
-                                    comorbidities?.length &&
-                                    <Col className="h-[90px] hidden sm:inline">
-                                        <Divider className="h-full" type="vertical" />
-                                    </Col>
-                                }
-                                {
-                                    comorbidities?.length &&
-                                    <Col className="flex flex-col gap-4">
-                                        <Collapse items={[
-                                            {
-                                                key: 'Comorbidities',
-                                                label: 'Comorbidities',
-                                                children: <Comorbidity comorbidities={comorbidities} />
-                                            }
-                                        ]} />
-                                    </Col>
-                                }
+
+                                <Col className="h-[90px] hidden sm:inline">
+                                    <Divider className="h-[90px]" type="vertical" />
+                                </Col>
+
+
+
+
+                                <Col className="flex flex-col gap-4">
+                                    <Collapse items={[
+                                        {
+                                            key: 'Comorbidities',
+                                            label: 'Comorbidities',
+                                            children: <Comorbidity comorbidities={comorbidities} />
+                                        }
+                                    ]} />
+                                </Col>
+
                             </Row>
                         )
                     })

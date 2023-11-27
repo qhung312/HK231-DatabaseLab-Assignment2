@@ -7,9 +7,10 @@ import { useEffect, useState } from "react";
 import { generateSymptomsOptions } from "@/common/helper/generate-options";
 import { MOCK_SYMPTOMS_DATA } from "@/common/mock-data/form-search-result";
 import { fetchSymptomsApi } from "@/apis";
+import useAddInstaceStore from "@/hooks/useAddInstanceStore";
 
 export const SymptomForm = () => {
-    const { symptoms, symptomFunctions } = useAddPatientStore();
+    const { symptoms, symptomFunctions } = useAddInstaceStore();
     const [symptomsOptions, setSymptomsOptions] = useState([] as any);
 
     const { addSymptomInfo, removeSymptomInfo, setSymptomInfos } = symptomFunctions;

@@ -7,10 +7,12 @@ export interface ISymptomReportProps {
 export const SymptomReport: FC<ISymptomReportProps> = ({
     symptoms
 }) => {
+    if (!symptoms?.length) return <div>No symptom</div>
+
     return <div>
         <div className="w-full flex flex-col gap-4">
             {
-                symptoms.map((symptom, index: number) => {
+                (symptoms || []).map((symptom, index: number) => {
 
                     const { id, description, seriousness, symptomId } = symptom
                     const key = `${symptomId}_${id}`

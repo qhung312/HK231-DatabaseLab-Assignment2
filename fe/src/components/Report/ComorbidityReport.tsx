@@ -8,10 +8,12 @@ export interface IComorbidityReportProps {
 export const ComorbidityReport: FC<IComorbidityReportProps> = ({
     comorbidities
 }) => {
+    if (!comorbidities?.length) return <div>No comorbidity</div>
+
     return <div>
         <div className="w-full flex flex-col gap-4">
             {
-                comorbidities.map((comorbidity, index: number) => {
+                (comorbidities || []).map((comorbidity, index: number) => {
 
                     const { id, description, seriousness, comorbidityId } = comorbidity
                     const key = `${comorbidityId}_${id}`

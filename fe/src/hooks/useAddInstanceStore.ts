@@ -2,33 +2,22 @@ import { IAddPatientPayload } from "@/apis/interfaces/add-patient.interface";
 import { generatePatientComorbidityPayload, generatePatientSymptomPayload } from "@/common/helper/generate-payload";
 import { IComorbidityInfo, IMedicationEffect, IMedicationInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
 import { ICareTakerBriefInfo } from "@/common/interfaces/form/form.interface";
-import { resetStore, selectCareTakerInfo, selectComorbidityInfo, selectDemographicInfo, selectLocationBeforeAdmission, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setCareTakerInfo, setComorbidityInfo, setDemographicInfo, setLocationBeforeAdmission, setSymptomInfo, setTestInfo, setTreatmentInfo } from "@/store/reducers/addPatientReducer";
+import { selectCareTakerInfo, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setSymptomInfo, setTreatmentInfo, setTestInfo, setCareTakerInfo, resetStore, selectLocationBeforeAdmission, setLocationBeforeAdmission } from "@/store/reducers/addInstanceReducer";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
-const useAddPatientStore = () => {
+export type IAddInstancePayload = Omit<IAddPatientPayload, 'demographic' | "comorbidities">;
+
+const useAddInstaceStore = () => {
     const dispatch = useAppDispatch();
 
-    const demographic = useAppSelector(selectDemographicInfo);
-    const comorbidities = useAppSelector(selectComorbidityInfo);
     const tests = useAppSelector(selectTestInfo);
     const treatments = useAppSelector(selectTreatmentInfo);
     const symptoms = useAppSelector(selectSymptomInfo);
     const careTakers = useAppSelector(selectCareTakerInfo);
     const locationBeforeAdmission = useAppSelector(selectLocationBeforeAdmission);
 
-    const setDemographicForm = (demographicInfo: any) => {
-        dispatch(setDemographicInfo(demographicInfo))
-    }
-
     const setLocation = (location: string) => {
         dispatch(setLocationBeforeAdmission(location))
-    }
-
-    const setComorbidities = (newComorbidity: IComorbidityInfo, index: number) => {
-        const comorbidityInfo = [...comorbidities];
-        comorbidityInfo[index] = newComorbidity;
-
-        dispatch(setComorbidityInfo(comorbidityInfo))
     }
 
     const addSymptomInfo = (newSymptom: ISymptomInfo) => {
@@ -49,19 +38,6 @@ const useAddPatientStore = () => {
         symptomInfo[index] = newSymptom;
 
         dispatch(setSymptomInfo(symptomInfo))
-    }
-
-    const addComorbidity = (newComorbidity: IComorbidityInfo) => {
-        const newComorbidityState = [...comorbidities, newComorbidity];
-
-        dispatch(setComorbidityInfo(newComorbidityState));
-    }
-
-    const removeComorbidity = (index: number) => {
-        const newComorbidityState = [...comorbidities];
-        newComorbidityState.splice(index, 1);
-
-        dispatch(setComorbidityInfo(newComorbidityState));
     }
 
     const setTestInfos = (newTestInfo: ITestInfo, index: number) => {
@@ -172,16 +148,13 @@ const useAddPatientStore = () => {
         dispatch(setCareTakerInfo(newCareTakerInfoState));
     }
 
-    const getAddPatientPayload = (): IAddPatientPayload => {
-        const comorbiditiesPayload = generatePatientComorbidityPayload(comorbidities)
+    const getAddInstancePayload = (): IAddInstancePayload => {
         const symptomsPayload = generatePatientSymptomPayload(symptoms)
 
         return {
-            demographic,
             locationBeforeAdmission,
             tests,
             treatments,
-            comorbidities: comorbiditiesPayload,
             symptoms: symptomsPayload,
             careTakers,
         }
@@ -195,12 +168,6 @@ const useAddPatientStore = () => {
         addSymptomInfo,
         removeSymptomInfo,
         setSymptomInfos
-    }
-
-    const comorbidityFunctions = {
-        addComorbidity,
-        removeComorbidity,
-        setComorbidities
     }
 
     const testFunctions = {
@@ -226,23 +193,19 @@ const useAddPatientStore = () => {
     }
 
     return {
-        demographic,
-        comorbidities,
         tests,
         treatments,
         symptoms,
         careTakers,
         symptomFunctions,
-        comorbidityFunctions,
         testFunctions,
         treatmentFunctions,
         careTakerFunctions,
         locationBeforeAdmission,
         setLocation,
-        setDemographicForm,
-        getAddPatientPayload,
+        getAddInstancePayload,
         resetAddPatientForm
     }
 }
 
-export default useAddPatientStore;
+export default useAddInstaceStore;
