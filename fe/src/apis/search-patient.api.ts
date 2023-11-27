@@ -23,7 +23,7 @@ export const searchPatientApi = async (payload: ISearchPatientPayload): Promise<
             error
         }
     }
-    console.log(data);
+
     return {
         data
     }
