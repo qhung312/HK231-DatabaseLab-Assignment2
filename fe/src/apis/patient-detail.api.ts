@@ -35,18 +35,35 @@ export const fetchPatientTestingInfoApi = async (
 export const fetchReportInfoApi = async (
     payload: IPatientReportInfoPayload
 ): Promise<IPatientReportInfoResponse> => {
-    const mockApiCallResponse: Promise<IPatientReportInfoResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: {
-                    reportInfo: MOCK_PATIENT_REPORT_INFO
-                }
-            }
-            resolve(data);
-        }, 2000)
-    );
+    const { patientId, patientInstanceOrder } = payload;
 
-    return await mockApiCallResponse;
+    const res = await axiosClient.get('patient/' + patientId + '/instance/' + patientInstanceOrder + '/report')
+    const resData = res.data;
+
+    const { error, data } = resData;
+
+    if (error) {
+        return {
+            error
+        }
+    }
+
+    const reportInfo = {
+        ...data?.reportInfo,
+        treatmentInfo: data?.reportInfo?.treatmentInfo?.map((treatment: any) => {
+            return {
+                ...treatment,
+                doctorId: treatment.doctor?.employeeId
+            }
+        })
+    }
+
+    console.log(reportInfo)
+    return {
+        data: {
+            reportInfo
+        }
+    };
 }
 
 export const fetchPatientInstanceApi = async (
