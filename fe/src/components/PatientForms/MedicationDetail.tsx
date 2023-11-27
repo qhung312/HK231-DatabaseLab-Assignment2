@@ -51,6 +51,13 @@ export const MedicationDetail: FC<IMedicationDetailProps> = ({
                 return;
             }
 
+            if (!data?.medications) {
+                notification.error({
+                    message: "Cannot find medication"
+                })
+                setIsLoading(false)
+                return;
+            }
             const { medications } = data;
 
             setMedicationOptions(generateMedicationOptions(medications))

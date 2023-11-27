@@ -78,11 +78,10 @@ export const CareTakerForm = () => {
                 return;
             }
 
-            await new Promise(resolve => setTimeout(resolve, 1000)); // mock loading time
-
             const employees = data?.employees;
 
             if (!employees?.length) {
+                setIsLoading(false);
                 return;
             }
 

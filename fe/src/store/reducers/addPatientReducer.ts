@@ -52,7 +52,6 @@ const addPatientReducer = createSlice({
         },
         resetStore: (state, action) => {
             state = initialState;
-            console.log(state);
         }
     }
 })

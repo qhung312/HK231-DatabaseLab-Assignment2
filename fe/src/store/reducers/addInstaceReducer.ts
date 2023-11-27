@@ -31,7 +31,6 @@ const addInstanceReducer = createSlice({
         },
         resetStore: (state, action) => {
             state = initialState;
-            console.log(state);
         }
     }
 })

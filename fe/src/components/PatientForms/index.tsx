@@ -33,6 +33,7 @@ export const PatientForms = () => {
         }
 
         const payload = getAddPatientPayload();
+        console.log(payload)
 
         notification.open({
             message: `Adding information for new patient`,

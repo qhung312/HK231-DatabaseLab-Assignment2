@@ -34,9 +34,10 @@ export const SymptomForm = () => {
                 })
                 return;
             }
+            console.log(data)
 
-            const { symptoms } = data;
-            setSymptomsOptions(generateSymptomsOptions(symptoms))
+            const { symptoms } = data || {};
+            setSymptomsOptions(generateSymptomsOptions(symptoms || []))
         }
 
         fetchSymptoms();

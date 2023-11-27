@@ -15,7 +15,7 @@ export const TestInfoForm = () => {
         <Col span={24}>
             {
                 tests.map((test, index) => {
-                    const { id, type, ctThreshold, spo2Rate, respiratoryBpm, result } = test;
+                    const { id, type, ctThreshold, spo2Rate, respiratoryBpm, result, timestamp } = test;
 
                     const isPcrOrQuickTest = type == "PCR Test" || type == "Quick Test";
 
@@ -151,6 +151,30 @@ export const TestInfoForm = () => {
                                 </Col>
                             }
                         </Row>
+                        <Row gutter={[16, 16]}>
+                            <Col span={24}>
+                                <Form.Item
+                                    label="Tested on:"
+                                    initialValue={timestamp}
+                                    name={`timestamp_${id}`} // Add the name prop to connect with the form field
+                                    rules={[{ required: true, message: 'Please select enter test date' }]}
+                                >
+                                    <Input
+                                        type="text"
+                                        value={timestamp}
+                                        placeholder="mm/dd/yyyy"
+                                        onChange={(e) => {
+                                            const newTest = {
+                                                ...test,
+                                                timestamp: e.target.value
+                                            }
+
+                                            setTestInfos(newTest, index)
+                                        }}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
                         <Button onClick={() => removeTestInfo(index)} className="flex items-center justify-center" type="primary" danger={true}>
                             <DeleteOutlined />
                         </Button>
@@ -169,5 +193,5 @@ export const TestInfoForm = () => {
                     className="underline"><PlusOutlined />Add test information</div>
             </Row>
         </Col>
-    </Row>
+    </Row >
 }

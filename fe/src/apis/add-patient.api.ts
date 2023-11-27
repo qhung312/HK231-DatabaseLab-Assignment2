@@ -3,85 +3,82 @@ import { IAddPatientPayload, IAddPatientResponse, IFetchComorbidityResponse, IFe
 import axiosClient from "@/common/helper/axios-client";
 
 /**
- * POST: /api/add-patient
+ * POST: /add-patient
  * @param payload 
  * @returns 
  */
 export const addPatientApi = async (payload: IAddPatientPayload): Promise<IAddPatientResponse> => {
-    // const mockApiCallResponse: Promise<IAddPatientResponse> = new Promise((resolve) =>
-    //     setTimeout(() => {
-    //         const data = {
-    //             data: {
-    //                 success: true,
-    //                 patientId: "123456789"
-    //             }
-    //         }
-    //         resolve(data);
-    //     }, 3000)
-    // );
-
     const res = await axiosClient.post('/patient', payload);
 
     const data = res.data as IAddPatientResponse;
-    console.log(data);
-    // const response = axios.post<IAddPatientResponse>("/api/add-patient", payload);
     return data;
 }
 
 /**
- * GET: /api/fetch-symptoms
+ * GET: /fetch-symptoms
  * @returns 
  */
 export const fetchSymptomsApi = async (): Promise<IFetchSymptomResponse> => {
-    const mockApiCallResponse: Promise<IFetchSymptomResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: {
-                    symptoms: MOCK_SYMPTOMS_DATA
-                }
-            }
-            resolve(data);
-        }, 2000)
-    );
+    const res = await axiosClient.get('/symptom');
 
-    return await mockApiCallResponse;
+    const { data, error } = res.data;
+
+    const ret = {
+        data: {
+            symptoms: data ?? []
+        },
+        error: error
+    }
+
+    return ret;
 }
 
 /**
- * GET: /api/fetch-comorbidities
+ * GET: /fetch-comorbidities
  * @returns 
  */
 export const fetchComorbiditiesApi = async (): Promise<IFetchComorbidityResponse> => {
-    const mockApiCallResponse: Promise<IFetchComorbidityResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: {
-                    comorbidities: MOCK_COMORBIDITY_DATA
-                }
-            }
-            resolve(data);
-        }, 2000)
-    );
+    const res = await axiosClient.get('/comorbidity');
 
-    return await mockApiCallResponse;
+    const { data, error } = res.data;
+
+    const ret = {
+        data: {
+            comorbidities: data ?? []
+        },
+        error: error
+    }
+
+    return ret;
 }
 
 /**
- * GET /api/fetch-medication
+ * GET
  * @param payload 
  * @returns 
  */
 export const fetchMedicationApi = async (payload: IFetchMedicationPayload): Promise<IFetchMedicationResponse> => {
-    const mockApiCallResponse: Promise<IFetchMedicationResponse> = new Promise((resolve) =>
-        setTimeout(() => {
-            const data = {
-                data: {
-                    medications: MOCK_MEDICATION_DATA
-                }
-            }
-            resolve(data);
-        }, 1000)
-    );
+    const { medId } = payload
+    const endpoint = "/medication/" + medId;
 
-    return await mockApiCallResponse;
+    const res = await axiosClient.get(endpoint);
+    const resData = res.data;
+
+    let medications = [];
+
+    switch (typeof resData.data) {
+        case "object":
+            medications = [resData.data];
+            break;
+        default:
+            medications = resData.data ?? [];
+            break;
+    }
+
+    return {
+        data: {
+            medications
+        },
+        error: resData.error
+    }
 }

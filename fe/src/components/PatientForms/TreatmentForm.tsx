@@ -70,8 +70,6 @@ export const TreatmentForm = () => {
                 return;
             }
 
-            await new Promise(resolve => setTimeout(resolve, 1000)); // mock delay 1s to show loading
-
             const employess = data?.employees;
 
             if (!employess) {
