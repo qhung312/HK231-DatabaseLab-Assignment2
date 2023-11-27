@@ -2,7 +2,7 @@ import { IAddPatientPayload } from "@/apis/interfaces/add-patient.interface";
 import { generatePatientComorbidityPayload, generatePatientSymptomPayload } from "@/common/helper/generate-payload";
 import { IComorbidityInfo, IMedicationEffect, IMedicationInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
 import { ICareTakerBriefInfo } from "@/common/interfaces/form/form.interface";
-import { selectCareTakerInfo, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setSymptomInfo, setTreatmentInfo, setTestInfo, setCareTakerInfo, resetStore } from "@/store/reducers/addInstaceReducer";
+import { selectCareTakerInfo, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setSymptomInfo, setTreatmentInfo, setTestInfo, setCareTakerInfo, resetStore, selectLocationBeforeAdmission, setLocationBeforeAdmission } from "@/store/reducers/addInstanceReducer";
 import { useAppDispatch, useAppSelector } from "@/store/store";
 
 export type IAddInstancePayload = Omit<IAddPatientPayload, 'demographic' | "comorbidities">;
@@ -14,6 +14,11 @@ const useAddInstaceStore = () => {
     const treatments = useAppSelector(selectTreatmentInfo);
     const symptoms = useAppSelector(selectSymptomInfo);
     const careTakers = useAppSelector(selectCareTakerInfo);
+    const locationBeforeAdmission = useAppSelector(selectLocationBeforeAdmission);
+
+    const setLocation = (location: string) => {
+        dispatch(setLocationBeforeAdmission(location))
+    }
 
     const addSymptomInfo = (newSymptom: ISymptomInfo) => {
         const newSymptomState = [...symptoms, newSymptom];
@@ -147,6 +152,7 @@ const useAddInstaceStore = () => {
         const symptomsPayload = generatePatientSymptomPayload(symptoms)
 
         return {
+            locationBeforeAdmission,
             tests,
             treatments,
             symptoms: symptomsPayload,
@@ -195,6 +201,8 @@ const useAddInstaceStore = () => {
         testFunctions,
         treatmentFunctions,
         careTakerFunctions,
+        locationBeforeAdmission,
+        setLocation,
         getAddPatientPayload,
         resetAddPatientForm
     }

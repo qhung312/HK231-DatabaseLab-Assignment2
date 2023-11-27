@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { TypedUseSelectorHook, useDispatch } from 'react-redux';
 import sessionReducer from './reducers/sessionReducer';
 import addPatientReducer from './reducers/addPatientReducer';
-import addInstaceReducer from './reducers/addInstaceReducer';
+import addInstaceReducer from './reducers/addInstanceReducer';
 
 export const store = configureStore({
   reducer: {

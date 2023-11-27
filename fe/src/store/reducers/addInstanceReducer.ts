@@ -23,6 +23,9 @@ const addInstanceReducer = createSlice({
         setTreatmentInfo: (state, action) => {
             state.treatmentInfo = action.payload;
         },
+        setLocationBeforeAdmission: (state, action) => {
+            state.locationBeforeAdmission = action.payload;
+        },
         setSymptomInfo: (state, action) => {
             state.symptomInfo = action.payload;
         },
@@ -35,11 +38,12 @@ const addInstanceReducer = createSlice({
     }
 })
 
-export const { setTestInfo, setTreatmentInfo, setSymptomInfo, resetStore, setCareTakerInfo } = addInstanceReducer.actions;
+export const { setTestInfo, setTreatmentInfo, setSymptomInfo, resetStore, setCareTakerInfo, setLocationBeforeAdmission } = addInstanceReducer.actions;
 
 export const selectTestInfo = (state: RootState) => state.addInstance.testInfo;
 export const selectTreatmentInfo = (state: RootState) => state.addInstance.treatmentInfo;
 export const selectSymptomInfo = (state: RootState) => state.addInstance.symptomInfo;
 export const selectCareTakerInfo = (state: RootState) => state.addInstance.careTakerInfo;
+export const selectLocationBeforeAdmission = (state: RootState) => state.addInstance.locationBeforeAdmission;
 
 export default addInstanceReducer.reducer;
