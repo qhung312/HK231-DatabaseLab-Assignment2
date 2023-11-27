@@ -1,6 +1,5 @@
 import { FC, useEffect, useState } from "react"
 import { SymptomReport } from "./SymptomReport";
-import { MOCK_PATIENT_REPORT_INFO } from "@/common/mock-data/patient-report";
 import { Collapse, Spin, notification } from "antd";
 import { ComorbidityReport } from "./ComorbidityReport";
 import { TestingReport } from "./TestingReport";
