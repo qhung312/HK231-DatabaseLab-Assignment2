@@ -9,6 +9,6 @@ export const ROUTES = [
     },
     {
         path: '/add/instance',
-        name: 'Add new patients'
+        name: 'Add new admission'
     }
 ];
