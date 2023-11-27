@@ -172,7 +172,6 @@ const PatientDetail = ({ params }: {
                         <Col span={12} >
                             <Select
                                 className="min-w-[150px]"
-                                defaultValue={patientInstanceOptions[0]?.value}
                                 options={patientInstanceOptions}
                                 loading={isLoading}
                                 disabled={isLoading}

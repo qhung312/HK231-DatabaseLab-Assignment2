@@ -148,7 +148,7 @@ const useAddInstaceStore = () => {
         dispatch(setCareTakerInfo(newCareTakerInfoState));
     }
 
-    const getAddPatientPayload = (): IAddInstancePayload => {
+    const getAddInstancePayload = (): IAddInstancePayload => {
         const symptomsPayload = generatePatientSymptomPayload(symptoms)
 
         return {
@@ -203,7 +203,7 @@ const useAddInstaceStore = () => {
         careTakerFunctions,
         locationBeforeAdmission,
         setLocation,
-        getAddPatientPayload,
+        getAddInstancePayload,
         resetAddPatientForm
     }
 }

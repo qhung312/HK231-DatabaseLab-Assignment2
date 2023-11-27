@@ -58,7 +58,6 @@ export const fetchReportInfoApi = async (
         })
     }
 
-    console.log(reportInfo)
     return {
         data: {
             reportInfo

@@ -33,10 +33,9 @@ export const PatientForms = () => {
         }
 
         const payload = getAddPatientPayload();
-        console.log(payload)
 
         notification.open({
-            message: `Adding information for new patient`,
+            message: `Adding new admission`,
         })
 
         const response = await addPatientApi(payload);

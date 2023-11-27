@@ -1,6 +1,7 @@
 import { MOCK_COMORBIDITY_DATA, MOCK_MEDICATION_DATA, MOCK_SYMPTOMS_DATA } from "@/common/mock-data/form-search-result";
-import { IAddPatientPayload, IAddPatientResponse, IFetchComorbidityResponse, IFetchMedicationPayload, IFetchMedicationResponse, IFetchSymptomResponse } from "./interfaces/add-patient.interface";
+import { IAddNewInstancePayload, IAddPatientPayload, IAddPatientResponse, IFetchComorbidityResponse, IFetchMedicationPayload, IFetchMedicationResponse, IFetchSymptomResponse } from "./interfaces/add-patient.interface";
 import axiosClient from "@/common/helper/axios-client";
+import { IAddInstancePayload } from "@/hooks";
 
 /**
  * POST: /add-patient
@@ -81,4 +82,19 @@ export const fetchMedicationApi = async (payload: IFetchMedicationPayload): Prom
         },
         error: resData.error
     }
+}
+
+export const addInstanceApi = async (payload: IAddNewInstancePayload): Promise<IAddPatientResponse> => {
+    const {
+        patientId,
+        ...rest
+    } = payload;
+
+    const body = rest
+
+    const res = await axiosClient.post(`patient/${patientId}/instance`, body);
+
+    const data = res.data as IAddPatientResponse;
+    return data;
+
 }

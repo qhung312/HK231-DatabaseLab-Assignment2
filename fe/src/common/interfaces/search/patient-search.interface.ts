@@ -11,6 +11,23 @@ export interface ISearchBarProps {
     setSearchBarInfo: Dispatch<SetStateAction<SearchBarState>>
 }
 
+export interface ISearchSelectProps {
+    value: string,
+    selectedValue?: string,
+    type: string,
+    typeOptions: {
+        label: string,
+        value: string,
+    }[],
+    valueOptions: {
+        label: string,
+        value: string,
+    }[],
+    placeholder?: string;
+    setSearchBarInfo: Dispatch<SetStateAction<SearchBarState>>;
+    setSelectedOption: Dispatch<SetStateAction<string>>;
+}
+
 export type SearchBarState = Omit<ISearchBarProps, 'setSearchBarInfo' | 'options' | 'placeholder'>
 
 

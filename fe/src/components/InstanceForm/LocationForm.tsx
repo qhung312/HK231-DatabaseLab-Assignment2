@@ -5,7 +5,7 @@ import { Col, Form, Input, InputNumber, Row } from "antd"
 export const LocationBeforeAdmissionForm = () => {
     const { locationBeforeAdmission, setLocation } = useAddInstaceStore();
 
-    return <Row gutter={[16, 16]} className="max-w-[800px]">
+    return <Row gutter={[16, 16]} className="w-[800px]">
         <Col span={24}>
             <Form.Item
                 label="Location before admission"
