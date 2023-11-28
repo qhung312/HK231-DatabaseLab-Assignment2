@@ -1,8 +1,11 @@
 import { TEST_OPTIONS, TEST_RESULT } from "@/common/constants/add-patient-form.constant";
+import locale from 'antd/es/date-picker/locale/en_US';
 import useAddPatientStore from "@/hooks/useAddPatientStore";
-import { Form, Input, Row, Col, Select, Button } from "antd"
+import { Form, Input, Row, Col, Select, Button, DatePicker } from "antd"
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { uuid } from "uuidv4";
+import dayjs from 'dayjs';
+
 export const TestInfoForm = () => {
     const { tests, testFunctions } = useAddPatientStore();
 
@@ -155,23 +158,19 @@ export const TestInfoForm = () => {
                             <Col span={24}>
                                 <Form.Item
                                     label="Tested on:"
-                                    initialValue={timestamp}
+                                    initialValue={timestamp ? dayjs(timestamp, 'YYYY-MM-DD') : undefined}
                                     name={`timestamp_${id}`} // Add the name prop to connect with the form field
                                     rules={[{ required: true, message: 'Please select enter test date' }]}
                                 >
-                                    <Input
-                                        type="text"
-                                        value={timestamp}
-                                        placeholder="mm/dd/yyyy"
-                                        onChange={(e) => {
+                                    <DatePicker
+                                        defaultValue={timestamp ? dayjs(timestamp, 'YYYY-MM-DD') : undefined}
+                                        locale={locale} onChange={(_, dateString) => {
                                             const newTest = {
                                                 ...test,
-                                                timestamp: e.target.value
+                                                timestamp: dateString
                                             }
-
                                             setTestInfos(newTest, index)
-                                        }}
-                                    />
+                                        }} />
                                 </Form.Item>
                             </Col>
                         </Row>

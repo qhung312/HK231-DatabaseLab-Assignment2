@@ -1,6 +1,6 @@
 import useAddPatientStore from "@/hooks/useAddPatientStore";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Col, Form, Input, Row, Select, notification } from "antd"
+import { Button, Col, DatePicker, Form, Input, Row, Select, notification } from "antd"
 import { uuid } from "uuidv4";
 import { MedicationForm } from "./MedicationForm";
 import { useEffect, useState } from "react";
@@ -10,6 +10,9 @@ import { useDebounce } from "@/hooks";
 import { IEmployeeBriefInfo } from "@/apis/interfaces/employee-detail.interface";
 import { searchEmployeeApi } from "@/apis";
 import useAddInstaceStore from "@/hooks/useAddInstanceStore";
+import locale from 'antd/es/date-picker/locale/en_US';
+import dayjs from "dayjs";
+
 
 const { TextArea } = Input;
 export const TreatmentForm = () => {
@@ -106,45 +109,49 @@ export const TreatmentForm = () => {
                             <Col span={12}>
                                 <Form.Item
                                     label="Start date:"
-                                    initialValue={startDate}
-                                    name={`start_date_${treatmentId}`} // Add the name prop to connect with the form field
+                                    initialValue={startDate ? dayjs(startDate, 'YYYY-MM-DD') : undefined}
+                                    name={`instance_start_date${treatmentId}`} // Add the name prop to connect with the form field
                                     rules={[{ required: true, message: 'Please select enter a start date' }]}
                                 >
-                                    <Input
-                                        type="text"
-                                        value={startDate}
-                                        placeholder="mm/dd/yyyy"
-                                        onChange={(e) => {
+                                    <DatePicker
+                                        className="w-full"
+                                        placeholder="Select start day"
+                                        defaultValue={startDate ? dayjs(startDate, 'YYYY-MM-DD') : undefined}
+                                        locale={locale}
+                                        onChange={(_, dateString) => {
+                                            const [year, month, date] = dateString.split('-');
+
                                             const newTreatment = {
                                                 ...treatment,
-                                                startDate: e.target.value
+                                                startDate: dateString
                                             }
 
                                             setTreatmentInfos(newTreatment, index)
-                                        }}
-                                    />
+                                        }} />
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
                                 <Form.Item
                                     label="End date:"
-                                    initialValue={endDate}
-                                    name={`end${treatmentId}`} // Add the name prop to connect with the form field
+                                    initialValue={endDate ? dayjs(endDate, 'DD-MM-YYYY') : undefined}
+                                    name={`instance_end_date${treatmentId}`} // Add the name prop to connect with the form field
                                     rules={[{ required: true, message: 'Please select enter an end date' }]}
                                 >
-                                    <Input
-                                        type="text"
-                                        value={endDate}
-                                        placeholder="mm/dd/yyyy"
-                                        onChange={(e) => {
+                                    <DatePicker
+                                        className="w-full"
+                                        placeholder="Select end day"
+                                        defaultValue={endDate ? dayjs(endDate, 'DD-MM-YYYY') : undefined}
+                                        locale={locale}
+                                        onChange={(_, dateString) => {
+                                            const [year, month, date] = dateString.split('-');
+
                                             const newTreatment = {
                                                 ...treatment,
-                                                endDate: e.target.value
+                                                endDate: dateString
                                             }
-
+                                            console.log(newTreatment.endDate)
                                             setTreatmentInfos(newTreatment, index)
-                                        }}
-                                    />
+                                        }} />
                                 </Form.Item>
                             </Col>
                         </Row>
