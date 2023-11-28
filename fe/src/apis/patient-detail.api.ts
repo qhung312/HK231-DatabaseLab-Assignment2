@@ -68,32 +68,42 @@ export const fetchReportInfoApi = async (
 export const fetchPatientInstanceApi = async (
     payload: IPatientInstanceInfoPayload
 ): Promise<IPatientInstanceInfoResponse> => {
-    const { patientId } = payload;
+    try {
+        const { patientId } = payload;
 
-    const res = await axiosClient.get('patient/' + patientId + '/instance')
-    const resData = res.data;
+        const res = await axiosClient.get('patient/' + patientId + '/instance')
+        const resData = res.data;
 
-    const { error, data } = resData;
+        const { error, data } = resData;
 
-    if (error) {
+        if (error) {
+            return {
+                error
+            }
+        }
+
+        const instanceInfo = (data?.instanceInfo || []).map((instance: any) => {
+            return {
+                ...instance,
+                patientOrder: instance.patientInstanceOrder,
+                assignedNurseId: instance.assignedNurse?.employeeId
+            }
+        })
+
         return {
-            error
+            data: {
+                instanceInfo
+            }
+        };
+    }
+    catch (err: any) {
+        const errorMessage = err?.response?.data?.error || 'Something went wrong';
+
+        return {
+            error: errorMessage
         }
     }
 
-    const instanceInfo = (data?.instanceInfo || []).map((instance: any) => {
-        return {
-            ...instance,
-            patientOrder: instance.patientInstanceOrder,
-            assignedNurseId: instance.assignedNurse?.employeeId
-        }
-    })
-
-    return {
-        data: {
-            instanceInfo
-        }
-    };
 }
 
 /**
@@ -101,24 +111,33 @@ export const fetchPatientInstanceApi = async (
  * @param payload 
  */
 export const fetchPatientDemographicInfoApi = async (payload: IPatientDemographicInfoPayload): Promise<IPatientDemographicInfoResponse> => {
-    const { patientId } = payload;
+    try {
+        const { patientId } = payload;
 
-    const res = await axiosClient.get('patient/' + patientId)
+        const res = await axiosClient.get('patient/' + patientId)
 
-    const resData = res.data;
+        const resData = res.data;
 
-    const { error, data } = resData;
+        const { error, data } = resData;
 
-    const demographicInfo = {
-        ...data.demographicInfo,
-        id: data.demographicInfo.identityNumber,
-        address: data.demographicInfo.addr,
-    };
+        const demographicInfo = {
+            ...data.demographicInfo,
+            id: data.demographicInfo.identityNumber,
+            address: data.demographicInfo.addr,
+        };
 
-    return {
-        data: {
-            demographicInfo: demographicInfo
-        },
-        error
+        return {
+            data: {
+                demographicInfo: demographicInfo
+            },
+            error
+        }
+    }
+    catch (err: any) {
+        const errorMessage = err?.response?.data?.error || 'Something went wrong';
+
+        return {
+            error: errorMessage
+        }
     }
 }

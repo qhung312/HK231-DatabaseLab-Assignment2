@@ -21,10 +21,10 @@ export const fetchUserSession = async (): Promise<IUserSessionResponse> => {
             }
         }
     }
-    catch (err) {
-        console.log(err)
+    catch (err: any) {
+        const errorMessage = err?.response?.data?.error || 'Something went wrong';
         return {
-            error: `${JSON.stringify(err)}` || 'Something went wrong',
+            error: errorMessage || 'Something went wrong',
         }
     }
 }
@@ -55,9 +55,11 @@ export const signUpApi = async (payload: IUserSignUpPayload): Promise<IUserSignU
             error: error,
         }
     }
-    catch (err) {
+    catch (err: any) {
+        const errorMessage = err?.response?.data?.error || 'Something went wrong';
+
         return {
-            error: `${JSON.stringify(err)}` || 'Something went wrong',
+            error: errorMessage
         }
     }
 }
@@ -90,8 +92,10 @@ export const signInApi = async (payload: IUserLoginPayload): Promise<IUserLoginR
         }
     }
     catch (err: any) {
+        const errorMessage = err?.response?.data?.error || 'Something went wrong';
+
         return {
-            error: err?.response?.data?.error as string || 'Something went wrong',
+            error: errorMessage
         }
     }
 
