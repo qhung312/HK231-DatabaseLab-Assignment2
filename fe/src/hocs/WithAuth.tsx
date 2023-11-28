@@ -32,16 +32,21 @@ const withAuth = (WrappedComponent: React.ComponentType<WithAuthProps>) => {
                     })
                     router.push('/signin');
                 }
+                else {
+                    setUserSession({
+                        username: userInfo.username
+                    })
+                }
 
                 setLoading(false);
             };
 
             checkUserSession();
-        }, [user, router, cookies, setUserSession]);
+        }, []);
 
-        if (!user) {
-            return <Spin />
-        }
+        // if (!user) {
+        //     return <Spin />
+        // }
         // Render the wrapped component if the user session exists and not in a loading state
         return loading ? <Spin></Spin> : <WrappedComponent {...props} />;
     };

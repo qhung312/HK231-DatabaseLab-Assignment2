@@ -98,5 +98,13 @@ export const signInApi = async (payload: IUserLoginPayload): Promise<IUserLoginR
             error: errorMessage
         }
     }
+}
 
+export const signOutApi = async (): Promise<void> => {
+    try {
+        await axiosClient.post('/auth/logout');
+    }
+    catch (err: any) {
+        throw new Error(err?.response?.data?.error || 'Something went wrong');
+    }
 }

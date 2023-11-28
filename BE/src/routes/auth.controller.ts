@@ -69,6 +69,20 @@ authController.post('/signup', async (req, res: CustomResponse) => {
   }
 });
 
+authController.post('/logout', async (req, res: CustomResponse) => {
+  try {
+    req.session.destroy((err) => {
+      if (err) {
+        throw new Error(err.message);
+      }
+    });
+
+    res.composer.ok('Logged out');
+  } catch (error) {
+    res.composer.badRequest(error.message);
+  }
+});
+
 authController.get('/session', async (req, res: CustomResponse) => {
   try {
     const username = _.get(req.session, 'username');
