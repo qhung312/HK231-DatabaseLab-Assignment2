@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS patient_instance (
     unique_number VARCHAR(10) NOT NULL REFERENCES patient(unique_number),
     location_before_admission VARCHAR(255) NOT NULL,
     admission_time TIMESTAMP NOT NULL,
-    nurse_assigned VARCHAR(9) NOT NULL REFERENCES employee(e_id),
+    nurse_assigned VARCHAR(10) NOT NULL REFERENCES employee(e_id),
     patient_order INT NOT NULL, -- Order of admission
     is_warning BOOLEAN NOT NULL DEFAULT FALSE,
     PRIMARY KEY (unique_number, patient_order)
@@ -187,7 +187,7 @@ DROP TABLE IF EXISTS medication_effect CASCADE;
 
 CREATE TABLE IF NOT EXISTS medication_effect (
     medication_id VARCHAR(10) NOT NULL REFERENCES medication(medication_id),
-	medication_effect_id VARCHAR(255),
+	medication_effect_id VARCHAR(5),
     effect VARCHAR(255) NOT NULL,
 	PRIMARY KEY (medication_id, medication_effect_id)
 );
@@ -205,8 +205,8 @@ CREATE TABLE IF NOT EXISTS medication_effect (
 DROP TABLE IF EXISTS manages CASCADE;
 
 CREATE TABLE IF NOT EXISTS manages (
-	e_id VARCHAR(10) NOT NULL PRIMARY KEY,
-	manager_id VARCHAR(10) NOT NULL
+	e_id VARCHAR(10) NOT NULL PRIMARY KEY REFERENCES employee(e_id),
+	manager_id VARCHAR(10) NOT NULL REFERENCES employee(e_id)
 );
 
 CREATE OR REPLACE FUNCTION check_manager_assigned()
@@ -271,7 +271,6 @@ CREATE TABLE IF NOT EXISTS moves (
     move_time TIMESTAMP NOT NULL,
     reason VARCHAR(255) NOT NULL,
     PRIMARY KEY (unique_number, patient_order, move_time),
-
     FOREIGN KEY (building_id, floor_id, room_id) REFERENCES room(building_id, floor_id, room_id),
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
@@ -283,15 +282,13 @@ CREATE TABLE IF NOT EXISTS moves (
 DROP TABLE IF EXISTS admits CASCADE;
 
 CREATE TABLE IF NOT EXISTS admits (
-    unique_number VARCHAR(10) NOT NULL,
-    patient_order INT NOT NULL,
+    e_id VARCHAR(10) NOT NULL REFERENCES employee(e_id),
     building_id VARCHAR(5) NOT NULL,
     floor_id VARCHAR(5) NOT NULL,
     room_id VARCHAR(5) NOT NULL,
-    e_id VARCHAR(10) NOT NULL REFERENCES employee(e_id),
-
+    unique_number VARCHAR(10) NOT NULL,
+    patient_order INT NOT NULL,
     PRIMARY KEY (unique_number, patient_order),
-
     FOREIGN KEY (building_id, floor_id, room_id) REFERENCES room(building_id, floor_id, room_id),
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
@@ -306,7 +303,8 @@ CREATE TABLE IF NOT EXISTS volunteer_takes_care (
     e_id VARCHAR(10) NOT NULL REFERENCES employee(e_id),
     unique_number VARCHAR(10) NOT NULL,
     patient_order INT NOT NULL,
-    FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
+    PRIMARY KEY (e_id, unique_number, patient_order),
+	FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
 
 -- Ensure that e_id of volunteer_takes_care points to a volunteer
@@ -368,16 +366,13 @@ EXECUTE PROCEDURE check_discharge();
 DROP TABLE IF EXISTS treats CASCADE;
 
 CREATE TABLE IF NOT EXISTS treats (
+    e_id VARCHAR(10) NOT NULL REFERENCES employee(e_id),
     unique_number VARCHAR(10) NOT NULL,
     patient_order INT NOT NULL,
-
-    e_id VARCHAR(10) NOT NULL REFERENCES employee(e_id),
     result VARCHAR(255) NOT NULL,
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
-
     PRIMARY KEY (unique_number, patient_order, e_id, start_time, end_time),
-
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
 
@@ -410,9 +405,8 @@ CREATE TABLE IF NOT EXISTS medication_in_treatment (
     e_id VARCHAR(10) NOT NULL,
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
-
     medication_id VARCHAR(10) NOT NULL REFERENCES medication(medication_id),
-
+	PRIMARY KEY (unique_number, patient_order, e_id, start_time, end_time, medication_id),
     FOREIGN KEY (unique_number, patient_order, e_id, start_time, end_time) REFERENCES treats(unique_number, patient_order, e_id, start_time, end_time)
 );
 
