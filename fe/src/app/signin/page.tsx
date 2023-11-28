@@ -1,21 +1,22 @@
 'use client'
-import { COOKIES_AUTH } from "@/common/constants/auth";
+import { fetchUserSession } from "@/apis";
 import { SignIn } from "@/components/Auth";
-import { useCookies } from "next-client-cookies";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const SignInPage = () => {
     const router = useRouter();
 
-    const cookies = useCookies();
-
     useEffect(() => {
-        const username = cookies.get(COOKIES_AUTH);
+        const fetchSession = async () => {
+            const { userInfo } = await fetchUserSession()
 
-        if (username) {
-            router.push('/')
+            if (userInfo?.username) {
+                router.push('/')
+            }
         }
+
+        fetchSession()
     }, [])
 
     return (

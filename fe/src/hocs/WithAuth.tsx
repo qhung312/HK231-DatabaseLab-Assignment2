@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSessionStore } from '@/hooks';
 import { useCookies } from 'next-client-cookies';
-import { COOKIES_AUTH } from '@/common/constants/auth';
-import { Spin } from 'antd'
+import { Spin, notification } from 'antd'
+import { fetchUserSession } from '@/apis';
 
 interface WithAuthProps {
     // TODO: add custom auth props
@@ -20,15 +20,16 @@ const withAuth = (WrappedComponent: React.ComponentType<WithAuthProps>) => {
 
         useEffect(() => {
             const checkUserSession = async () => {
-                const username = cookies.get(COOKIES_AUTH);
+                // const username = cookies.get(COOKIES_AUTH);
+                const { userInfo } = await fetchUserSession()
+                setUserSession({
+                    username: ""
+                })
 
-                if (username && !user) {
-                    setUserSession({
-                        username,
-                    });
-                }
-
-                if (!(username || user)) {
+                if (!userInfo?.username) {
+                    notification.error({
+                        message: 'Please log in again'
+                    })
                     router.push('/signin');
                 }
 
