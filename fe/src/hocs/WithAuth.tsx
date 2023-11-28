@@ -22,13 +22,13 @@ const withAuth = (WrappedComponent: React.ComponentType<WithAuthProps>) => {
             const checkUserSession = async () => {
                 // const username = cookies.get(COOKIES_AUTH);
                 const { userInfo } = await fetchUserSession()
-                setUserSession({
-                    username: ""
-                })
 
                 if (!userInfo?.username) {
                     notification.error({
                         message: 'Please log in again'
+                    })
+                    setUserSession({
+                        username: ""
                     })
                     router.push('/signin');
                 }
