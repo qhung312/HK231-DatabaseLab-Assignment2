@@ -1,4 +1,3 @@
-import { PATIENT_SEARCH_RESULT } from "@/common/mock-data/patient-search-result";
 import { ISearchPatientPayload, ISearchPatientResponse } from "./interfaces/search-patient.interface";
 import axiosClient from "@/common/helper/axios-client";
 import { notification } from "antd";
@@ -21,7 +20,6 @@ export const searchPatientApi = async (payload: ISearchPatientPayload): Promise<
         const { error, data } = resData;
 
         if (error) {
-            console.log(resData)
             notification.error({ message: error });
             return {
                 error

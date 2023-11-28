@@ -1,5 +1,4 @@
 import { ISearchEmployeePayload, ISearchEmployeeResponse } from "./interfaces/employee-detail.interface";
-import { DOCTORS_SEARCH_RESULT, NURSES_SEARCH_RESULT } from "@/common/mock-data/employee-search-result";
 import axiosClient from "@/common/helper/axios-client";
 /**
  * /employee/search?type=type&role=role&value=value

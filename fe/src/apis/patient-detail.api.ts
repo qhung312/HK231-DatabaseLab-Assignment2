@@ -1,8 +1,5 @@
-import { MOCK_DEMOGRAPHIC_DATA, MOCK_TEST_INFO_DATA } from "@/common/mock-data/patient-test-information";
+import { MOCK_TEST_INFO_DATA } from "@/common/mock-data/patient-test-information";
 import { IPatientDemographicInfoPayload, IPatientDemographicInfoResponse, IPatientInstanceInfoPayload, IPatientInstanceInfoResponse, IPatientReportInfoPayload, IPatientReportInfoResponse, IPatientTestingInfoPayload, IPatientTestingInfoResponse } from "./interfaces/patient-detail.interface";
-import { MOCK_PATIENT_REPORT_INFO } from "@/common/mock-data/patient-report";
-import { MOCK_PATIENT_INSTANCE_INFO } from "@/common/mock-data/patient-instance";
-import axios from "axios";
 import axiosClient from "@/common/helper/axios-client";
 
 /**
