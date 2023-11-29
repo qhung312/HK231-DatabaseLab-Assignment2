@@ -1,9 +1,10 @@
 import { IAddPatientPayload } from "@/apis/interfaces/add-patient.interface";
 import { generatePatientComorbidityPayload, generatePatientSymptomPayload } from "@/common/helper/generate-payload";
-import { IComorbidityInfo, IMedicationEffect, IMedicationInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
+import { IComorbidityInfo, IMedicationEffect, IMedicationInfo, IPeriodInfo, ISymptomInfo, ITestInfo, ITreatmenInfo } from "@/common/interfaces/form/form-detail.interface";
 import { ICareTakerBriefInfo } from "@/common/interfaces/form/form.interface";
 import { selectCareTakerInfo, selectSymptomInfo, selectTestInfo, selectTreatmentInfo, setSymptomInfo, setTreatmentInfo, setTestInfo, setCareTakerInfo, resetStore, selectLocationBeforeAdmission, setLocationBeforeAdmission } from "@/store/reducers/addInstanceReducer";
 import { useAppDispatch, useAppSelector } from "@/store/store";
+import { uuid } from "uuidv4";
 
 export type IAddInstancePayload = Omit<IAddPatientPayload, 'demographic' | "comorbidities">;
 
@@ -38,6 +39,42 @@ const useAddInstaceStore = () => {
         symptomInfo[index] = newSymptom;
 
         dispatch(setSymptomInfo(symptomInfo))
+    }
+
+    const addNewPeriod = (index: number) => {
+        const clonedSymtoms = structuredClone(symptoms);
+
+        const newPeriod: IPeriodInfo = {
+            periodId: uuid(),
+            startDate: "",
+            endDate: "",
+            seriousness: ""
+        }
+
+        if (clonedSymtoms[index].periods?.length) {
+            clonedSymtoms[index].periods?.push(newPeriod);
+        }
+        else {
+            clonedSymtoms[index].periods = [newPeriod];
+        }
+
+        dispatch(setSymptomInfo(clonedSymtoms))
+    }
+
+    const removePeriod = (periodIndex: number, symptomIndex: number) => {
+        const clonedSymtoms = structuredClone(symptoms);
+
+        clonedSymtoms[symptomIndex].periods?.splice(periodIndex, 1);
+
+        dispatch(setSymptomInfo(clonedSymtoms))
+    }
+
+    const setPeriod = (period: IPeriodInfo, periodIndex: number, symptomIndex: number) => {
+        const clonedSymtoms = structuredClone(symptoms);
+
+        clonedSymtoms[symptomIndex].periods?.splice(periodIndex, 1, period);
+
+        dispatch(setSymptomInfo(clonedSymtoms))
     }
 
     const setTestInfos = (newTestInfo: ITestInfo, index: number) => {
@@ -192,6 +229,12 @@ const useAddInstaceStore = () => {
         setNurseInfo
     }
 
+    const periodFunctions = {
+        addNewPeriod,
+        removePeriod,
+        setPeriod
+    }
+
     return {
         tests,
         treatments,
@@ -202,6 +245,7 @@ const useAddInstaceStore = () => {
         treatmentFunctions,
         careTakerFunctions,
         locationBeforeAdmission,
+        periodFunctions,
         setLocation,
         getAddInstancePayload,
         resetAddPatientForm
