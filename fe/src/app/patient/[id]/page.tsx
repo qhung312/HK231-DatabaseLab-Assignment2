@@ -203,7 +203,7 @@ const PatientDetail = ({ params }: {
                         </Col>
 
                         <Col span={12}>
-                            <p>Status: <span className={statusMapper(selectedPatientInstance?.isWarning)}>{selectedPatientInstance?.isWarning ? "Warning" : "Normal"}</span></p>
+                            <p>Health status: <span className={statusMapper(selectedPatientInstance?.isWarning)}>{selectedPatientInstance?.isWarning ? "Warning" : "Normal"}</span></p>
                         </Col>
 
                         <Col span={24}>
