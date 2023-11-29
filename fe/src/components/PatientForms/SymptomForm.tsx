@@ -1,15 +1,15 @@
 import useAddPatientStore from "@/hooks/useAddPatientStore";
-import { Button, Col, Form, Input, Row, Select, notification } from "antd"
+import { Button, Col, Form, Row, Select, notification } from "antd"
 import { DeleteOutlined } from "@ant-design/icons";
 import { uuid } from "uuidv4";
 import { PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { generateSymptomsOptions } from "@/common/helper/generate-options";
-import { MOCK_SYMPTOMS_DATA } from "@/common/mock-data/form-search-result";
 import { fetchSymptomsApi } from "@/apis";
+import { PeriodForm } from "./PeriodForm";
 
 export const SymptomForm = () => {
-    const { symptoms, symptomFunctions } = useAddPatientStore();
+    const { symptoms, symptomFunctions, periodFunctions } = useAddPatientStore();
     const [symptomsOptions, setSymptomsOptions] = useState([] as any);
 
     const { addSymptomInfo, removeSymptomInfo, setSymptomInfos } = symptomFunctions;
@@ -22,6 +22,7 @@ export const SymptomForm = () => {
 
         setSymptomInfos(newSymptom, index);
     };
+
 
     useEffect(() => {
         const fetchSymptoms = async () => {
@@ -54,9 +55,9 @@ export const SymptomForm = () => {
         <Col span={24}>
             {
                 symptoms.map((symptom, index) => {
-                    const { id, seriousness, symptomId } = symptom
+                    const { id, periods, symptomId } = symptom
 
-                    return <div className="border-[1px] p-4 rounded-[8px] mb-[12px]" key={id}>
+                    return <div className="border-[1px] p-4 rounded-[8px]" key={id}>
                         <Row gutter={[16, 16]}>
                             <Col span={24}>
                                 <Form.Item
@@ -75,30 +76,15 @@ export const SymptomForm = () => {
                                 </Form.Item>
                             </Col>
                         </Row>
-                        <Row gutter={[16, 16]}>
-                            <Col span={24}>
-                                <Form.Item
-                                    label="Seriousness"
-                                    initialValue={seriousness}
-                                    name={`symptom_seriousness_${id}`} // Add the name prop to connect with the form field
-                                    rules={[{ required: true, message: 'Please enter the seriousness status' }]}
-                                >
-                                    <Input
-                                        type="text"
-                                        value={seriousness}
-                                        onChange={(e) => handleSymptomChange(e.target.value, 'seriousness', index)}
-                                    />
-                                </Form.Item>
-                            </Col>
-                        </Row>
-                        <Button onClick={() => removeSymptomInfo(index)} className="flex items-center justify-center" type="primary" danger={true}>
+                        <PeriodForm periods={periods} symptomIndex={index} />
+                        <Button onClick={() => removeSymptomInfo(index)} className="flex items-center justify-center] mt-[12px]" type="primary" danger={true}>
                             <DeleteOutlined />
                         </Button>
                     </div>
                 })
             }
             <Row
-                className="flex items-start justify-start w-max hover:cursor-pointer mb-[24px]"
+                className="flex items-start justify-start w-max hover:cursor-pointer mt-[12px] mb-[24px]"
                 gutter={[16, 16]}
             >
                 <div
@@ -106,10 +92,11 @@ export const SymptomForm = () => {
                         id: uuid(),
                         symptomId: "",
                         description: "",
-                        seriousness: ""
+                        periods: []
                     })}
 
-                    className="underline"><PlusOutlined />Add symptom</div>
+                    className="underline"><PlusOutlined />Add symptom
+                </div>
             </Row>
         </Col>
     </Row>

@@ -7,11 +7,18 @@ export interface IDemographicInfo {
     phone: string;
 }
 
+export interface IPeriodInfo {
+    periodId: string;
+    startDate: string;
+    endDate: string;
+    seriousness: string;
+}
+
 export interface ISymptomInfo {
     id?: string | number; // unique id for frontend or has_symptom (if needed)
     symptomId: string | number;
     description: string;
-    seriousness?: string;
+    periods?: IPeriodInfo[];
 }
 
 export interface IComorbidityInfo {
