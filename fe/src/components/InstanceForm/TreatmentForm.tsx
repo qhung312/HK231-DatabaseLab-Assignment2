@@ -87,12 +87,7 @@ export const TreatmentForm = () => {
             setIsLoading(false);
         }
 
-        if (debouncedSearchBarValue) {
-            searchDoctor();
-        }
-        else {
-            setSearchDoctorOptions([]);
-        }
+        searchDoctor();
     }, [debouncedSearchBarType, debouncedSearchBarValue])
 
     return <Row gutter={[16, 16]} className="max-w-[800px]">
@@ -119,8 +114,6 @@ export const TreatmentForm = () => {
                                         defaultValue={startDate ? dayjs(startDate, 'YYYY-MM-DD') : undefined}
                                         locale={locale}
                                         onChange={(_, dateString) => {
-                                            const [year, month, date] = dateString.split('-');
-
                                             const newTreatment = {
                                                 ...treatment,
                                                 startDate: dateString
@@ -143,13 +136,11 @@ export const TreatmentForm = () => {
                                         defaultValue={endDate ? dayjs(endDate, 'DD-MM-YYYY') : undefined}
                                         locale={locale}
                                         onChange={(_, dateString) => {
-                                            const [year, month, date] = dateString.split('-');
-
                                             const newTreatment = {
                                                 ...treatment,
                                                 endDate: dateString
                                             }
-                                            console.log(newTreatment.endDate)
+
                                             setTreatmentInfos(newTreatment, index)
                                         }} />
                                 </Form.Item>
