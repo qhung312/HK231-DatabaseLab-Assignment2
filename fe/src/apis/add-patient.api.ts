@@ -76,10 +76,21 @@ export const fetchComorbiditiesApi = async (): Promise<IFetchComorbidityResponse
  */
 export const fetchMedicationApi = async (payload: IFetchMedicationPayload): Promise<IFetchMedicationResponse> => {
     try {
-        const { medId } = payload
-        const endpoint = "/medication/" + medId;
+        const { name, id } = payload
 
-        const res = await axiosClient.get(endpoint);
+        const paramsExist = name || id;
+
+        const endpoint = "/medication" + `${paramsExist ? "/search" : ""}`;
+
+        const params = {
+            name,
+            id
+        }
+
+        const res = await axiosClient.get(endpoint, {
+            params: paramsExist ? params : undefined
+        });
+
         const resData = res.data;
 
         let medications = [];

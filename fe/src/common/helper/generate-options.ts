@@ -16,7 +16,7 @@ export const generateComorbiditiesOptions = (comorbidities: IComorbidityInfo[]) 
 
 export const generateMedicationOptions = (medications: IMedicationInfo[]) => {
     return medications.map((medication) => ({
-        label: medication.medId,
+        label: medication.medName,
         value: medication.medId,
         ...medication
     }));

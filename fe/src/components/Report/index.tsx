@@ -44,7 +44,6 @@ export const PatientReport: FC<IReportProps> = ({ patientId, patientInstanceOrde
             if (!data?.reportInfo) return;
 
             setReport(data.reportInfo);
-            console.log(data.reportInfo);
             setIsLoading(false);
         }
 
