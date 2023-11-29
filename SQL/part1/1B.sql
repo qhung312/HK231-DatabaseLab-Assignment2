@@ -11,13 +11,13 @@ VALUES ('1', '2153414', 'Truong Quoc Hung', 'Male', 'Ho Chi Minh City', '0111222
 
 -- insert employee
 INSERT INTO employee (e_id, e_name, e_type, is_head)
-VALUES ('1', 'Doctor 1', 'Doctor', TRUE),
-('2', 'Doctor 2', 'Doctor', FALSE),
-('3', 'Nurse 1', 'Nurse', FALSE),
-('4', 'Nurse 2', 'Nurse', FALSE),
-('5', 'Staff 1', 'Staff', FALSE),
-('6', 'Volunteer 1', 'Volunteer', FALSE),
-('7', 'Manager 1', 'Manager', FALSE);
+VALUES ('1', 'Doctor A', 'Doctor', TRUE),
+('2', 'Doctor B', 'Doctor', FALSE),
+('3', 'Nurse A', 'Nurse', FALSE),
+('4', 'Nurse B', 'Nurse', FALSE),
+('5', 'Staff A', 'Staff', FALSE),
+('6', 'Volunteer A', 'Volunteer', FALSE),
+('7', 'Manager A', 'Manager', FALSE);
 
 -- manages
 INSERT INTO manages (e_id, manager_id)
@@ -135,12 +135,19 @@ VALUES ('1', '1', 'Not very serious'),
 ('3', '3', 'Not very serious');
 
 -- has_symptom
-INSERT INTO has_symptom (s_id, unique_number, patient_order, seriousness)
-VALUES ('1', '1', '1', 'Serious'),
-('2', '1', '1', 'Harmless'),
-('3', '2', '1', 'Harmless'),
-('4', '3', '1', 'Harmless'),
-('5', '4', '1', 'Very Serious');
+INSERT INTO has_symptom (s_id, unique_number, patient_order)
+VALUES ('1', '1', '1'),
+('2', '1', '1'),
+('3', '2', '1'),
+('4', '3', '1'),
+('5', '4', '1');
+
+INSERT INTO symptom_period (s_id, unique_number, patient_order, start_date, end_date, seriousness)
+VALUES ('1', '1', '1', '12/3/2023', '12/4/2023', 'Very Serious'),
+('2', '1', '1', '12/3/2023', '12/4/2023', 'Harmless'),
+('3', '2', '1', '12/3/2023', '12/4/2023', 'May be serious'),
+('4', '3', '1', '12/3/2023', '12/4/2023', 'May be serious'),
+('5', '4', '1', '12/3/2023', '12/4/2023', 'Extremely serious');
 
 -- medication
 INSERT INTO medication (medication_id, medication_name, exp_date, price)

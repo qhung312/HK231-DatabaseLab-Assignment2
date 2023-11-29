@@ -250,8 +250,23 @@ CREATE TABLE IF NOT EXISTS has_symptom (
     s_id VARCHAR(10) NOT NULL REFERENCES symptom(s_id),
     unique_number VARCHAR(10) NOT NULL,
     patient_order INT NOT NULL,
-	seriousness VARCHAR(255) NOT NULL,
     PRIMARY KEY (unique_number, patient_order, s_id),
+    FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
+);
+
+DROP TABLE IF EXISTS symptom_period CASCADE;
+
+CREATE TABLE IF NOT EXISTS symptom_period (
+    s_id VARCHAR(10) NOT NULL REFERENCES symptom(s_id),
+    unique_number VARCHAR(10) NOT NULL,
+    patient_order INT NOT NULL,
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    seriousness VARCHAR(255) NOT NULL,
+
+    PRIMARY KEY (unique_number, patient_order, s_id, start_date, end_date),
+    FOREIGN KEY (unique_number, patient_order, s_id) REFERENCES has_symptom(unique_number, patient_order, s_id),
+
     FOREIGN KEY (unique_number, patient_order) REFERENCES patient_instance(unique_number, patient_order)
 );
 
