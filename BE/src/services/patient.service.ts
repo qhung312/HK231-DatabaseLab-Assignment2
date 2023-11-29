@@ -1,6 +1,4 @@
-import { randomUUID } from 'crypto';
-
-import _ from 'lodash';
+import _, { toNumber } from 'lodash';
 
 import pool from '../database/database_connection';
 import AddPatientInstanceDto from '../dto/add-patient-instance.dto';
@@ -128,6 +126,21 @@ async function getMaximumOrderOfPatient(patientId: string): Promise<number> {
   return _.first(rows).maxPatientOrder;
 }
 
+async function getMaxPatientId(): Promise<number> {
+  const { rows } = await pool.query(
+    `
+  SELECT unique_number AS "patientId"
+  FROM patient
+  `
+  );
+
+  if (_.isEmpty(rows)) {
+    return 0;
+  }
+
+  return _.max(_.map(rows, (row) => toNumber(row.patientId)));
+}
+
 async function addPatientInstance(patientId: string, info: AddPatientInstanceDto) {
   const patientOrder = (await getMaximumOrderOfPatient(patientId)) + 1;
 
@@ -157,7 +170,8 @@ async function addPatientInstance(patientId: string, info: AddPatientInstanceDto
 
 async function addPatient(info: AddPatientDto) {
   // add the new user
-  const newPatientId = randomUUID();
+  const newPatientId = ((await getMaxPatientId()) + 1).toString();
+  console.log(newPatientId);
   const { id, name, gender, address, phone } = info.demographic;
   await pool.query(
     `

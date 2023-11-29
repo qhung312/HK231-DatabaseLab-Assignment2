@@ -17,10 +17,10 @@ BEGIN
 END;
 $$ LANGUAGE PLPGSQL;
 
-CREATE OR REPLACE FUNCTION calculate_testing(arg_unique_number VARCHAR(255), arg_patient_order INT)
+CREATE OR REPLACE FUNCTION calculate_testing(arg_unique_number VARCHAR(10), arg_patient_order INT)
 RETURNS void AS $$
 DECLARE
-    _unique_number VARCHAR(255);
+    _unique_number VARCHAR(10);
     _patient_order INT;
     _test_order INT;
     _result BOOLEAN;
@@ -79,7 +79,7 @@ END;
 $$ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION sort_nurses_by_patient_count(start_date TIMESTAMP, end_date TIMESTAMP)
-RETURNS TABLE(nurse_id VARCHAR(255), takes_care_of BIGINT) AS $$
+RETURNS TABLE(nurse_id VARCHAR(10), takes_care_of BIGINT) AS $$
 BEGIN
     RETURN QUERY
     SELECT nurse_assigned AS nurse_id, COUNT(*) AS takes_care_of FROM patient_instance
