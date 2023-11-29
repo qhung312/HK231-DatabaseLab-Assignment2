@@ -1,34 +1,26 @@
-import { FC, useState } from "react";
-import { Button, Form, Input, Card, notification, Spin, Row, Col } from 'antd';
+import { FC, useEffect, useState } from "react";
+import { Button, Checkbox, Form, Input, Card, notification, Spin } from 'antd';
 import { useRouter } from "next/navigation";
+import { signUpApi } from "@/apis";
 import { useSessionStore } from "@/hooks";
-import { fetchUserSession, signInApi } from "@/apis";
 
-const LogInComponent: FC = () => {
+const SignUpComponent: FC = () => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
-    const { setUserSession } = useSessionStore();
+
 
     const onFinish = async (values: any) => {
         const payload = {
             username: values.username,
-            password: values.password
+            password: values.password,
+            employeeId: values.employeeID
         }
 
         setIsLoading(true)
 
         try {
-            const signInRes = await signInApi(payload);
-
-            if (signInRes.error || !signInRes?.data?.username) {
-                notification.error({
-                    message: signInRes.error
-                })
-                return;
-            }
-
-            const { userInfo, error } = await fetchUserSession();
+            const { data, error } = await signUpApi(payload)
 
             if (error) {
                 notification.error({
@@ -37,19 +29,11 @@ const LogInComponent: FC = () => {
                 return;
             }
 
-            if (!userInfo?.username) {
-                notification.error({
-                    message: 'Cannot fetch user session'
-                })
-                return;
-            }
-
             notification.success({
-                message: 'Log in successfully'
+                message: data?.message || 'Sign up successfully'
             })
 
-            setUserSession(userInfo);
-            router.back();
+            router.push('/signin');
         }
         catch (err) {
             console.log(err)
@@ -68,11 +52,11 @@ const LogInComponent: FC = () => {
         username?: string;
         password?: string;
         remember?: string;
+        employeeID?: string;
     };
 
-
     return (
-        <Card title="Log in">
+        <Card title="Sign up">
             <Form
                 className="w-[250px] sm:w-[500px] flex flex-col items-center justify-center"
                 name="basic"
@@ -85,9 +69,17 @@ const LogInComponent: FC = () => {
                 autoComplete="off"
             >
                 <Form.Item<FieldType>
+                    label="Employee ID"
+                    name="employeeID"
+                    rules={[{ required: true, message: 'Please enter your employee ID!' }]}
+                    className="w-full"
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item<FieldType>
                     label="Username"
                     name="username"
-                    rules={[{ required: true, message: 'Please input your username!' }]}
+                    rules={[{ required: true, message: 'Please enter your username!' }]}
                     className="w-full"
                 >
                     <Input />
@@ -96,28 +88,23 @@ const LogInComponent: FC = () => {
                 <Form.Item<FieldType>
                     label="Password"
                     name="password"
+                    rules={[{ required: true, message: 'Please enter your password!' }]}
                     className="w-full"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
                 >
                     <Input.Password />
                 </Form.Item>
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                     <Button disabled={isLoading} type="primary" htmlType="submit">
-                        Log in
+                        Sign up
                     </Button>
                     {
                         isLoading && <Spin />
                     }
-                </Form.Item>
-                <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
-                    <p>
-                        Don&lsquo;t have an account? <a className="text-[#2563EB]" href="/signup">Sign up</a>
-                    </p>
                 </Form.Item>
             </Form>
         </Card>
     )
 }
 
-export default LogInComponent;
+export default SignUpComponent;

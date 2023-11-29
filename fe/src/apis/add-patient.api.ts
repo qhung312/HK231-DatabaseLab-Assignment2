@@ -1,7 +1,5 @@
-import { MOCK_COMORBIDITY_DATA, MOCK_MEDICATION_DATA, MOCK_SYMPTOMS_DATA } from "@/common/mock-data/form-search-result";
 import { IAddNewInstancePayload, IAddPatientPayload, IAddPatientResponse, IFetchComorbidityResponse, IFetchMedicationPayload, IFetchMedicationResponse, IFetchSymptomResponse } from "./interfaces/add-patient.interface";
 import axiosClient from "@/common/helper/axios-client";
-import { IAddInstancePayload } from "@/hooks";
 
 /**
  * POST: /add-patient
@@ -9,10 +7,19 @@ import { IAddInstancePayload } from "@/hooks";
  * @returns 
  */
 export const addPatientApi = async (payload: IAddPatientPayload): Promise<IAddPatientResponse> => {
-    const res = await axiosClient.post('/patient', payload);
+    try {
+        const res = await axiosClient.post('/patient', payload);
 
-    const data = res.data as IAddPatientResponse;
-    return data;
+        const data = res.data as IAddPatientResponse;
+        return data;
+    }
+    catch (err: any) {
+        const errorMessage = err?.response?.data?.error || 'Something went wrong';
+
+        return {
+            error: errorMessage
+        }
+    }
 }
 
 /**
@@ -39,18 +46,27 @@ export const fetchSymptomsApi = async (): Promise<IFetchSymptomResponse> => {
  * @returns 
  */
 export const fetchComorbiditiesApi = async (): Promise<IFetchComorbidityResponse> => {
-    const res = await axiosClient.get('/comorbidity');
+    try {
+        const res = await axiosClient.get('/comorbidity');
 
-    const { data, error } = res.data;
+        const { data, error } = res.data;
 
-    const ret = {
-        data: {
-            comorbidities: data ?? []
-        },
-        error: error
+        const ret = {
+            data: {
+                comorbidities: data ?? []
+            },
+            error: error
+        }
+
+        return ret;
     }
+    catch (err: any) {
+        const errorMessage = err?.response?.data?.error || 'Something went wrong';
 
-    return ret;
+        return {
+            error: errorMessage
+        }
+    }
 }
 
 /**
@@ -59,42 +75,60 @@ export const fetchComorbiditiesApi = async (): Promise<IFetchComorbidityResponse
  * @returns 
  */
 export const fetchMedicationApi = async (payload: IFetchMedicationPayload): Promise<IFetchMedicationResponse> => {
-    const { medId } = payload
-    const endpoint = "/medication/" + medId;
+    try {
+        const { medId } = payload
+        const endpoint = "/medication/" + medId;
 
-    const res = await axiosClient.get(endpoint);
-    const resData = res.data;
+        const res = await axiosClient.get(endpoint);
+        const resData = res.data;
 
-    let medications = [];
+        let medications = [];
 
-    switch (typeof resData.data) {
-        case "object":
-            medications = [resData.data];
-            break;
-        default:
-            medications = resData.data ?? [];
-            break;
+        switch (typeof resData.data) {
+            case "object":
+                medications = [resData.data];
+                break;
+            default:
+                medications = resData.data ?? [];
+                break;
+        }
+
+        return {
+            data: {
+                medications
+            },
+            error: resData.error
+        }
     }
+    catch (err: any) {
+        const errorMessage = err?.response?.data?.error || 'Something went wrong';
 
-    return {
-        data: {
-            medications
-        },
-        error: resData.error
+        return {
+            error: errorMessage
+        }
     }
 }
 
 export const addInstanceApi = async (payload: IAddNewInstancePayload): Promise<IAddPatientResponse> => {
-    const {
-        patientId,
-        ...rest
-    } = payload;
+    try {
+        const {
+            patientId,
+            ...rest
+        } = payload;
 
-    const body = rest
+        const body = rest
 
-    const res = await axiosClient.post(`patient/${patientId}/instance`, body);
+        const res = await axiosClient.post(`patient/${patientId}/instance`, body);
 
-    const data = res.data as IAddPatientResponse;
-    return data;
+        const data = res.data as IAddPatientResponse;
+        return data;
+    }
+    catch (err: any) {
+        const errorMessage = err?.response?.data?.error || 'Something went wrong';
+
+        return {
+            error: errorMessage
+        }
+    }
 
 }

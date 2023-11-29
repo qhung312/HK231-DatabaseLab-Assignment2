@@ -1,5 +1,4 @@
 import { ISearchEmployeePayload, ISearchEmployeeResponse } from "./interfaces/employee-detail.interface";
-import { DOCTORS_SEARCH_RESULT, NURSES_SEARCH_RESULT } from "@/common/mock-data/employee-search-result";
 import axiosClient from "@/common/helper/axios-client";
 /**
  * /employee/search?type=type&role=role&value=value
@@ -8,35 +7,44 @@ import axiosClient from "@/common/helper/axios-client";
  * @returns 
  */
 export const searchEmployeeApi = async (payload: ISearchEmployeePayload): Promise<ISearchEmployeeResponse> => {
-    const query = [];
+    try {
+        const query = [];
 
-    const { type, value, role } = payload;
+        const { type, value, role } = payload;
 
-    if (value) {
-        query.push(`${type || "name"}=${value}`);
-    }
+        if (value) {
+            query.push(`${type || "name"}=${value}`);
+        }
 
-    if (role) {
-        query.push(`role=${role}`);
-    }
+        if (role) {
+            query.push(`role=${role}`);
+        }
 
-    const queryString = query.join("&");
+        const queryString = query.join("&");
 
-    const res = await axiosClient.get(`/employee?${queryString}`);
+        const res = await axiosClient.get(`/employee?${queryString}`);
 
-    const resData = res.data;
+        const resData = res.data;
 
-    const { error, data } = resData;
+        const { error, data } = resData;
 
-    if (error) {
+        if (error) {
+            return {
+                error: error
+            }
+        }
+
         return {
-            error: error
+            data: {
+                employees: data
+            }
         }
     }
+    catch (err: any) {
+        const errorMessage = err?.response?.data?.error || 'Something went wrong';
 
-    return {
-        data: {
-            employees: data
+        return {
+            error: errorMessage
         }
     }
 }

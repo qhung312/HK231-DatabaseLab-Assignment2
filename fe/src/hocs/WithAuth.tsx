@@ -2,8 +2,8 @@ import { FC, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSessionStore } from '@/hooks';
 import { useCookies } from 'next-client-cookies';
-import { COOKIES_AUTH } from '@/common/constants/auth';
-import { Spin } from 'antd'
+import { Spin, notification } from 'antd'
+import { fetchUserSession } from '@/apis';
 
 interface WithAuthProps {
     // TODO: add custom auth props
@@ -20,27 +20,33 @@ const withAuth = (WrappedComponent: React.ComponentType<WithAuthProps>) => {
 
         useEffect(() => {
             const checkUserSession = async () => {
-                const username = cookies.get(COOKIES_AUTH);
+                // const username = cookies.get(COOKIES_AUTH);
+                const { userInfo } = await fetchUserSession()
 
-                if (username && !user) {
+                if (!userInfo?.username) {
+                    notification.error({
+                        message: 'Please log in again'
+                    })
                     setUserSession({
-                        username,
-                    });
-                }
-
-                if (!(username || user)) {
+                        username: ""
+                    })
                     router.push('/signin');
+                }
+                else {
+                    setUserSession({
+                        username: userInfo.username
+                    })
                 }
 
                 setLoading(false);
             };
 
             checkUserSession();
-        }, [user, router, cookies, setUserSession]);
+        }, []);
 
-        if (!user) {
-            return <Spin />
-        }
+        // if (!user) {
+        //     return <Spin />
+        // }
         // Render the wrapped component if the user session exists and not in a loading state
         return loading ? <Spin></Spin> : <WrappedComponent {...props} />;
     };

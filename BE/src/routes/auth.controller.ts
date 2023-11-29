@@ -34,7 +34,7 @@ authController.post('/login', async (req, res: CustomResponse) => {
 
     _.set(req.session, 'username', account.username);
 
-    res.composer.ok({ employeeId: account.e_id });
+    res.composer.ok({ employeeId: account.e_id, username: account.username });
   } catch (error) {
     res.composer.badRequest(error.message);
   }
@@ -64,6 +64,20 @@ authController.post('/signup', async (req, res: CustomResponse) => {
     ]);
 
     res.composer.ok(`Account '${username}' created`);
+  } catch (error) {
+    res.composer.badRequest(error.message);
+  }
+});
+
+authController.post('/logout', async (req, res: CustomResponse) => {
+  try {
+    req.session.destroy((err) => {
+      if (err) {
+        throw new Error(err.message);
+      }
+    });
+
+    res.composer.ok('Logged out');
   } catch (error) {
     res.composer.badRequest(error.message);
   }

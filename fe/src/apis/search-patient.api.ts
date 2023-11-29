@@ -1,6 +1,6 @@
-import { PATIENT_SEARCH_RESULT } from "@/common/mock-data/patient-search-result";
 import { ISearchPatientPayload, ISearchPatientResponse } from "./interfaces/search-patient.interface";
 import axiosClient from "@/common/helper/axios-client";
+import { notification } from "antd";
 
 /**
  * GET: /api/search-patient
@@ -8,23 +8,34 @@ import axiosClient from "@/common/helper/axios-client";
  * @returns 
  */
 export const searchPatientApi = async (payload: ISearchPatientPayload): Promise<ISearchPatientResponse> => {
-    const { type, value } = payload;
+    try {
+        const { type, value } = payload;
 
-    const queryString = `?${type}=${value}`;
-    const endpoint = `/patient${queryString}`;
+        const queryString = `?${type}=${value}`;
+        const endpoint = `/patient${queryString}`;
 
-    const res = await axiosClient.get<ISearchPatientResponse>(endpoint);
-    const resData = res.data;
+        const res = await axiosClient.get<ISearchPatientResponse>(endpoint);
+        const resData = res.data;
 
-    const { error, data } = resData;
+        const { error, data } = resData;
 
-    if (error) {
+        if (error) {
+            notification.error({ message: error });
+            return {
+                error
+            }
+        }
+
         return {
-            error
+            data
+        }
+    }
+    catch (err: any) {
+        const errorMessage = err?.response?.data?.error || 'Something went wrong';
+
+        return {
+            error: errorMessage
         }
     }
 
-    return {
-        data
-    }
 }

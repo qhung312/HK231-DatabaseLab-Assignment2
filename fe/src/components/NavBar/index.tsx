@@ -7,15 +7,20 @@ import { ROUTES } from '@/common/constants/routes.constant';
 import { useSessionStore } from '@/hooks';
 import { LogoutOutlined } from "@ant-design/icons";
 import { useRouter } from 'next/navigation';
+import { useCookies } from 'next-client-cookies';
+import axiosClient from '@/common/helper/axios-client';
+import { signOutApi } from '@/apis';
 
 const NavBar = () => {
     const pathname = usePathname() || '/';
     const router = useRouter();
+    const cookies = useCookies();
 
     const { user, deleteUserSession } = useSessionStore();
 
-    const handleSignOut = () => {
+    const handleSignOut = async () => {
         deleteUserSession();
+        await signOutApi()
         router.push('/')
     }
 

@@ -1,6 +1,6 @@
 'use client'
 import { fetchUserSession } from "@/apis";
-import { SignIn } from "@/components/Auth";
+import { SignUp } from "@/components/Auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -21,7 +21,7 @@ const SignInPage = () => {
 
     return (
         <div className="flex h-[calc(100vh-50px)] w-full items-center justify-center">
-            <SignIn />
+            <SignUp />
         </div>
     )
 }
