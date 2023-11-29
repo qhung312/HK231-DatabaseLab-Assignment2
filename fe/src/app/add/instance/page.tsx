@@ -106,7 +106,7 @@ const AddInstancePage = () => {
     }, [selectedPatient])
 
     return (
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-4 p-2">
             <SearchSelect
                 value={patientSearchInfo.value}
                 type={patientSearchInfo.type}
