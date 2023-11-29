@@ -19,7 +19,11 @@ export type AddPatientComorbidityInfo = {
 
 export type AddPatientInstanceSymptom = {
   symptomId: string;
-  seriousness: string;
+  periods: {
+    seriousness: string;
+    startDate: string;
+    endDate: string;
+  }[];
 };
 
 export type AddPatientInstanceTreatment = {

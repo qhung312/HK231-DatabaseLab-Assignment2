@@ -171,7 +171,7 @@ async function addPatientInstance(patientId: string, info: AddPatientInstanceDto
 async function addPatient(info: AddPatientDto) {
   // add the new user
   const newPatientId = ((await getMaxPatientId()) + 1).toString();
-  console.log(newPatientId);
+
   const { id, name, gender, address, phone } = info.demographic;
   await pool.query(
     `

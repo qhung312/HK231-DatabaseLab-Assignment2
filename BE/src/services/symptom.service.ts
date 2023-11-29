@@ -10,18 +10,31 @@ async function getPatientInstanceSymptoms(
 ): Promise<HasSymptomInfo[]> {
   const { rows } = await pool.query(
     `
-  SELECT
-    has_symptom.s_id AS "symptomId",
-    has_symptom.seriousness AS "seriousness",
-    symptom.s_description AS "description"
-  FROM has_symptom
-  JOIN symptom ON has_symptom.s_id=symptom.s_id
-  WHERE has_symptom.unique_number=$1 AND has_symptom.patient_order=$2;
+    SELECT
+      symptom_period.s_id AS "symptomId",
+      symptom.s_description AS "description",
+      symptom_period.start_date AS "startDate",
+      symptom_period.end_date AS "endDate",
+      symptom_period.seriousness AS "seriousness"
+    FROM symptom_period
+    JOIN symptom ON symptom_period.s_id=symptom.s_id
+    WHERE (symptom_period.unique_number, symptom_period.patient_order)=($1, $2);
   `,
     [patientId, instanceId]
   );
 
-  return rows;
+  const groupedResult = _.groupBy(rows, 'symptomId');
+
+  const result: HasSymptomInfo[] = _.map(groupedResult, (periods) => {
+    const firstValue = _.first(periods);
+
+    return {
+      ..._.pick(firstValue, ['symptomId', 'description']),
+      periods: _.map(periods, (period) => _.pick(period, ['seriousness', 'startDate', 'endDate']))
+    };
+  });
+
+  return result;
 }
 
 async function getAllSymptoms(): Promise<SymptomInfo[]> {
@@ -40,19 +53,40 @@ async function addPatientInstanceSymptoms(
   symptoms: AddPatientInstanceSymptom[]
 ) {
   if (symptoms.length > 0) {
+    // insert has_symptom
     await pool.query(
       `
-    INSERT INTO has_symptom(unique_number, patient_order, s_id, seriousness)
+    INSERT INTO has_symptom(unique_number, patient_order, s_id)
     VALUES ${_.join(
-      _.map(
-        symptoms,
-        (symp, index) =>
-          `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, $${index * 4 + 4})`
-      ),
+      _.map(symptoms, (symp, index) => `($${index * 3 + 1}, $${index * 3 + 2}, $${index * 3 + 3})`),
       ', '
     )}
     `,
-      _.flatMap(symptoms, (symp) => [patientId, instanceId, symp.symptomId, symp.seriousness])
+      _.flatMap(symptoms, (symp) => [patientId, instanceId, symp.symptomId])
+    );
+
+    // insert symptom_period
+    await Promise.all(
+      _.flatMap(symptoms, (symptom) =>
+        _.map(symptom.periods, (period) =>
+          (async () => {
+            await pool.query(
+              `
+            INSERT INTO symptom_period(unique_number, patient_order, s_id, start_date, end_date, seriousness)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            `,
+              [
+                patientId,
+                instanceId,
+                symptom.symptomId,
+                period.startDate,
+                period.endDate,
+                period.seriousness
+              ]
+            );
+          })()
+        )
+      )
     );
   }
 }
