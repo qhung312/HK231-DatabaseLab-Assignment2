@@ -26,7 +26,7 @@ export interface IPatientDemographicInfoPayload {
 
 export interface IReportInfoData {
     symptomsInfo: ISymptomInfo[];
-    comorbodityInfo: IComorbidityInfo[];
+    comorbidityInfo: IComorbidityInfo[];
     testInfo: ITestInfo[];
     treatmentInfo: ITreatmenInfo[];
 }

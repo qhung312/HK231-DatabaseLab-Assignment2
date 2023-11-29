@@ -18,7 +18,7 @@ export const PatientReport: FC<IReportProps> = ({ patientId, patientInstanceOrde
 
     const [reportInfo, setReport] = useState<IReportInfoData>({
         symptomsInfo: [],
-        comorbodityInfo: [],
+        comorbidityInfo: [],
         testInfo: [],
         treatmentInfo: []
     });
@@ -44,6 +44,7 @@ export const PatientReport: FC<IReportProps> = ({ patientId, patientInstanceOrde
             if (!data?.reportInfo) return;
 
             setReport(data.reportInfo);
+            console.log(data.reportInfo);
             setIsLoading(false);
         }
 
@@ -68,7 +69,7 @@ export const PatientReport: FC<IReportProps> = ({ patientId, patientInstanceOrde
                         {
                             key: 'Comorbidity',
                             label: <p className="font-bold">Comorbidities</p>,
-                            children: <ComorbidityReport comorbidities={reportInfo.comorbodityInfo} />
+                            children: <ComorbidityReport comorbidities={reportInfo.comorbidityInfo} />
                         },
                         {
                             key: 'Tests',
