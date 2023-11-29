@@ -31,9 +31,6 @@ export const MedicationDetail: FC<IMedicationDetailProps> = ({
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if (!debouncedValue)
-            return;
-
         const fetchData = async () => {
             setIsLoading(true)
             // Mock api call
@@ -60,7 +57,9 @@ export const MedicationDetail: FC<IMedicationDetailProps> = ({
             }
             const { medications } = data;
 
-            setMedicationOptions(generateMedicationOptions(medications))
+            const options = generateMedicationOptions(medications)
+            setMedicationOptions(options)
+
             setIsLoading(false)
         }
 

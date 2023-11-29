@@ -84,13 +84,11 @@ export const fetchMedicationApi = async (payload: IFetchMedicationPayload): Prom
 
         let medications = [];
 
-        switch (typeof resData.data) {
-            case "object":
-                medications = [resData.data];
-                break;
-            default:
-                medications = resData.data ?? [];
-                break;
+        if (Array.isArray(resData.data)) {
+            medications = resData.data;
+        }
+        else {
+            medications = [resData.data];
         }
 
         return {

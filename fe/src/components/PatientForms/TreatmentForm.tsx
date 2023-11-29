@@ -85,12 +85,8 @@ export const TreatmentForm = () => {
             setIsLoading(false);
         }
 
-        if (debouncedSearchBarValue) {
-            searchDoctor();
-        }
-        else {
-            setSearchDoctorOptions([]);
-        }
+        searchDoctor();
+
     }, [debouncedSearchBarType, debouncedSearchBarValue])
 
     return <Row gutter={[16, 16]} className="max-w-[800px]">

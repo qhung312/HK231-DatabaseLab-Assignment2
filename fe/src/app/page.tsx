@@ -57,7 +57,7 @@ const SearchPatientPage = () => {
   }, [debouncedValue, debouncedType])
 
   return (
-    <div className="border-[1px] gap-6 flex-col rounded-[8px] p-2 flex w-full items-center justify-center">
+    <div className="gap-4 flex-col rounded-[8px] p-2 flex w-full items-center justify-center">
       <SearchBar
         value={patientSearchInfo.value}
         type={patientSearchInfo.type}
