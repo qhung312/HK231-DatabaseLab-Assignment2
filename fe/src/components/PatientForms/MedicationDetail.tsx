@@ -24,7 +24,7 @@ export const MedicationDetail: FC<IMedicationDetailProps> = ({
 
     const { medId, medName, expiredDate, price, effects, id } = medication;
 
-    const [text, setText] = useState(`${medId}` || "");
+    const [text, setText] = useState("");
     const debouncedValue = useDebounce(text, 500);
 
     const [medicationOptions, setMedicationOptions] = useState([] as any);
@@ -33,9 +33,9 @@ export const MedicationDetail: FC<IMedicationDetailProps> = ({
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true)
-            // Mock api call
+
             const response = await fetchMedicationApi({
-                medId: debouncedValue
+                name: debouncedValue
             });
 
             const { data, error } = response;
@@ -79,18 +79,22 @@ export const MedicationDetail: FC<IMedicationDetailProps> = ({
 
         return newMed;
     }
+    
+    const filterOption = (input: string, option: any) => {
+        return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+    }
 
     return <div className="border-[1px] p-4 rounded-[8px] mb-[24px]" key={medId}>
         <Row gutter={[16, 16]}>
             <Col span={24}>
                 <Form.Item
-                    label="Medication ID:"
+                    label="Medication name:"
                     initialValue={medId}
                     name={`med_name_id_${id}`} // Add the name prop to connect with the form field
-                    rules={[{ required: true, message: 'Please select medication id' }]}
+                    rules={[{ required: true, message: 'Please select medication name' }]}
                 >
                     <Select
-                        placeholder="Medication id"
+                        placeholder="Medication name"
                         onSelect={(value) => {
                             const newMed = {
                                 ...medication,
@@ -104,6 +108,7 @@ export const MedicationDetail: FC<IMedicationDetailProps> = ({
                         loading={isLoading}
                         onSearch={(value) => setText(value)}
                         showSearch
+                        filterOption={filterOption}
                     />
                 </Form.Item>
             </Col>

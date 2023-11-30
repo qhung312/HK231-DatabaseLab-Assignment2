@@ -45,7 +45,8 @@ export interface IFetchComorbidityResponse {
 }
 
 export interface IFetchMedicationPayload {
-    medId: string;
+    name?: string;
+    id?: string;
 }
 
 export interface IFetchMedicationResponse {

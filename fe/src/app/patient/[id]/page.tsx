@@ -62,11 +62,22 @@ const PatientDetail = ({ params }: {
     }[]);
 
     const generatePatientInstanceOptions = (instanceInfo: IPatientInstance[]) => {
-        return instanceInfo.map((instance) => ({
-            label: `${instance.patientOrder}. ${instance.admissionTime}`,
-            value: instance.patientOrder,
-            ...instance
-        }))
+        const lastAdmissionIndex = instanceInfo.length - 1;
+
+        return instanceInfo.map((instance, index) => {
+
+            let label = `${instance.patientOrder}. ${instance.admissionTime}`;
+
+            if (index == lastAdmissionIndex) {
+                label += " (Latest)";
+            }
+
+            return {
+                label,
+                value: instance.patientOrder,
+                ...instance
+            }
+        })
     }
 
     const setSelectedInstanceOrder = (value: string | number) => {
@@ -118,6 +129,9 @@ const PatientDetail = ({ params }: {
 
             const instanceInfo = data.instanceInfo;
             const patientInstanceOptions = generatePatientInstanceOptions(instanceInfo);
+
+            const lastOptionIndex = patientInstanceOptions.length - 1;
+            setSelectedPatientInstance(patientInstanceOptions[lastOptionIndex]);
 
             setPatientInstanceOptions(patientInstanceOptions);
             setIsLoading(false);
@@ -171,7 +185,8 @@ const PatientDetail = ({ params }: {
                         <p className="font-bold">Patient admissions</p>
                         <Col span={12} >
                             <Select
-                                className="min-w-[150px]"
+                                className="min-w-[300px]"
+                                defaultValue={selectedPatientInstance?.patientOrder}
                                 options={patientInstanceOptions}
                                 loading={isLoading}
                                 disabled={isLoading}
@@ -188,7 +203,7 @@ const PatientDetail = ({ params }: {
                         </Col>
 
                         <Col span={12}>
-                            <p>Status: <span className={statusMapper(selectedPatientInstance?.isWarning)}>{selectedPatientInstance?.isWarning ? "Warning" : "Normal"}</span></p>
+                            <p>Health status: <span className={statusMapper(selectedPatientInstance?.isWarning)}>{selectedPatientInstance?.isWarning ? "Warning" : "Normal"}</span></p>
                         </Col>
 
                         <Col span={24}>

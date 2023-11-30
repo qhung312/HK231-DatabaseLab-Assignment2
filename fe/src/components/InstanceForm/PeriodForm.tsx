@@ -36,7 +36,7 @@ export const PeriodForm: FC<IPeriodFormProps> = ({
         }
         <div
             onClick={() => addNewPeriod(symptomIndex)}
-            className="underline hover:cursor-pointer -mt-[8px]">
+            className="underline hover:cursor-pointer -mt-[8px] mb-[12px]">
             <PlusOutlined />Add more detail for this symptom
         </div>
     </Row>

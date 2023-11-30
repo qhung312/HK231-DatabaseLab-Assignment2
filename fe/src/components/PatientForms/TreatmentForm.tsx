@@ -135,13 +135,11 @@ export const TreatmentForm = () => {
                                         defaultValue={endDate ? dayjs(endDate, 'DD-MM-YYYY') : undefined}
                                         locale={locale}
                                         onChange={(_, dateString) => {
-                                            const [year, month, date] = dateString.split('-');
-
                                             const newTreatment = {
                                                 ...treatment,
                                                 endDate: dateString
                                             }
-                                            console.log(newTreatment.endDate)
+
                                             setTreatmentInfos(newTreatment, index)
                                         }} />
                                 </Form.Item>

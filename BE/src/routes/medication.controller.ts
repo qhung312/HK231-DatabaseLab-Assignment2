@@ -17,8 +17,32 @@ medicationController.get('/', async (req, res: CustomResponse) => {
   }
 });
 
-medicationController.get('/:medId', async (req, res: CustomResponse) => {
+medicationController.get('/search', async (req, res: CustomResponse) => {
   try {
+    const { name, id } = req.query;
+
+    if (!name && !id) {
+      throw new Error('No query parameter found');
+    }
+    type MedicationQuery = {
+      queryString: string;
+      value: string;
+    };
+
+    const queries: MedicationQuery[] = [];
+    if (name) {
+      queries.push({
+        queryString: `medication.medication_name=$${queries.length + 1}`,
+        value: decodeURIComponent(name as string)
+      });
+    }
+    if (id) {
+      queries.push({
+        queryString: `medication.medication_id=$${queries.length + 1}`,
+        value: id as string
+      });
+    }
+
     const { rows, rowCount } = await pool.query(
       `
     SELECT medication.medication_id AS "medId",
@@ -29,13 +53,17 @@ medicationController.get('/:medId', async (req, res: CustomResponse) => {
       medication_effect.effect AS "medEffect"
     FROM medication
     LEFT JOIN medication_effect ON medication.medication_id = medication_effect.medication_id
-    WHERE medication.medication_id=$1
+    ${queries.length > 0 ? `WHERE ${_.join(_.map(queries, 'queryString'), ' AND ')}` : ''}
     `,
-      [req.params.medId]
+      _.map(queries, (option) => option.value)
     );
 
+    const errorMessage = name
+      ? `Medication with name ${name} not found`
+      : `Medication with id ${id} not found`;
+
     if (rowCount === 0) {
-      throw new Error(`Medication with id ${req.params.medId} not found`);
+      throw new Error(errorMessage);
     }
 
     const firstValue = _.first(rows);
