@@ -87,9 +87,9 @@ BEGIN
 		employee.e_name AS nurse_name,
 		COUNT(patient_instance.nurse_assigned) AS takes_care_of
 	FROM employee
-	LEFT JOIN patient_instance ON employee.e_id=patient_instance.nurse_assigned
-	WHERE start_date <= patient_instance.admission_time AND admission_time <= end_date AND
-		employee.e_type='Nurse'
+	LEFT JOIN patient_instance ON employee.e_id=patient_instance.nurse_assigned AND
+		start_date <= patient_instance.admission_time AND admission_time <= end_date
+	WHERE employee.e_type='Nurse'
 	GROUP BY employee.e_id, employee.e_name
 	ORDER BY COUNT(patient_instance.nurse_assigned) DESC;
 END;
