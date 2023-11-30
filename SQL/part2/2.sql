@@ -79,12 +79,18 @@ END;
 $$ LANGUAGE PLPGSQL;
 
 CREATE OR REPLACE FUNCTION sort_nurses_by_patient_count(start_date TIMESTAMP, end_date TIMESTAMP)
-RETURNS TABLE(nurse_id VARCHAR(10), takes_care_of BIGINT) AS $$
+RETURNS TABLE(nurse_id VARCHAR(10), nurse_name VARCHAR(255), takes_care_of BIGINT) AS $$
 BEGIN
     RETURN QUERY
-    SELECT nurse_assigned AS nurse_id, COUNT(*) AS takes_care_of FROM patient_instance
-    WHERE start_date <= admission_time AND admission_time <= end_date
-    GROUP BY nurse_assigned
-    ORDER BY COUNT(*) DESC;
+	SELECT
+		employee.e_id AS nurse_id,
+		employee.e_name AS nurse_name,
+		COUNT(patient_instance.nurse_assigned) AS takes_care_of
+	FROM employee
+	LEFT JOIN patient_instance ON employee.e_id=patient_instance.nurse_assigned
+	WHERE start_date <= patient_instance.admission_time AND admission_time <= end_date AND
+		employee.e_type='Nurse'
+	GROUP BY employee.e_id, employee.e_name
+	ORDER BY COUNT(patient_instance.nurse_assigned) DESC;
 END;
 $$ LANGUAGE PLPGSQL;
