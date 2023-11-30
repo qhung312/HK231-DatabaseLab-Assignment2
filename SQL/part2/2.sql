@@ -1,9 +1,15 @@
 CREATE OR REPLACE FUNCTION update_pcr_test()
 RETURNS void AS $$
 BEGIN
-    UPDATE test_info
-    SET result=TRUE, ct_threshold=NULL
-    WHERE test_type='PCR Test' AND test_timestamp > '9/1/2020';
+	UPDATE test_info
+	SET result=TRUE, ct_threshold=NULL
+	WHERE test_info.test_type='PCR Test'
+		AND EXISTS(
+			SELECT *
+			FROM patient_instance
+			WHERE (patient_instance.unique_number, patient_instance.patient_order)=(test_info.unique_number, test_info.patient_order)
+				AND patient_instance.admission_time >= '2020-9-1'
+		);
 END;
 $$ LANGUAGE PLPGSQL;
 
