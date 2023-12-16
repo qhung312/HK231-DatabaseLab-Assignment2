@@ -3,6 +3,7 @@ import { Col, Collapse, Divider, Input, Row } from "antd";
 import { FC } from "react";
 import { MedicationsReport } from "./MedicationReport";
 import { EmployeeCard } from "../Card/EmployeeCard";
+import { formatDate } from "@/common/helper/date";
 
 export interface ITreatmentReportProps {
     treatments: ITreatmenInfo[];
@@ -23,12 +24,12 @@ export const TreatmentReport: FC<ITreatmentReportProps> = ({ treatments }) => {
                 return <Row key={key} gutter={[16, 16]} >
                     <Col span={12}>
                         <div>
-                            Start Date: {startDate}
+                            Start Date: {formatDate(startDate, true)}
                         </div>
                     </Col>
                     <Col span={12}>
                         <div>
-                            End Date: {endDate}
+                            End Date: {formatDate(endDate, true)}
                         </div>
                     </Col>
                     <Col span={24}>

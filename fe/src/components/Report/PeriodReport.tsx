@@ -1,3 +1,4 @@
+import { formatDate } from "@/common/helper/date";
 import { IPeriodInfo } from "@/common/interfaces/form/form-detail.interface";
 import { Col, Row } from "antd";
 import { FC } from "react";
@@ -18,10 +19,10 @@ export const PeriodReport: FC<IPeriodReportProps> = ({ periods }) => {
                     return <div className="border-[1px] p-4 rounded-[12px]" key={periodId}>
                         <Row gutter={[16, 16]}>
                             <Col span={12}>
-                                <p>Start date: <span>{startDate}</span></p>
+                                <p>Start date: <span>{formatDate(startDate, true)}</span></p>
                             </Col>
                             <Col span={12}>
-                                <p>End date: <span>{endDate}</span></p>
+                                <p>End date: <span>{formatDate(endDate, true)}</span></p>
                             </Col>
 
                             <Col span={24}>

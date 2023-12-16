@@ -1,3 +1,4 @@
+import { formatDate } from "@/common/helper/date";
 import { ITestInfo } from "@/common/interfaces/form/form-detail.interface";
 import { MOCK_TEST_INFO_DATA } from "@/common/mock-data/patient-test-information";
 import { Col, Row, Spin } from "antd";
@@ -34,7 +35,7 @@ const PcrOrQuickTest = (props: ITestInfo) => {
 
     const { type, timestamp, result, ctThreshold } = props;
 
-    const statusMapper = (result?: boolean) => result ? "text-[#FF3838]" : "text-[#2DCCFF]"
+    const statusMapper = (result?: boolean) => result ? "text-[#2DCCFF]" : "text-[#FF3838]"
 
     return <Row className="border-[1px] p-4 rounded-[12px]" gutter={[16, 16]}>
         <Col span={24}>
@@ -45,7 +46,7 @@ const PcrOrQuickTest = (props: ITestInfo) => {
 
         <Col span={12}>
             <div>
-                Tested on: {timestamp}
+                Tested on: {formatDate(timestamp || 'true', true)}
             </div>
         </Col>
 
@@ -83,7 +84,7 @@ const RBPMOrSPO2Test = (props: ITestInfo) => {
 
         <Col span={12}>
             <div>
-                Tested on: {timestamp}
+            Tested on: {formatDate(timestamp || 'true', true)}
             </div>
         </Col>
 

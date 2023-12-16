@@ -1,6 +1,7 @@
 'use client';
 import { IPatientInstance } from "@/apis/interfaces/patient-detail.interface";
 import { fetchPatientDemographicInfoApi, fetchPatientInstanceApi } from "@/apis/patient-detail.api";
+import { formatDate } from "@/common/helper/date";
 import { IDemographicInfo } from "@/common/interfaces/form/form-detail.interface";
 import { EmployeeCard } from "@/components/Card/EmployeeCard";
 import { PatientReport } from "@/components/Report";
@@ -66,7 +67,8 @@ const PatientDetail = ({ params }: {
 
         return instanceInfo.map((instance, index) => {
 
-            let label = `${instance.patientOrder}. ${instance.admissionTime}`;
+            const time = formatDate(instance.admissionTime, true);
+            let label = `${instance.patientOrder}. ${time}`;
 
             if (index == lastAdmissionIndex) {
                 label += " (Latest)";
@@ -199,7 +201,7 @@ const PatientDetail = ({ params }: {
                 {selectedPatientInstance?.patientOrder &&
                     <Row className="mb-[20px]" gutter={[16, 16]}>
                         <Col span={12}>
-                            <p>Admitted on: <span>{selectedPatientInstance?.admissionTime}</span></p>
+                            <p>Admitted on: <span>{formatDate(selectedPatientInstance?.admissionTime || '', true)}</span></p>
                         </Col>
 
                         <Col span={12}>
