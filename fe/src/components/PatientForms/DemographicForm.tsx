@@ -8,6 +8,13 @@ import { GENDER_OPTIONS } from "@/common/constants/add-patient-form.constant";
 export const DemographicForm: FC<IDemographicFormProps> = () => {
     const { demographic, setDemographicForm } = useAddPatientStore();
 
+    
+    const isFieldValid = {
+        'name': (name: string) => !name.length || /^[a-zA-Z]+$/.test(name),
+        'phone': (phone: string) =>  !phone.length || /^[0-9]{10}$/.test(phone),
+        'id': (id: string) => !id.length || /^[0-9]+$/.test(id)
+    }
+
     return (
         <Row gutter={[16, 16]} className="max-w-[800px]">
             <div className="font-bold">
@@ -21,6 +28,8 @@ export const DemographicForm: FC<IDemographicFormProps> = () => {
                             initialValue={demographic.name}
                             name="name" // Add the name prop to connect with the form field
                             rules={[{ required: true, message: 'Please enter a name' }]}
+                            validateStatus={isFieldValid.name(demographic.name) ? "success" : "error"}
+                            help={isFieldValid.name(demographic.name) ? "" : "Name must contain only letters"}
                         >
                             <Input
                                 type="text"
@@ -54,6 +63,8 @@ export const DemographicForm: FC<IDemographicFormProps> = () => {
                             label="ID number"
                             name="id" // Add the name prop to connect with the form field
                             rules={[{ required: true, message: 'Please enter an ID number' }]}
+                            validateStatus={isFieldValid.id(demographic.id) ? "success" : "error"}
+                            help={isFieldValid.id(demographic.id) ? "" : "ID must contain only numbers"}
                         >
                             <Input
                                 type="text"
@@ -68,6 +79,8 @@ export const DemographicForm: FC<IDemographicFormProps> = () => {
                             initialValue={demographic.phone}
                             name="phone" // Add the name prop to connect with the form field
                             rules={[{ required: true, message: 'Please enter a phone number' }]}
+                            validateStatus={isFieldValid.phone(demographic.phone) ? "success" : "error"}
+                            help={isFieldValid.phone(demographic.phone) ? "" : "Phone number must contain only 10 numbers"}
                         >
                             <Input
                                 type="text"

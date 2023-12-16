@@ -34,7 +34,7 @@ const PcrOrQuickTest = (props: ITestInfo) => {
 
     const { type, timestamp, result, ctThreshold } = props;
 
-    const statusMapper = (result?: boolean) => result ? "text-[#FF3838]" : "text-[#2DCCFF]"
+    const statusMapper = (result?: boolean) => result ? "text-[#2DCCFF]" : "text-[#FF3838]"
 
     return <Row className="border-[1px] p-4 rounded-[12px]" gutter={[16, 16]}>
         <Col span={24}>
