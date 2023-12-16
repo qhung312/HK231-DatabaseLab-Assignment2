@@ -25,7 +25,7 @@ patientController.get('/', async (req, res: CustomResponse) => {
     const queryOptions: PatientQueryOptions[] = [];
     if (req.query.name) {
       queryOptions.push({
-        queryString: `patient.full_name=$${queryOptions.length + 1}`,
+        queryString: `patient.full_name like '%'||$${queryOptions.length + 1}||'%'`,
         value: decodeURIComponent(req.query.name as string)
       });
     }
