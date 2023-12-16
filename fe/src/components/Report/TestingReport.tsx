@@ -1,3 +1,4 @@
+import { formatDate } from "@/common/helper/date";
 import { ITestInfo } from "@/common/interfaces/form/form-detail.interface";
 import { MOCK_TEST_INFO_DATA } from "@/common/mock-data/patient-test-information";
 import { Col, Row, Spin } from "antd";
@@ -45,7 +46,7 @@ const PcrOrQuickTest = (props: ITestInfo) => {
 
         <Col span={12}>
             <div>
-                Tested on: {timestamp}
+                Tested on: {formatDate(timestamp || 'true', true)}
             </div>
         </Col>
 
@@ -83,7 +84,7 @@ const RBPMOrSPO2Test = (props: ITestInfo) => {
 
         <Col span={12}>
             <div>
-                Tested on: {timestamp}
+            Tested on: {formatDate(timestamp || 'true', true)}
             </div>
         </Col>
 
